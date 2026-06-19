@@ -24,9 +24,58 @@ In the replace box
   ### Removing the spaces and the dashes 
   find the box and write his command : 
 
-    ([- ]+)(?=\d*$)
+    ([- ]+)(?=[0-9\-]*$)
 
-    
+
+ #### Explanation of each symbol;
+
+ [ - ] + ) : Matches any dash or space character
+
+(? = (Has allowed to select the dash or space)
+
+[0-9\-] Means any no from 0-9
+
+\- - uses a backtrack to escape a dash.
+
+Asteric , Zero or more quantifier which checks the no and dashes only
+
+$ > End of the line.   
+
+### Changing the formart to +254
+Find the fnd box and put this command;
+
+    ;(254|0)?(\d{9})$
+
+In the replace box input this command ;
+
+    ;+254$2
+
+  #### Explanation of the symbols;
+  ;(254|0)?(\d{9})$
+
+  ; > Matches the literal semicolon right infront e phone no 
+
+  254|0 > means lost for either e digits 254 or 0
+
+  | > its a conditional symbol
+
+  (\d{9}) > the brackets () capture group 2
+
+  \d{9} > matches exactly 9 digits 
+
+  $ > end of a line
+
+  #### replace box ; ;+254$2
+
+;+254 , drops a fresh semicolon following the new format 
+
+$ > It is i 2 ecause it captures the group 2 inside the second set of paranthesis 
+
+### Generating the Usernames 
+
+Find the find box, enter this command ;
+
+
 
 
 
