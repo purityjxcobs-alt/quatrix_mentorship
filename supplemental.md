@@ -1,45 +1,46 @@
 # Supplemental Module
 ## Regular Expressions - RegEx
 ### Cleaning up the phone number no to +254 format
-ctrl + H TO open the fid panel
+CTrl + H to open the find panel
 
     \((.*)\)
 
-In the replace box 
+#### In the replace box 
 
     $1
 
-  \( > it is anescape paranthesis , it looks fo a literal opening bracket in yor data eg (075)
+#### Explaining the symbols;
 
-  ( > second bracket , it captures the group 1
+  1. \( > it is an escape paranthesis , it looks fo a literal opening bracket in yor data eg (075)
 
-  .* > grabs all characters trapped in the brackets 
+  2. ( > second bracket , it captures the group 1
 
-  ) > Third bracket , it closes the capture group 1
+  3. .* > grabs all characters trapped in the brackets 
 
-  \) > escapes right parathesis , it matches a literal bracket that closes the number in my data 
+  4. ) > Third bracket , it closes the capture group 1
 
-  $1 > Captures the group 1 , hence it caputers 1 delete itand overwrites it usinga a clean digits 
+  5. \) > escapes right parathesis , it matches a literal bracket that closes the number in my data 
+
+  6. $1 > Captures the group 1 , hence it captures group 1 deletes it and overwrites it using the new format which is +254
 
   ### Removing the spaces and the dashes 
-  find the box and write his command : 
+  Find the box and write his command : 
 
-    ([- ]+)(?=[0-9\-]*$)
+        ([- ]+)(?=[0-9\-]*$)
 
+#### Explanation of each symbol;
 
- #### Explanation of each symbol;
+1. [ - ] + ) > Matches any dash or space character
 
- [ - ] + ) : Matches any dash or space character
+2. (? = > Has allowed to select the dash or space
 
-(? = (Has allowed to select the dash or space)
+3. [0-9] > Means any number from 0-9
 
-[0-9\-] Means any no from 0-9
+4. \- > uses a backtrack to escape a dash.
 
-\- - uses a backtrack to escape a dash.
+5. Asteric * >  Means zero or more quantifier    which checks the no and dashes only
 
-Asteric , Zero or more quantifier which checks the no and dashes only
-
-$ > End of the line.   
+6. Dollar sign $ > End of the line.   
 
 ### Changing the formart to +254
 Find the fnd box and put this command;
