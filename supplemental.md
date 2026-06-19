@@ -94,10 +94,11 @@ replace command;
 9. \s — Whitespace Character: Matches the blank space before the last name.
 10. ( ) — Capture Group 5 ($5)> Encloses the entire last name to use for the username string eg, Atieno).
 11. ([A-Z]) — Capture Group 6 ($6): Captures the first uppercase letter of the last name (A). Note: We use Group 5 instead to get the full last name.
-12. [a-z]+ —  Matches the remaining lowercase letters of the last name (tieno).
+12. [a-z]+ —  Matches the remaining lowercase letters of the last name (tieno)
 13. ; — Literal Semicolon: Matches the data column separator before the phone number
-14. (\+\d+) — Capture Group 7 ($7): Matches and saves the literal + and all the phone number digits you cleaned in the previous step eg,  (+254775705148)
-$ — end of line 
+14. (\+\d+) — Capture Group 7 ($7)
+15. Plus sign + and all the phone number digits we formated the +254
+16. $ — end of line 
 
 Replace box ;
 1. $1;$2;$7; — Re-inserts your student ID, the full name, and the cleaned phone number exactly as they were, separated by clean semicolons.
