@@ -110,9 +110,9 @@ Find box;
 
     (;[a-z])([A-Z])([A-Z])([a-z]+)$
 
-    Replace box ;
-    
-        $1\l$2\l$3$4
+replace box;
+
+    $1\l$2\l$3$4
 
 ### Explaining each symbol
 find box;
@@ -127,3 +127,5 @@ replace box;
 2. \l$2 — The lowercase \l (lowercase 'L') tells editors that support inline switching to convert just the single next character ($2) to lowercase.
 3. \l$3 — Converts the next single character ($3) to lowercase.
 4. $4 — Puts back the rest of the lowercase last name.
+
+#### Using the Sed tool 
