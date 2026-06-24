@@ -146,7 +146,8 @@ replace box;
 
 ### Step 2 ; Removing the hypens and spaces 
 
-    sed -E 's/([- ]+)([0-9]+)$/\2/; s/([- ]+)([0-9]+)$/\2/' students.txt
+    sed -E 's/([- ()]+)([0-9]+)$/\2/; s/([- ()]+)([0-9]+)$/\2/; s/\(//g; s/\)//g' students.txt
+
 
 ### Explain the symbols 
 1. ([- ]+): This is Capture Group 1. (+)-ensures it grabs one or more
@@ -166,7 +167,7 @@ Initial Line in Pattern Space: 2956;Yannis C Atieno;(0775)-705-148
 
 2. FIRST `s/([- ]+)([0-9]+)$/\2/` - The $ anchor forces sed to start scanning from the absolute end of the line. It reads backward, finds the last digits 148 (([0-9]+)$), sees the hyphen - right before them (([- ]+)), and deletes that hyphen.
 a. s/ - Starts the substitution command
-b. ([- ]+): Capture Group 1. Matches one or more spaces or hyphens.
+b. ([- ]+): Capture Group 1. Matches one or more spaces or hyphens.s
 c. ([0-9]+): Capture Group 2. Matches one or more digits.
 d. $: End of Line Anchor
 e. /\2/: Replaces the entire matched pattern with only the contents of Capture Group 2 (the digits). Group 1 (the hyphens/spaces) is deleted.
@@ -192,7 +193,8 @@ e. /\2/: Replaces the entire matched pattern with only the contents of Capture G
  #### Changing the usernames
  Command;
 
-    sed -E 'h; s/^[^;]*;([A-Z])[a-z]* ([A-Z])[a-z]* ([A-Z][a-z]*);.*/\1\2\3/; s/(.*)/\L\1/; G; s/(.*)\n(.*)/\2;\1/' students.txt
+    sed -E 'h; s/^[^;]*;([A-Z])[a-z]* ([A-Z])[a-z]* ([A-Z][a-z]*);.*/\1\2\3/; s/(.*)/\L\1/; G; s/(.*)\n(.*)/\2;\1/; s/\(([0-9]+)\)/\1/g; s/-//g; s/ //g; s/;0?([0-9]{9});/;+254\1;/; s/;254([0-9]{9});/;+254\1;/' students.txt
+
 
 ### Explain the symbols 
 #### FIRST COMMAND ; 'h; s/^[^;]*;([A-Z])[a-z]* ([A-Z])[a-z]* ([A-Z][a-z]*);.*/\1\2\3/;
