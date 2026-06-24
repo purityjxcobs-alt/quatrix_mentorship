@@ -130,3 +130,70 @@ replace box;
 4. $4 — Puts back the rest of the lowercase last name.
 
 #### Using the Sed tool 
+### To remove characters such as (, ), - or spaces and later change the format to +254
+### Step 1 ; Remove the brackets 
+
+    sed -E 's/\(([0-9]+)\)/\1/g' students.txt
+
+### Explain the symbols 
+1. s (///) -The substitution pattern layout.
+2. \( and \): These match literal open and close brackets. 
+3. ([0-9]+): () Create a Capture Group 1.
+4. [0-9] matches any single number from 0 to 9.
+5. + means "match one or more of the preceding item".
+6. \1: Backreferece to Capture Group 1. It puts back the numbers we memorized, effectively deleting the brackets.
+7. g: The global flag. It forces sed to replace every bracket it finds on the line, not just the first one.
+
+### Step 2 ; Removing the hypens and spaces 
+
+    sed -E 's/([- ]+)([0-9]+)$/\2/; s/([- ]+)([0-9]+)$/\2/' students.txt
+
+### Explain the symbols 
+1. ([- ]+): This is Capture Group 1. (+)-ensures it grabs one or more
+2. ([0-9]+): () - This is Capture Group 2.
+3. $ ; The end of line 
+4. \2: Replaces the whole match with only the contents of Capture Group 2  
+
+### step 3 ; Changing the format to +254 
+
+    sed -E 's/\(([0-9]+)\)/\1/g; s/([- ]+)([0-9]+)$/\2/; s/([- ]+)([0-9]+)$/\2/; s/;0?([0-9]{9})$/;+254\1/; s/;254([0-9]+)$/;+254\1/' students.txt
+
+### Explain the symbols
+Initial Line in Pattern Space: 2956;Yannis C Atieno;(0775)-705-148
+
+ 1. 's/\(([0-9]+)\)/\1/g' -  It scans the text and catches (0775). The \( and \) match the brackets. The ([0-9]+) saves 0775 into memory slot \1. It deletes the brackets and drops 0775 back down.  
+                output;2956;Yannis C Atieno;0775-705-148
+
+2. FIRST `s/([- ]+)([0-9]+)$/\2/` - The $ anchor forces sed to start scanning from the absolute end of the line. It reads backward, finds the last digits 148 (([0-9]+)$), sees the hyphen - right before them (([- ]+)), and deletes that hyphen.
+a. s/ - Starts the substitution command
+b. ([- ]+): Capture Group 1. Matches one or more spaces or hyphens.
+c. ([0-9]+): Capture Group 2. Matches one or more digits.
+d. $: End of Line Anchor
+e. /\2/: Replaces the entire matched pattern with only the contents of Capture Group 2 (the digits). Group 1 (the hyphens/spaces) is deleted.
+                output ; 2956;Yannis C Atieno;0775-705148
+
+3. SECOND `s/([- ]+)([0-9]+)$/\2/` - It scans from the end ($) again. Now the final number block is 705148. It sees the remaining hyphen right before it and deletes it. The spaces separating Yannis C Atieno are 100% safe because they are not at the end of the line.              
+                output ; 2956;Yannis C Atieno;0775705148
+
+ 4. `s/;0?([0-9]{9})$/;+254\1/` 
+      1. s/ -substitution command 
+      2. ; -Matches the literal semicolon character
+      3. 0? -Matches the digit 0 zero or one time.
+            -This makes the leading zero optional (it matches numbers starting with 07 or just 7
+       4. ()- captures group 1 hence what is inise ths parantheis is saved in memeory so that we can reuse it using \1
+       5. [0-9]- set that matches any single digit from 0 to 9.
+       6. {9}-  A quantifier meaning exactly 9 times
+       7. $ - end of a line
+       8. ;+254 the text that will be inserted 
+       9. \1 - backreference to capture group 1 , it inserted the exact 9 digits that were captured in the search step .
+       10. / -closes the substition command 
+                 output ; 2956;Yannis C Atieno;+254775705148
+                 s
+
+
+
+
+
+
+
+
