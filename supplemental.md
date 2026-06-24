@@ -187,8 +187,41 @@ e. /\2/: Replaces the entire matched pattern with only the contents of Capture G
        8. ;+254 the text that will be inserted 
        9. \1 - backreference to capture group 1 , it inserted the exact 9 digits that were captured in the search step .
        10. / -closes the substition command 
-                 output ; 2956;Yannis C Atieno;+254775705148
-                 s
+                 output ; 2956;Yannis C Atieno;+254775705
+        
+ #### Changing the usernames
+ Command;
+
+    sed -E 'h; s/^[^;]*;([A-Z])[a-z]* ([A-Z])[a-z]* ([A-Z][a-z]*);.*/\1\2\3/; s/(.*)/\L\1/; G; s/(.*)\n(.*)/\2;\1/' students.txt
+
+### Explain the symbols 
+#### FIRST COMMAND ; 'h; s/^[^;]*;([A-Z])[a-z]* ([A-Z])[a-z]* ([A-Z][a-z]*);.*/\1\2\3/;
+1. h: Copies the current line to a background memory clipboard
+2. ^[^;]*;: Matches from the very start of the line (^) up to the first semicolon. This safely matches and discards the student ID (2956;).
+3. ([A-Z])[a-z]* : Looks at the first name (Yannis ).
+    a. The ([A-Z]) captures the first capital letter (Y) and saves it to Memory Slot 1 (\1). 
+    b.[a-z]* matches the rest of the lowercase letters a(annis ).
+4. ([A-Z])[a-z]* : Looks at the middle name (C ). it captures the capita letter into memory slot 2 \2
+5. ([A-Z][a-z]*) : Looks at the last name (Atieno) . it captures the entire lowercase into memory slot 3 \3
+6. ;.* - Matches the final semicolon and everything after it (the phone number) so it can be deleted.
+7. \1\2\3: Replaces the entire line with just the contents of our three memory slots 
+
+#### SECOND COMMAND /(.*)/\L\1/ - converting to lowercase
+1. (.*) - Matches the entire text currently in active memory
+2. \L: This is a special sed flag that tells the editor: "make every character that follows me lowercase".
+3. \1: Outputs the captured text under the lowercase rule.
+
+#### THIRD COMMAND g; (Get and Merge)
+
+#### FOURTH COMMAND s/(.*)\n(.*)/\2;\1/ - Rearranging the format
+1. (.*)\n - Matches everything up to the newline .This captures our lowercase username (ycatieno) into Memory Slot 1 (\1).
+2. (.*) -  Matches everything after the newline.This captures the complete data record (2956;Yannis C Atieno;+254775705148) into Memory Slot 2 (\2).
+3. \2;\1: Re-orders them. It prints Memory Slot 2 first, types a literal semicolon (;), and merges Memory Slot 1 till the end .
+             output ; 2956;Yannis C Atieno;+254775705148;ycatieno
+
+
+
+      
 
 
 
