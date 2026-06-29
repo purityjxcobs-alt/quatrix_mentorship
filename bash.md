@@ -14,16 +14,17 @@ if youre in the specified directory .sampledata use;
 mkdir flag -p  - This tells mkdir to create parent directories if they do not exist .
 
 #### 2. Move all student data files (.txt) whose first name starts with A, B, C, D, E, or F into the A-F directory
+- pattern the comand follows; 
+
+273_Beth_K_Atieno.txt
 
 Move names starting with A through F
 
     mv *_[A-F][a-z]*_*.txt A-F/ 
 
-
 SYMBOLS;
-1 st * Matches the student ID number 
-2 nd * Matches the rest of the firstname and the last name 
-.txt Extension 
+- asteric * _ [A-F] matches the ID and the first letter of the first name. 
+- [a-z]*_ matches the rest of the first name up to the next underscore, preventing it from checking the middle or last names.
 
 #### 3. Move all student data files (.txt) whose first name starts with G, H, I, J, K, or L into the G-L directory.
 
@@ -137,5 +138,4 @@ Verify
 
 - it lists the contents of your current directory where we see only our studen.txt files and the folders A-F,G-L,M-R,S-Z are no longer visible
 
- 
 
