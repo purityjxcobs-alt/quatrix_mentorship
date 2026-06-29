@@ -138,4 +138,41 @@ Verify
 
 - it lists the contents of your current directory where we see only our studen.txt files and the folders A-F,G-L,M-R,S-Z are no longer visible
 
+#### 12. Rename all files with Nate to be Nathan using: i) rename command and ii) using mv command and a bash loop of your choice and other commands you deem necessary.
+- first find all files with the name Nate 
+
+```bash
+ls *_Nate_*.txt
+```
+Explain the symbols used;
+1. ls is a list command that displays file inside your current directory 
+2. `*` matches the student ID numbers 
+3. `_Nate_` ensures it only grabs files where "Nate" is the standalone first name.
+4. `*`  matches the middle initial and last name text.
+5. `.txt` ensures you only see the data text files.
+ 
+ * using the mv command and a bash loop of choice 
+ for loop 
+
+```bash
+for file in *_Nate_*.txt; do
+    mv "file" "{file/_Nate_/_Nathan_}"
+done
+```
+
+Explain the command ;
+1. for - starts the loop block 
+2. file - this is a placeholder variable name ,one can name it anything 
+3. in - a separator keyword that point the loop to the target list of items it needs to process
+4. ; - A command separator. It tells Linux that this line's setup is finished and allows us to put the next keyword (do) on the same line.
+5. do - the keyword that signals the start of the actual action steps
+6. mv - move command
+7. dollar sign - looks inside the file (actual filename)
+8. "" (Double Quotes) - puts together the text
+9. **`"${file/_Nate_/_Nathan_}"`** - this is a bash string substitution tool
+10. file - points to the current filename
+11. The first forward slash (/) tells the computer to look for what follows next (_ Nate _).
+12. The second forward slash (/) acts as the swap command, replacing the target text with the final string (_Nathan _).
+
+
 
