@@ -59,7 +59,7 @@ To verify where youre
 
 expected output ;
 
-    /home/pkinoti/quatrix-mentor/.sampledata/.sampledata/A-F
+    /home/pkinoti/quatrix-mentor/.sampledata/A-F
 
 #### 7. From inside the A-F directory, list all files in the S-Z directory using a relative path.
 Change the directory to folder A-F
@@ -79,18 +79,21 @@ Change or ensure your are in the directory A-F
 
     cd A-F
 To restore all the student data files back into the main .sampledata 
-    mv ../*/*.txt ..
+
+    mv * ../G-L/* ../M-R/* ../S-Z/* ../
+
 
 Explain the symbols
-mv - tranfering the files to a new desitination
-.. - parent directory , since we are inside A-F we move to .sampledata
-1st * - matches any subfoldername inside .sampledata 
-2nd * - matches any file name that ends with .txt
-Final .. - this is the destination path into .sampledata
+1. mv - tranfering the files to a new desitination
+2. Asteric * - Matches and selects all files inside your current folder (A-F)
+3. ../G-L/* - Steps up to the parent folder (..), enters the G-L directory, and selects all files inside it
+4. ../M-R/* - Steps up to the parent folder, enters the M-R directory, and selects all files inside it.
+5. ../S-Z/* - Steps up to the parent folder, enters the S-Z directory, and selects all files inside it.
+6. ../: The final destination path. This tells the system to drop every single collected file right into the main .sampledata parent directory.
 
-To verify 
+7. To verify 
 
-    ls 
+        ls 
 
 #### 9. Search/list for files for students where the last name starts with A and scored seventy-something ie 7X e.g.. 1273_Beth_K_Atieno.txt
 
@@ -102,7 +105,7 @@ Explain the symbols;
 3. ;7[0-9]\.": Looks specifically for a semicolon, a 7, any number from 0 to 9, and a literal decimal point 
   trail followed ; English;73.3722 
    
-   use cat to display the hidden output ;
+   - use cat to display the hidden output ;
 
 
         cat 3089_Yannis_K_Atieno.txt
@@ -115,7 +118,7 @@ Another straight forward  command ;
 
     grep "@gmail\.com" *.txt
 
-This gives you the file ame nd the actual gmail address line 
+- This gives you the file ame nd the actual gmail address line 
 
 Explain the symbols;
 1. grep -l: Lists only the names of the files that contain a match, rather than printing the email line itself.
@@ -124,28 +127,15 @@ Explain the symbols;
 
 #### 11.Undo the restructuring of the files ie move the files from e.g. A-F,...,S-Z back to where they were before started part (c) ie where all the files were in one folder. After you're done moving, delete the empty folders.
 
-A-F
+    rmdir A-F G-L M-R S-Z
 
-    rmdir A-F
+rmdir stands for remove make directory. It instantly removes the specified folders. 
+ 
+Verify 
 
-G-L
+    ls 
 
-    rmdir G-Lssscd
-
-M-R
-
-    rmdir M-R
-
-S-Z
-
-    rmdir S-Z
-
-Verification 
-
-    ls
-    
-Explain the symbols
-rmdir 
+- it lists the contents of your current directory where we see only our studen.txt files and the folders A-F,G-L,M-R,S-Z are no longer visible
 
  
 
