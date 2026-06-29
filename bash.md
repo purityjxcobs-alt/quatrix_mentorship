@@ -17,31 +17,31 @@ mkdir flag -p  - This tells mkdir to create parent directories if they do not ex
 
 Move names starting with A through F
 
-    mv *_[A-F]*.txt A-F/
+    mv *_[A-F][a-z]*_*.txt A-F/ 
 
-    SYMBOLS;
-    1 st * Matches the student ID number 
-    2 nd * Matches the rest of the firstname and the last name 
-    .txt Extension 
+
+SYMBOLS;
+1 st * Matches the student ID number 
+2 nd * Matches the rest of the firstname and the last name 
+.txt Extension 
 
 #### 3. Move all student data files (.txt) whose first name starts with G, H, I, J, K, or L into the G-L directory.
 
 Move names starting with G through L
 
-    mv *_[G-L]*.txt G-L/
-
+    mv *_[G-L][a-z]*_*.txt G-L/   
 
 #### 4. Move all student data files (.txt) whose first name starts with M, N, O, P, Q, or R into the M-R directory.
 
 Move names starting with M through R   
 
-    mv *_[M-R]*.txt M-R/
+    mv *_[M-R][a-z]*_*.txt M-R/
 
  #### 5. Move all remaining student data files (.txt) into the S-Z directory.
 
   Move all reaining students S-Z (S through Z) 
 
-    mv *.txt S-Z/
+    mv *_[S-Z][a-z]*_*.txt S-Z/
 
 #### 6. Navigate into the A-F directory using a relative path from your current location (the main directory where generate_data.sh is).
 -A relative path is a way to describe the location of a file or folder starting from where you are currently standing in the terminal.
@@ -92,8 +92,60 @@ To verify
 
     ls 
 
+#### 9. Search/list for files for students where the last name starts with A and scored seventy-something ie 7X e.g.. 1273_Beth_K_Atieno.txt
+
+    grep -l -E ";7[0-9]\." *_*_*_A*.txt
+
+Explain the symbols;
+1. grep -l: Displays only the names of the files that match.
+2. *_*_*_A*.txt: Searches only inside files where the student's last name starts with A (like Atieno).
+3. ;7[0-9]\.": Looks specifically for a semicolon, a 7, any number from 0 to 9, and a literal decimal point 
+  trail followed ; English;73.3722 
+   
+   use cat to display the hidden output ;
 
 
+        cat 3089_Yannis_K_Atieno.txt
+
+#### 10. Search/list for files for students who have ...@gmail.com email addresses.
+
+    grep -l "@gmail\.com" *.txt
+
+Another straight forward  command ;
+
+    grep "@gmail\.com" *.txt
+
+This gives you the file ame nd the actual gmail address line 
+
+Explain the symbols;
+1. grep -l: Lists only the names of the files that contain a match, rather than printing the email line itself.
+2. "@gmail\.com": Searches for the text @gmail.com. The backslash \. ensures the system treats the dot as a real period, not a wildcard character.
+3. *.txt: Searches through all the text files in your current directory.
+
+#### 11.Undo the restructuring of the files ie move the files from e.g. A-F,...,S-Z back to where they were before started part (c) ie where all the files were in one folder. After you're done moving, delete the empty folders.
+
+A-F
+
+    rmdir A-F
+
+G-L
+
+    rmdir G-Lssscd
+
+M-R
+
+    rmdir M-R
+
+S-Z
+
+    rmdir S-Z
+
+Verification 
+
+    ls
+    
+Explain the symbols
+rmdir 
 
  
 
