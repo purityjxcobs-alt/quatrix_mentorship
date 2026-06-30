@@ -277,3 +277,33 @@ Explaining the commands;
 6. .test.student.csv: Targets your hidden main database sheet.
 7. 2>/dev/null -Silences any minor terminal warnings to keep your presentation professional.
 
+* Removing the name Joan from the csv file
+
+```bash
+    sed -i '/;\bJoan\b/d' .test.student.csv
+```
+
+Explaining the symbols;
+1. sed: The "Stream Editor" tool used to search and modify text patterns.
+2. -i: In-place flag. It tells sed to save the changes directly back into the .test.student.csv file instead of just printing the result on your screen.
+3. /'...'/: Search wrappers. Everything inside the forward slashes is the pattern sed is hunting for.
+4. ;: Matches the literal semicolon right before the student's name field.
+5. \b: Word Boundary - ensures the name Joan is alone
+6. d: Delete - It tells sed to delete any line where the search pattern is found.
+7. .test.student.csv: The exact target file name in your directory.
+
+* To verify Joan ha been removed 
+
+```bash
+    grep ';\bJoan\b' .test.student.csv
+ ```   
+Explain the commands;
+1. grep - searches files that matches a specific pattern
+2. ';\bJoan\b': The exact same search pattern used in the sed command. It looks for a semicolon, followed by the exact, whole word "Joan".
+3. .test.student.csv: The target file you are searching inside.
+
+* To check if Joanne is still there
+
+```bash
+grep ';\bJoanne\b' .test.student.csv
+```
