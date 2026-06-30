@@ -139,11 +139,22 @@ Verify
 - it lists the contents of your current directory where we see only our studen.txt files and the folders A-F,G-L,M-R,S-Z are no longer visible
 
 #### 12. Rename all files with Nate to be Nathan using: i) rename command and ii) using mv command and a bash loop of your choice and other commands you deem necessary.
+
+filename concept ;
+2748_Nate_L_Chacha.txt to 2748_Nathan_L_Chacha.txt
+
 - first find all files with the name Nate 
 
+.sampedata folder;
 ```bash
 ls *_Nate_*.txt
 ```
+main directory quatrix-mentor;
+
+```bash
+ls .sampledata/*_Nate_*.txt
+```
+
 Explain the symbols used;
 1. ls is a list command that displays file inside your current directory 
 2. `*` matches the student ID numbers 
@@ -174,5 +185,95 @@ Explain the command ;
 11. The first forward slash (/) tells the computer to look for what follows next (_ Nate _).
 12. The second forward slash (/) acts as the swap command, replacing the target text with the final string (_Nathan _).
 
+#### 13. Rename any occurrences of Nate to Nathan in all the *.txt files and in the .test.score.csv file as well.
+content concept;
 
+```text
+.sampledata/2797_Nathan_W_Wambugu.txt:Name: Nate W. Wambugu
+└─────────────────┬──────────────────┘ └───────────┬─────────┘
+        1. THE FILENAME                       2. THE FILE CONTENT
+```
+
+Reverting the file name back to the original state ;
+
+```bash
+for file in .sampledata/*Nathan*.txt; do mv "file" "{file/_Nathan_/_Nate_}"; done
+```
+to verify the reversion 
+
+    grep "Nate" .sampledata/*.txt .test.*.csv
+
+*Updating the file .txt file - finding and replacing 
+
+     sed -i 's/\bNate\b/Nathan/g' .sampledata/*.txt
+
+Explaining the command:
+1. sed: Stream Editor utility.
+2. -i: Overwrites and saves changes directly to the files in-place.
+3. 's/\bNate\b/Nathan/g': The substitution rule (Find exact word Nate, replace with Nathan everywhere globally on each line). \b - word boundary 
+4. .test.: Targets files in your current folder that start with a literal dot and the word test.
+5. Asterisk * : A wildcard symbol that matches any text pattern in the middle of the filename. This bridges the gap between your real file name (.test.student.csv) and the assignment's placeholder file name (.test.score.csv) by catching both.
+6. .csv: Restricts the operation specifically to files ending with the Comma-Separated Values extension.
+ 
+*Updating the spreadsheets.csv 
+
+    sed -i 's/\bNate\b/Nathan/g' .test.*.csv
+
+Explaining the commands;
+1. sed -i - its Opens the .csv files, edits the values, and overwrites the files in-place.
+2. 's/\bNate\b/Nathan/g' - the substitution where by the name Nate is changed to Nathan
+3. .test.- Targets files in your current working directory that begin with a literal period
+4. Asterisk *-  A wildcard symbol that matches any middle text in the filename.
+
+*To verify;
+
+    grep "Nathan" .sampledata/*.txt .test.*.csv
+
+*Changing the filename .txt from Nate to Nathan
+use the for loop 
+
+```bash
+for file in *_Nate_*.txt; do
+    mv "file" "{file/_Nate_/_Nathan_}"
+done
+```
+*To verify ;
+
+    grep "Nathan" .sampledata/*.txt .test.*.csv
+
+#### 14. Remove any files for students with the name Joan (and be careful NOT to remove those for Joanne). Remove these lines in the csv file as well.
+* Remove files and CSV lines for "Joan" (NOT "Joanne")
+- To prove the existance of both Joan and Joanne
+
+```bash
+ls .sampledata/*_Joan_*.txt .sampledata/*_Joanne_*.txt
+```
+
+* Removing the individual text file for Joan
+
+```bash
+rm .sampledata/*_Joan_*.txt
+```
+
+Explaining the commands;
+1. rm: Remove utility , It permanently erases specified files from the filesystem.
+2. .sampledata/ - Directs the removal tool inside the target subfolder.
+3. *-A wildcard matching any text pattern
+4. Joan -surrounding Joan with underscores, we lock down the selection. It explicitly targets files with _Joan_ and skips files containing
+
+* Removing Joans row from the .csv files
+-To verify the rows for both Joan and Joanne 
+
+```bash
+grep -E "_(Joan|Joanne)_|;(Joan|Joanne) " .sampledata/*.txt .test.student.csv 2>/dev/null
+```
+Explaining the commands;
+
+1. grep: The text-matching tool used to search inside files and print the matching lines.
+2. -E: Enables Extended Regular Expressions, which enables () and other characters
+3. _ (Joan|Joanne) _ -Looks for files where the filename has _Joan_ OR _Joanne_. This isolates your individual text files. | is logical or seperator
+4. ;(Joan|Joanne) : Looks for rows inside the spreadsheet where a semicolon column divider is followed by exactly Joan OR Joanne then puts them aside 
+5. .sampledata/*.txt: Wildcard targeting the student text records folder.
+6. .test.student.csv: Targets your hidden main database sheet.
+7. 2>/dev/null -Silences any minor terminal warnings to keep your presentation professional.
 
