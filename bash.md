@@ -1,4 +1,5 @@
 # Section 4: File Organization and Navigation
+
 #### 1. Create four new directories inside .sampledata: A-F, G-L, M-R, and S-Z.
 
 command used ;
@@ -401,7 +402,9 @@ what every part means;
 
      IV) Populate_exam_database.sh: The script that builds the database and fills it with the fake data. eg school database
 
-     # Section 5 : Searching Data in .test.student.csv
+
+# Section 5 : Searching Data in .test.student.csv
+
 #### 1. Display all lines from .test.student.csv where the phone number starts with 072.
 * Navigate to he .test.student.csv file and see what data is there ;
 
@@ -527,3 +530,339 @@ Explain the commands;
 7. sort - arranges then in an alphabetic oreder 
 
 8. uniq - its a trash cleaner hence it removed every domain that repeatd itself and prints a clea final list of the individual domain eg if 40 papers all say gmail.com it throws 39 of them and remains with one hence one unique domain name without repeats 
+
+# Section 6: Automation with Bash Scripting
+
+#### 1. Create a Bash script named organize_students.zsh that performs the file organization task from Section 3 (creating the A-F, G-L, M-R, S-Z directories and moving files into them). Make sure it's executable.
+step 1 ; Creating the file
+
+```bash
+touch organize_students.zsh
+```
+step 2 ; Making it executable 
+
+```bash
+chmod +x restore_data.zsh
+```
+Explain the command 
+1. chmod - Short form for Change Mode ,it modifies the access permissions of a file
+2. +x - This add executability (+) (x) permission . it gives the system permission to run the contents of the file as code
+3. restore_data.zsh - target file to change to .
+
+
+```bash
+cat << 'EOF' > organize_students.zsh
+#!/bin/zsh
+
+# Create the alphabet folders right here in the current directory
+mkdir -p A-F G-L M-R S-Z
+
+# Loop through all text files in the current directory
+for file in *.txt(N); do
+    # 1. Strip the number prefix by taking everything after the first underscore
+    clean_name=$(echo "$file" | cut -d'_' -f2-)
+    
+    # 2. Get ONLY the first character [1] of the name and force to Uppercase (U)
+    first_letter=${(U)clean_name[1]}
+
+    # 3. Move the file into the correct local folder
+    case $first_letter in
+        [A-F]) mv "$file" A-F/ ;;
+        [G-L]) mv "$file" G-L/ ;;
+        [M-R]) mv "$file" M-R/ ;;
+        [S-Z]) mv "$file" S-Z/ ;;
+    esac
+done
+EOF
+```
+
+Explaining the command;
+
+1. cat - it reads input from the terminal screen and passes it along
+
+2. << - The here-document redirector symbol , its tells the terminal shell to read all the line text line i type below as i input data until i type a specific closing word
+
+3. EOF - End of File marker word 
+
+4. (>) - The overwrite redirector ,it takes the output processed by cat and streams it dirctly into a file replacing any old test inside that file
+
+5. organize_student.zsh - the exact name of the file being created or overwriten on your disk.
+
+* inside the Script File
+#/bin/zsh
+
+1. #! - the Shebang pattern marker
+
+2. /bib/zsh - the system path pointing to the zsh shell executable program ,they force the computer to launch a Zsh environment to run the code bypassing bash 
+
+3. (#) - human to read
+
+4. mkdir -p A-F G-L M-R S-Z - making the directories 
+
+* for file in *.txt(N); do 
+
+1. for file in ...; do - It picks up files one by one referening each as the variable $file and runs the code
+
+2. *- matches any text sequence 
+
+3. .txt - only files ending with .txt
+
+4. (N) - The Zsh NullGlob flag , if there are no .txt it forces the lop t skip instead of crashing
+
+*  clean_name=$(echo "$file" | cut -d'_' -f2-)
+
+1. clean_name- Creates a brand-new storage variable in memory named clean_name.
+
+2. $( ) - runs the command inside the paranthesis first and then save he result text output into our variable
+
+3. echo - prints data
+
+4. $file - the initial filename
+
+5. | - redirects the text output from the echo command and feeds it to the next command (cut) 
+
+6. cut - slashes section out of lineof text eg 1662_James.txt it cuts the number and the underscore for it to remain clean name James.txt.
+
+7. -d -delimeter flag - it tells cut to split the text string everywhere it finds an underscore 
+
+8. -f2 - he field range selection flag. It extracts everything starting from the second section through the end of the text line, dropping the leading number prefix.
+
+##### first_letter=${(U)clean_name[1]}
+
+1. first_letter=: Sets up a storage variable named first_letter.
+
+2. ${ ... }: The formal shell parameter expansion syntax used to securely read and edit variable data strings.
+
+3. (U): The Zsh internal conversion flag that forces the character to become a capital uppercase letter.
+
+4. clean_name: References the cleaned student name text string.
+
+5. [1]: The index position brackets. In Zsh, strings start counting at index 1. This isolates only the absolute first character of the text string (e.g., J from James).
+
+##### case $first_letter in
+
+1. case ... in: Opens a conditional pattern matching evaluation tree structure. It reads the string value saved in $first_letter and looks for a match listed below.
+eg Is J between A-F ? NO skips
+   Is J between G-L ? yes 
+
+   since they match the mv move it there 
+
+2. $: The evaluation operator symbol. It triggers the shell to read the raw text inside a variable rather than treating the variable name as literal text.
+
+##### [A-F]) mv "$file" A-F/ ;;
+
+1. [A-F]: A bracket match range layout. It matches any single uppercase letter between A and F inclusive.
+
+2. ): Marks the end of a single pattern option condition definition block.
+
+3. mv: The move command utility. It shifts a file package location across directories.
+
+4. "$file": The target file being moved.
+
+5. A-F/: The folder path destination where the file is being transferred.
+
+6. ; ; ; erminating indicator symbol. It tells the script to stop checking other patterns and skip to the end of the case tree block.
+
+##### ESAC
+
+The official closing indicator for a conditional case evaluation structure. It is simply the word "case" spelled backward.
+
+#### done
+
+The official closing loop indicator for a programmatic for loop construction block.
+
+#### EOF
+
+closing marker word 
+
+#### 2. Create a Bash script named find_072_phones.zsh that searches .test.student.csv for all phone numbers starting with 072 and outputs only those phone numbers to the terminal. Make it executable.
+
+Step 1 ; Creating a blank file
+
+```bash
+touch find_072_phones.zsh
+```
+Step 2 ; write a text 
+
+```bash
+cat << 'EOF' > find_072_phones.zsh
+#!/bin/zsh
+
+grep -o -E '\b072[0-9]+\b' .test.student.csv
+EOF
+```
+
+Explain the command;
+1. cat << 'EOF' > find_072_phones.zsh - where we write till we see EOF
+
+2. #!/bin/zsh: - To use zsh to read the text
+
+3. grep - searche for the text
+
+4. -o - only-matching the entire long line from the book
+
+5. 072: The exact numbers we are hunting for! The phone number must start with these three digits.
+
+6. [0-9]+: The plus (+) means "one or more." [0-9] means any digit from 0 to 9.
+
+Step 3 ; Make the script a real program 
+
+```bash
+chmod +x find_072_phones.zsh
+```
+
+Step 4 ; Test the script to see the numbers
+
+```bash
+./find_072_phones.zsh
+```
+
+#### 3. Create a Bash script named county_student_count.zsh that takes a county ID as its first argument and outputs the number of students from that county in .test.student.csv.
+
+Step 1 ; Create a blank file 
+
+```bash
+touch county_student_count.zsh
+```
+
+Step 2 ; write the county ID of the students 
+
+```bash
+cat << 'EOF' > county_student_count.zsh
+#!/bin/zsh
+
+COUNTY_ID="$1"
+
+# We changed the commas to semicolons inside the pattern!
+grep -c -E "(^|;)${COUNTY_ID}(;|$)" .test.student.csv
+EOF
+```
+
+Explain the commands;
+1. COUNTY_ID="$1" - $1 - the first word or number when you start the program so if eg ./county_student_count.zsh 10 the umber cought is 10 
+
+2. grep -searches in the file
+
+3. -c - counts and prints out the actual lines of text it finds
+
+4. (^|; and (;|$) 
+    
+    i) ^ - start of line
+
+    ii) $ - end of line
+
+    iii) , - spreadsheet comma separator
+
+    iv) | means or 
+    
+This ensures if your looking for eg ; county number 10 it brings the exact no not 110 or 105
+
+5. ${COUNTY_ID} - brings back the initial number 
+
+Step 3 ; Make it executable 
+
+```bash
+chmod +x county_student_count.zsh
+```
+
+Step 4 ; Test out the program 
+
+```bash
+./county_student_count.zsh 10
+```
+
+#### 4. Create a Bash script named restore_data.zsh that moves all student data files (.txt) from the categorized directories (A-F, G-L, etc.) back into the main .sampledata directory and then removes the empty categorized directories. Make it executable.
+
+Step 1 ; Make a file
+
+```bash
+touch full_cleanup.zsh
+```
+
+Step 2 ; print the text 
+
+```bash
+cat << 'EOF' > full_cleanup.zsh
+#!/bin/zsh
+
+# Safe cleanup that avoids missing file crashes and removes test csv files quietly
+rm -f .test.*.csv(N)
+EOF
+```
+
+Explain the commands;
+1. ource: This is like a Borrowing Spell. It tells the robot to open up the other script file (./generate_data.sh) and memorize all the secret tricks and functions written inside it.
+
+2. ./generate_data.sh: The path to the external data script file you are borrowing rules from.
+
+3. cleanup: This calls the specific action function name that was memorized from generate_data.sh. It tells the robot: "Do that base room-cleaning routine right now!"
+
+4. rm: Short for Remove. This is the trash-shredder command used to permanently delete files.
+
+5. -f: Short for Force.
+
+6. .test.*.csv: The target target file pattern. The * is a wildcard that matches any characters in the middle. It ensures that files like .test.student.csv or .test.scores.csv get completely wiped away.
+
+step 3 ; Make it executable 
+
+```bash
+chmod +x full_cleanup.zsh
+```
+
+step 4 ; test the program
+
+```bash
+./full_cleanup.zsh
+```
+To verify
+
+```bash
+ls -l *.zsh
+```
+
+#### 6. Create a Bash script named full_cleanup.zsh that runs the cleanup function from generate_data.sh and then also removes all .test.*.csv files. Make it executable.
+
+step 1 ; 
+
+```bash
+cat << 'EOF' > full_cleanup.zsh
+#!/bin/zsh
+
+# 1. Check if the file generate_data.sh actually exists before opening it
+if [[ -f ./generate_data.sh ]]; then
+    source ./generate_data.sh
+    cleanup
+fi
+
+# 2. Quietly wipe away all the temporary test csv files
+rm -f .test.*.csv(N)
+EOF
+```
+
+Explain the command ;
+1. if [[ -f ./generate_data.sh ]]; then ... fi: This is a Safety Shield. The -f flag asks: "Does the file generate_data.sh exist right here?" If yes, it loads it (source) and runs the cleanup function. If no, it skips it completely to prevent those nasty error
+
+2. rm: Short for Remove. The permanent trash-shredder command.
+
+3. -f: Short for Force. Tells the robot to shred the files instantly without asking for permission.
+
+4. .test.*.csv: The target file pattern where the * wildcard matches any characters in the middle.
+
+5. (N): The Zsh NullGlob Mask. It tells the robot: "If the test files are already deleted, just stay completely quiet and peaceful instead of shouting an error message!"
+
+step 2 ; Make it Executable
+
+```bash
+chmod +x full_cleanup.zsh
+```
+
+step 3; run the script 
+
+```bash
+./full_cleanup.zsh
+```
+To verify ;
+
+```bash
+ls .test.*.csv
+```
