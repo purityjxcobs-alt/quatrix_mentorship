@@ -186,6 +186,12 @@ Explain the command ;
 11. The first forward slash (/) tells the computer to look for what follows next (_ Nate _).
 12. The second forward slash (/) acts as the swap command, replacing the target text with the final string (_Nathan _).
 
+* To prove it changed to Nathan ;
+
+```bash
+ls *_Nathan_*.txt
+```
+
 #### 13. Rename any occurrences of Nate to Nathan in all the *.txt files and in the .test.score.csv file as well.
 content concept;
 
@@ -198,7 +204,8 @@ content concept;
 Reverting the file name back to the original state ;
 
 ```bash
-for file in .sampledata/*Nathan*.txt; do mv "file" "{file/_Nathan_/_Nate_}"; done
+for file in .sampledata/*Nathan*.txt; do mv "$file" "${file/_Nathan_/_Nate_}"; done
+
 ```
 to verify the reversion 
 
