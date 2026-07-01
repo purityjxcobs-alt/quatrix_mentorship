@@ -165,6 +165,7 @@ Explain the symbols used;
  * using the mv command and a bash loop of choice 
 
  - for loop 
+change your directory to .sampledata since the files are there
 
 ```bash
 for file in *_Nate_*.txt; do
@@ -200,29 +201,16 @@ content concept;
 └─────────────────┬──────────────────┘ └───────────┬─────────┘
         1. THE FILENAME                       2. THE FILE CONTENT
 ```
-
-Reverting the file name back to the original state ;
+* The file content .csv
+check if the name Nate exists in the .csv files 
 
 ```bash
-for file in .sampledata/*Nathan*.txt; do mv "$file" "${file/_Nathan_/_Nate_}"; done
-
+    grep -w "Nate" .test.*.csv
 ```
-to verify the reversion 
+Explain the commands;
+1. grep - searches for the text inside the files 
+2. -w - Matches only whole words hence it will find Nate 
 
-    grep "Nate" .sampledata/*.txt .test.*.csv
-
-*Updating the file .txt file - finding and replacing 
-
-     sed -i 's/\bNate\b/Nathan/g' .sampledata/*.txt
-
-Explaining the command:
-1. sed: Stream Editor utility.
-2. -i: Overwrites and saves changes directly to the files in-place.
-3. 's/\bNate\b/Nathan/g': The substitution rule (Find exact word Nate, replace with Nathan everywhere globally on each line). \b - word boundary 
-4. .test.: Targets files in your current folder that start with a literal dot and the word test.
-5. Asterisk * : A wildcard symbol that matches any text pattern in the middle of the filename. This bridges the gap between your real file name (.test.student.csv) and the assignment's placeholder file name (.test.score.csv) by catching both.
-6. .csv: Restricts the operation specifically to files ending with the Comma-Separated Values extension.
- 
 *Updating the spreadsheets.csv 
 
     sed -i 's/\bNate\b/Nathan/g' .test.*.csv
@@ -262,6 +250,11 @@ ls .sampledata/*_Joan_*.txt .sampledata/*_Joanne_*.txt
 ```bash
 rm .sampledata/*_Joan_*.txt
 ```
+To prove it has been deleted;
+
+```bash
+    ls .sampledata/*_Joan_*.txt
+```
 
 Explaining the commands;
 1. rm: Remove utility , It permanently erases specified files from the filesystem.
@@ -285,7 +278,7 @@ Explaining the commands;
 6. .test.student.csv: Targets your hidden main database sheet.
 7. 2>/dev/null -Silences any minor terminal warnings to keep your presentation professional.
 
-* Removing the name Joan from the csv file
+* Removing the name Joan from the csv files
 
 ```bash
     sed -i '/;\bJoan\b/d' .test.student.csv
