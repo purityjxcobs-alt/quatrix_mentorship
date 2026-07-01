@@ -163,11 +163,12 @@ Explain the symbols used;
 5. `.txt` ensures you only see the data text files.
  
  * using the mv command and a bash loop of choice 
- for loop 
+
+ - for loop 
 
 ```bash
 for file in *_Nate_*.txt; do
-    mv "file" "{file/_Nate_/_Nathan_}"
+    mv "$file" "${file/_Nate_/_Nathan_}"
 done
 ```
 
