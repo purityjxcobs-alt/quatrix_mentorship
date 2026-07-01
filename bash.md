@@ -331,6 +331,7 @@ To verify it exist ;
  cd .sampledata/G-L
  ```
  i)) Navigate to the root directory of the mentor repo with one command.
+
  the path ; ~/quatrix-mentor/.sampledata/G-L , we are exactly two folders deep .
   
 To navigate to the root directory ;
@@ -339,12 +340,15 @@ To navigate to the root directory ;
 cd ../..
 ```
 iii) Navigate to your home directory. Show at least two ways to do this.
+
 What is my home directory ; /home/pkinoti:
 
 way 1;
 
 From your home directory (ie WITHOUT navigating away from your home directory):
+
 List the files in the .sampledata folder.
+
 way 2;
 
 ```bash
@@ -361,3 +365,165 @@ ls ~/quatrix-mentor/.sampledata
 ```bash
 tree ~/quatrix-mentor
 ```
+Explanation of the output;
+
+```text
+├── supplemental
+│   └── README.md
+└── util
+    ├── data
+    │   ├── counties_file
+    │   ├── domain_file
+    │   ├── firstname
+    │   ├── lastname
+    │   ├── middleinitial
+    │   ├── school_type_file
+    │   └── subject_file
+    ├── exam_data.sh
+    ├── exam_schema.sql
+    ├── generate_exam_data.sh
+    └── populate_exam_database.sh
+```
+what every part means;
+
+1. Supplemental Documentation - the README.md is the instruction manual for the project.
+2. util/data/ - The blueprint of the database. It contains the SQL commands,
+
+    * util - is a folder helper it holds the code, scripts or data that do routine tasks   for the main project like generating data or configuring settigs 
+
+3. Database structure 
+
+     1)exam_schema.sql: The blueprint that builds the database tables. eg where the schools, students and test score go .
+
+     II)exam_data.sh: The configuration settings file it puts everything where they should be .
+
+     III) generate_exam_data.sh: The script that creates the fake data using the ingredients above from the util/data 
+
+     IV) Populate_exam_database.sh: The script that builds the database and fills it with the fake data. eg school database
+
+     # Section 5 : Searching Data in .test.student.csv
+#### 1. Display all lines from .test.student.csv where the phone number starts with 072.
+* Navigate to he .test.student.csv file and see what data is there ;
+
+```bash
+head -n 5 .test.student.csv
+```
+
+Explain the cmmands;
+1. Head - reads the file from the top down and displays the first ten lines
+2. -n - A flag that stands for number of lines 
+3. 5 - output the first five lines
+4. .test.student.csv - the tagret file that head opens and read
+
+* Scroll through the file
+
+```bash
+less .test.student.csv
+```
+- press q to quit
+
+To display all lines ;
+
+```bash
+grep -E "^[^;]+;[^;]+;072" .test.student.csv
+```
+explain the commands;
+
+1018; Amber C Yebo; 0726-513-152;40;153 
+
+1. grep - searches for file 
+
+2. -E - Extended Reqular Expression that allows other special symbols in the input
+
+3. ^  - start at the absolute beginning of the line (the start of Column 1). 
+
+4. [^;] - The brackets mean "match any character inside," but the ^ inside the brackets 
+means "NOT". So, this matches any character that is not a semicolon. Eg the ID 1234 
+
+5. +-means "one or more times". Combined with the previous symbol, [^;]+ matches a continuous block of text without semicolons. This represents the entire content of Column 1 (the Student ID).
+
+6. ; -This matches the divider separating Column 1 and Column 2.
+
+7. [^;]+ : The exact same logic repeated. It matches one or more characters that are not semicolons, safely capturing everything inside Column 2 (the Full Name).
+
+8. ; - matching the divider separating Column 2 and Column 3.
+
+9. 072 - The target numbers.
+
+#### 2. Count how many students have an email address ending with @gmail.com in .test.student.csv.
+
+```bash
+grep -c "@gmail\.com$" .test.student.csv
+```
+Explain the commands;
+1. -c - The count flag , it outputs a dinal number representing the total matches
+2. "@gmail\.com$" - the regular expression earch pattern
+3. \. - means its a literal period
+4. dollar sign -means the absolute end of the line 
+
+#### 3. List the full names (second field) of all students from County ID 15 in .test.student.csv.
+Pattern; 
+
+2479;Mary L Idris;0720-620-609;15;
+
+```bash
+grep -E "^[^;]+;[^;]+;[^;]+;15;" .test.student.csv
+```
+
+#### 4.Find the student ID, full name, and email address for any student whose name contains "Olivia" (case-insensitive) in .test.student.csv.
+to test if olivia is in the file ;
+
+```bash
+grep -i "olivia" .test.student.csv | wc -l
+
+```
+
+```bash
+grep -i "amber" .test.student.csv
+```
+Explain the command;
+1. grep - searches for the name
+2. flag -i - is the insensitive flag that tells grep to ignore capitalization so any form the name is written its okay
+3. amber - the tagret seach
+4. .test.student.csv - the target data file 
+
+#### 5. Display the phone numbers of all students who attend School ID 50 in .test.student.csv.
+
+Pattern ;
+
+1509; Edward P Kimani; 0737-011-551; 11; 50;
+
+```bash
+grep -E "^[^;]+;[^;]+;[^;]+;[^;]+;50;" .test.student.csv
+```
+#### 6. Count the total number of students listed in .test.student.csv (excluding any header if it existed, but your script doesn't generate one).
+
+```bash
+grep -c "^" .test.student.csv
+```
+Explain the command;
+1. grep - searches in the files
+2. -c - Count flag , lists all the total matches
+3. "^" : The search pattern enclosed the ^  is the regular expression that means the start of the line hence it m,atches every line in the document .
+
+#### 7. Find all unique domain names used in student email addresses from .test.student.csv
+
+```bash
+grep -oE "[^@;]+$" .test.student.csv | sort | uniq
+```
+Explain the commands;
+1. grep - search utility
+
+2. -o - Only matching flag , instead of printing the whole line the flag o prints the only exact text
+
+3. [^@;] : means any character that is not an @ sign or a semicolon ;".
+
+4. +- A quantifier meaning "one or more times"
+
+5. $ - The end-of-line anchor
+
+6. | - It redirects the list of domains from grep directly into the input of the next command.
+
+7. sort - arranges then in an alphabetic oreder 
+
+8. uniq - its a trash cleaner hence it removed every domain that repeatd itself and prints a clea final list of the individual domain eg if 40 papers all say gmail.com it throws 39 of them and remains with one hence one unique domain name without repeats 
