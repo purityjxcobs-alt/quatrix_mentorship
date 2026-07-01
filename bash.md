@@ -308,3 +308,56 @@ Explain the commands;
 ```bash
 grep ';\bJoanne\b' .test.student.csv
 ```
+#### 15. Navigation:
+i) Navigate to the G-L folder that's inside the .sampledata folder with one command.
+
+Step 1 ; Make the G-L directory inside .sampledata 
+
+```bash
+mkdir G-L
+```
+To verify it exist ;
+ 
+ ```bash
+ ls 
+ ```
+ To navigate into the folder inside .sampledata
+
+ ```bash
+ cd quatrix-mentor
+ ```
+
+ ```bash
+ cd .sampledata/G-L
+ ```
+ i)) Navigate to the root directory of the mentor repo with one command.
+ the path ; ~/quatrix-mentor/.sampledata/G-L , we are exactly two folders deep .
+  
+To navigate to the root directory ;
+
+```bash
+cd ../..
+```
+iii) Navigate to your home directory. Show at least two ways to do this.
+What is my home directory ; /home/pkinoti:
+
+way 1;
+
+From your home directory (ie WITHOUT navigating away from your home directory):
+List the files in the .sampledata folder.
+way 2;
+
+```bash
+cd ~
+```
+iv)From your home directory (ie WITHOUT navigating away from your home directory):
+* List the files in the .sampledata folder. 
+
+```bash
+ls ~/quatrix-mentor/.sampledata
+```
+* List the folder and sub-folder and files structure/hierarchy of the mentor folder using just one command.
+
+```bash
+tree ~/quatrix-mentor
+```
