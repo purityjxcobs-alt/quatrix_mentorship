@@ -788,6 +788,7 @@ Step 4 ; Test out the program
 #### 5. Create a Bash script named restore_data.zsh that moves all student data files (.txt) from the categorized directories (A-F, G-L, etc.) back into the main .sampledata directory and then removes the empty categorized directories. Make it executable.
 
 Step 1 ; Create a blank file 
+do it in the main directory quatrix-mentor
 
 ```bash
 touch restore_data.zsh
@@ -799,20 +800,24 @@ Step 2 ; Write a code inside the file
 cat << 'EOF' > restore_data.zsh
 #!/bin/zsh
 
-# 1. Create the main destination folder just in case it was missing
+# 1. Ensure the destination hidden folder exists
 mkdir -p .sampledata
 
-# 2. Loop through each categorized alphabet folder
+# 2. Loop through each folder in the main directory
 for folder in A-F G-L M-R S-Z; do
-    # Check if the folder actually exists before trying to look inside it
+    
+    # 3. Check if the folder exists here
     if [[ -d "$folder" ]]; then
-        # Move all .txt files from that folder back into .sampledata
+        
+        # 4. Move all text files into the hidden .sampledata folder
         mv "$folder"/*.txt(N) .sampledata/ 2>/dev/null
         
-        # Remove the folder now that it is empty
+        # 5. Delete the empty folder
         rmdir "$folder" 2>/dev/null
     fi
 done
+
+echo "Data successfully restored to .sampledata folder!"
 EOF
 ```
 
@@ -832,6 +837,11 @@ Step 4 . Run the program
 
 ```bash
 ./restore_data.zsh
+```
+ to prove they have been removed from the main directory ;
+ 
+```bash
+ls -d A-F G-L M-R S-Z
 ```
 
 #### 6. Create a Bash script named full_cleanup.zsh that runs the cleanup function from generate_data.sh and then also removes all .test.*.csv files. Make it executable.
@@ -860,6 +870,7 @@ EOF
 ```
 
 Explain the commands;
+
 1. if [[ -f ./generate_data.sh ]]; then
    * -f - The file exist flag , it verifs that the .sh is a real file 
 
@@ -892,3 +903,5 @@ To verify ;
 ls .test.*.csv
 ```
 the no file directory means it .csv file has been cleaned up .
+
+
