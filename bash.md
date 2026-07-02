@@ -675,6 +675,12 @@ The official closing loop indicator for a programmatic for loop construction blo
 
 closing marker word 
 
+Verify the script ;
+
+```bash
+./organize_students.zsh
+```
+
 To verify it worked ;
 
 ```bash
@@ -753,6 +759,7 @@ Explain the commands;
 3. -c - counts and prints out the actual lines of text it finds
 
 4. (^|; and (;|$) 
+being that in the data our county number is written as ;100;
     
     i) ^ - start of line
 
@@ -778,58 +785,64 @@ Step 4 ; Test out the program
 ./county_student_count.zsh 10
 ```
 
-#### 4. Create a Bash script named restore_data.zsh that moves all student data files (.txt) from the categorized directories (A-F, G-L, etc.) back into the main .sampledata directory and then removes the empty categorized directories. Make it executable.
+#### 5. Create a Bash script named restore_data.zsh that moves all student data files (.txt) from the categorized directories (A-F, G-L, etc.) back into the main .sampledata directory and then removes the empty categorized directories. Make it executable.
 
-Step 1 ; Make a file
+Step 1 ; Create a blank file 
+
+```bash
+touch restore_data.zsh
+```
+
+Step 2 ; Write a code inside the file 
+
+```bash
+cat << 'EOF' > restore_data.zsh
+#!/bin/zsh
+
+# 1. Create the main destination folder just in case it was missing
+mkdir -p .sampledata
+
+# 2. Loop through each categorized alphabet folder
+for folder in A-F G-L M-R S-Z; do
+    # Check if the folder actually exists before trying to look inside it
+    if [[ -d "$folder" ]]; then
+        # Move all .txt files from that folder back into .sampledata
+        mv "$folder"/*.txt(N) .sampledata/ 2>/dev/null
+        
+        # Remove the folder now that it is empty
+        rmdir "$folder" 2>/dev/null
+    fi
+done
+EOF
+```
+
+Explain the commands ;
+
+##### if [[ -d "$folder" ]]; then
+* if then opens a conditional statement block
+* [[  ]] - where the test condition occurs
+* -d - tests whether the variable string actually point to and anctual directory 
+
+Step 3. Making the script Executable
+
+```bash
+chmod +x restore_data.zsh
+```
+Step 4 . Run the program 
+
+```bash
+./restore_data.zsh
+```
+
+#### 6. Create a Bash script named full_cleanup.zsh that runs the cleanup function from generate_data.sh and then also removes all .test.*.csv files. Make it executable.
+
+step 1 ; Creating a file
 
 ```bash
 touch full_cleanup.zsh
 ```
 
-Step 2 ; print the text 
-
-```bash
-cat << 'EOF' > full_cleanup.zsh
-#!/bin/zsh
-
-# Safe cleanup that avoids missing file crashes and removes test csv files quietly
-rm -f .test.*.csv(N)
-EOF
-```
-
-Explain the commands;
-1. ource: This is like a Borrowing Spell. It tells the robot to open up the other script file (./generate_data.sh) and memorize all the secret tricks and functions written inside it.
-
-2. ./generate_data.sh: The path to the external data script file you are borrowing rules from.
-
-3. cleanup: This calls the specific action function name that was memorized from generate_data.sh. It tells the robot: "Do that base room-cleaning routine right now!"
-
-4. rm: Short for Remove. This is the trash-shredder command used to permanently delete files.
-
-5. -f: Short for Force.
-
-6. .test.*.csv: The target target file pattern. The * is a wildcard that matches any characters in the middle. It ensures that files like .test.student.csv or .test.scores.csv get completely wiped away.
-
-step 3 ; Make it executable 
-
-```bash
-chmod +x full_cleanup.zsh
-```
-
-step 4 ; test the program
-
-```bash
-./full_cleanup.zsh
-```
-To verify
-
-```bash
-ls -l *.zsh
-```
-
-#### 6. Create a Bash script named full_cleanup.zsh that runs the cleanup function from generate_data.sh and then also removes all .test.*.csv files. Make it executable.
-
-step 1 ; 
+Step 2 ; Write the code 
 
 ```bash
 cat << 'EOF' > full_cleanup.zsh
@@ -846,14 +859,19 @@ rm -f .test.*.csv(N)
 EOF
 ```
 
-Explain the command ;
-1. if [[ -f ./generate_data.sh ]]; then ... fi: This is a Safety Shield. The -f flag asks: "Does the file generate_data.sh exist right here?" If yes, it loads it (source) and runs the cleanup function. If no, it skips it completely to prevent those nasty error
+Explain the commands;
+1. if [[ -f ./generate_data.sh ]]; then
+   * -f - The file exist flag , it verifs that the .sh is a real file 
 
-2. rm: Short for Remove. The permanent trash-shredder command.
+2. source ./generate_data.sh 
+It opens another file and memeorises the .sh so that can use them
 
-3. -f: Short for Force. Tells the robot to shred the files instantly without asking for permission.
+3. cleanup This launches the specific sequence of instructions that you just imported via the source command.
 
-4. .test.*.csv: The target file pattern where the * wildcard matches any characters in the middle.
+4. rm -f .test.*.csv(N)
+ rm - remove the file
+ -f force - it forces instant deletion 
+ .csv file is the target 
 
 5. (N): The Zsh NullGlob Mask. It tells the robot: "If the test files are already deleted, just stay completely quiet and peaceful instead of shouting an error message!"
 
