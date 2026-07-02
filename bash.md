@@ -534,7 +534,7 @@ Explain the commands;
 # Section 6: Automation with Bash Scripting
 
 #### 1. Create a Bash script named organize_students.zsh that performs the file organization task from Section 3 (creating the A-F, G-L, M-R, S-Z directories and moving files into them). Make sure it's executable.
-step 1 ; Creating the file
+step 1 ; Creating the file inside .sampledata
 
 ```bash
 touch organize_students.zsh
@@ -542,7 +542,7 @@ touch organize_students.zsh
 step 2 ; Making it executable 
 
 ```bash
-chmod +x restore_data.zsh
+chmod +x organize_students.zsh
 ```
 Explain the command 
 1. chmod - Short form for Change Mode ,it modifies the access permissions of a file
@@ -593,7 +593,7 @@ Explaining the command;
 
 1. #! - the Shebang pattern marker
 
-2. /bib/zsh - the system path pointing to the zsh shell executable program ,they force the computer to launch a Zsh environment to run the code bypassing bash 
+2. /bin/zsh the system path pointing to the zsh shell executable program ,they force the computer to launch a Zsh environment to run the code bypassing bash 
 
 3. (#) - human to read
 
@@ -675,7 +675,14 @@ The official closing loop indicator for a programmatic for loop construction blo
 
 closing marker word 
 
+To verify it worked ;
+
+```bash
+ls A-F G-L M-R S-Z
+```
+
 #### 2. Create a Bash script named find_072_phones.zsh that searches .test.student.csv for all phone numbers starting with 072 and outputs only those phone numbers to the terminal. Make it executable.
+NB ; REMEMBER TO REGENRATE THE OLD DATA SINCE WEVE DELETED IT 
 
 Step 1 ; Creating a blank file
 
@@ -866,3 +873,4 @@ To verify ;
 ```bash
 ls .test.*.csv
 ```
+the no file directory means it .csv file has been cleaned up .
