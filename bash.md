@@ -798,26 +798,19 @@ Step 2 ; Write a code inside the file
 
 ```bash
 cat << 'EOF' > restore_data.zsh
-#!/bin/zsh
+cat << 'EOF' > restore_data.zsh
+#!/bin/bash
 
-# 1. Ensure the destination hidden folder exists
+# 1. Ensure the main .sampledata directory exists
 mkdir -p .sampledata
 
-# 2. Loop through each folder in the main directory
-for folder in A-F G-L M-R S-Z; do
-    
-    # 3. Check if the folder exists here
-    if [[ -d "$folder" ]]; then
-        
-        # 4. Move all text files into the hidden .sampledata folder
-        mv "$folder"/*.txt(N) .sampledata/ 2>/dev/null
-        
-        # 5. Delete the empty folder
-        rmdir "$folder" 2>/dev/null
-    fi
-done
+# 2. Pull all .txt files out of the categories and into the root of .sampledata
+mv .sampledata/*/*.txt .sampledata/ 2>/dev/null
 
-echo "Data successfully restored to .sampledata folder!"
+# 3. Completely delete the empty category folders
+rmdir .sampledata/A-F .sampledata/G-L .sampledata/M-R .sampledata/S-Z 2>/dev/null
+
+echo "SUCCESS: Categories deleted. Files restored flatly into .sampledata!"
 EOF
 ```
 
@@ -843,8 +836,19 @@ Step 4 . Run the program
 ```bash
 ls -d A-F G-L M-R S-Z
 ```
+to verify the categories are gone
+
+```bash
+ls -F .sampledata
+```
+the flag -F - classify , it ads a speciall trailing symbol to the end of the name to show what kind of files they are . 
 
 #### 6. Create a Bash script named full_cleanup.zsh that runs the cleanup function from generate_data.sh and then also removes all .test.*.csv files. Make it executable.
+to prove that the .csv file is there before deleting ;
+
+```bash
+ls -la
+```
 
 step 1 ; Creating a file
 
@@ -856,19 +860,15 @@ Step 2 ; Write the code
 
 ```bash
 cat << 'EOF' > full_cleanup.zsh
-#!/bin/zsh
-
+#!/bin/bash
 # 1. Check if the file generate_data.sh actually exists before opening it
 if [[ -f ./generate_data.sh ]]; then
-    source ./generate_data.sh
-    cleanup
+    source ./generate_data.sh cleanup
 fi
-
 # 2. Quietly wipe away all the temporary test csv files
-rm -f .test.*.csv(N)
+rm -f .test.*.csv
 EOF
 ```
-
 Explain the commands;
 
 1. if [[ -f ./generate_data.sh ]]; then
@@ -904,4 +904,9 @@ ls .test.*.csv
 ```
 the no file directory means it .csv file has been cleaned up .
 
+to verify in the main directory as well ;
 
+
+```bash
+ls -la
+```
