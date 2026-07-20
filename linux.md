@@ -665,3 +665,9 @@ Step 7: Make Zoe a Sudoer on your Local PC
 ```bash
 sudo usermod -aG sudo zdoe
 ```
+Step 9: Install the Xfce Desktop Package Locally
+From our profile 
+
+```bash
+sudo apt update && sudo apt install -y task-xfce-desktop
+```
