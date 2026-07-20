@@ -286,6 +286,8 @@ du
 ``` 
 Expected output ;
 
+* shows number alone
+
 ```bash
 8       ./quatrix-mentorship/.git/objects/c2
 4       ./quatrix-mentorship/.git/objects/pack
@@ -293,6 +295,7 @@ Expected output ;
 232     ./quatrix-mentorship/.git
 ``` 
 Example 1 . Human readable size of the current folder
+* using -h , helps you to see the K,G,M instead of the number alone .
 
 command used ; 
 ```bash
@@ -329,10 +332,13 @@ Expected output ;
 6.7G    .
 ``` 
 Explain the command ; 
+
 This command tells your computer to break down that 6.7G total and show you the size of each individual folder sitting directly inside your current directory
 1. du - disk usage
 2. -h - human readable 
-3. --max-depth=1 - it sets a depth limit , tells the tool to only look 1 folder deep hence shows the sizes of the immediate folders and hids thousands of tiny-subfolders inside them hence the screen is clean and readable .
+3. --max-depth=1 - it sets a depth limit , tells the tool to only look 1 folder deep hence shows the sizes of the immediate folders and hides thousands of tiny-subfolders inside them hence the screen is clean and readable .
+4. 1.2/392 - The exacts storage footprint of that folder 
+
 
 #### 9. df (Disk Free)
 Shows the overall storage space available on your entire computer drives (stands for Disk Free).
@@ -486,3 +492,176 @@ MiB Mem :   7603.8 total,    477.8 free,   6072.5 used,   2152.2 buff/cacheMiB S
 section 5 ; The top apps 
 
 Your apps are sorted automatically by who is using the most CPU power at this exact moment.
+ 
+
+
+
+ # QUESTIONS AND TASKS 
+ 1. Installation of applications in Debian:
+
+i) How do you install applications on the command line? Install the following applications: gedit, kwrite, vim, rsyslog, xfce4-terminal and Google Chrome.
+
+ii)How does one uninstall an application?
+ 
+ Step 1 . Update the package index 
+ * Before Installing any program , you must refresh your system knowldge of what software exists online 
+
+```bash
+sudo apt update
+```
+Step 2 : Installing Standard Apps (gedit, kwrite, vim, rsyslog, xfce4-terminal)
+
+* The applications are open - source and and already saved inside Debian's official online library. You can install them all at the exact same time. 
+
+```bash
+sudo apt install -y gedit kwrite vim rsyslog xfce4-terminal
+```
+Step 3: Install Third-Party Apps (Google Chrome)
+
+* Google chrome is owned by Google so debian is not allowed to keep it in its official open-source warehouse .Hence, we must download it directly from google .
+
+```bash
+sudo apt install -y wget
+wget https://google.com
+sudo apt install ./google-chrome-stable_current_amd64.deb
+```
+To verify they have been installed ;
+
+```bash
+apt list --installed gedit kwrite vim rsyslog xfce4-terminal google-chrome-stable
+```
+II) How to uninstall Application 
+
+ a) 
+```bash
+sudo apt purge -y gedit kwrite vim rsyslog xfce4-terminal google-chrome-stable
+```
+Explanation 
+1. sudo ; Grants administrator permissions to delete system software.
+1. apt purge: Completely uninstalls the applications and destroys all of their system configuration files.
+3. -y: Automatically answers "yes" to the confirmation prompt, allowing the uninstallation to run hands-free.
+
+ b) Cleaning up leftover background files 
+
+```bash
+sudo apt autoremove -y
+```
+ c)  To verify they have been deleted 
+
+```bash
+apt list --installed gedit kwrite vim rsyslog xfce4-terminal google-chrome-stable
+```
+2. What is a Desktop Environment? Install the following Desktop Environments: KDE Plasma, Cinnamon, Xfce.
+
+* Desktop Environment , It is the graphical interface built on top of the core Linux engine. It turns lines of text into visual elements you can click with a mouse
+
+1. KDE Plasma (K Desktop Environment Plasma) , is where you can change the position of every single button and dial. By default, it looks like modern Windows, but you can customize it to look like anything one wants 
+
+2. Cinnamon Desktop Environment ,It features a traditional "Start Menu" in the bottom-left corner, a taskbar along the bottom, and clear icons on the desktop. It is designed to make users coming from Windows feel instantly at home.
+
+3. Xfce ( X Forms Common Environment ) , It removes flashy animations and heavy visual effects so it can run incredibly fast. It is perfect for old computers or making a new computer lightning fast because it uses very little computer memory (RAM).
+
+Step 1. Installing them 
+
+* The softwares are organised in packages called Task Packages 
+
+```bash
+sudo apt update && sudo apt install -y task-kde-desktop task-cinnamon-desktop task-xfce-desktop
+```
+Explain ;
+1. task-kde-desktop, task-cinnamon-desktop, task-xfce-desktop: These are the specific system names for the bundles. Using the task- prefix ensures you get all the wallpapers, login screens, and default applications made for that specific desktop style.
+
+```bash
+ssh pkinoti@test.traccar.quatrixglobal.com
+```
+8. Create the User Account for Zoe Doe 
+ 
+```bash
+sudo adduser zdoe
+```
+Explaining commands ;
+1. Sudo , grands you administrator permission to make system changes 
+2. adduser , builds a new user accounts an creates their own home directory 
+3. adoe , username for Zoe
+
+Step 2 ; Make zdoe a sudoer administrator
+
+* Adding her to the sudo group so that she can run her own administrative commands .
+
+```bash
+sudo usermod -aG sudo zdoe
+```
+Explaining commands;
+1. sudo: Grants you the admin rights needed to modify user accounts.
+
+2. usermod: Short for user modify. This command changes existing user account settings.
+     -aG , a means appen (add to) ,G group .Together, they add the user to a new group without removing them from any groups they are already in.
+
+3. sudo , The name of the target group.Hence, anyone in the sudo group gets administrator rights.
+
+4. zdoe: The username of the account we are modifying.
+
+Step 3: Generate an SSH Key Pair for Zoe using the ECDSA Protocol
+
+```bash
+ssh-keygen -t ecdsa -b 521 -C "zoe.doe@example.com"
+```
+Explaining the commands;
+1. sh-keygen -t ecdsa -b 521 -C "..."
+ssh-keygen: The tool that generate the keys
+-t ecdsa: Tells the tool to use the ECDSA protocol as requested.
+-b 521: Sets the bit size to 521, making it the strongest and most secure version of an ECDSA key possible.
+-C "zoe.doe@example.com": Attaches a clear label tag to the key.
+
+step 4 ; Allow jdoe to access test.traccar.quatrixglobal.com server.
+
+```bash
+cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+Explaining the commands ; 
+1. cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
+cat reads the newly created public key 
+(>>) the redirect tool , it copies the text and adds it to the end of a security file called the authorised_keys 
+
+2. chmod 600 ~/.ssh/authorized_keys
+chmod , alters file security permissions 
+600 Sets the permission level so that only Zoe can read and write to this file, and everyone else on the system is strictly blocked.
+
+why 600 ?
+
+When you set a file to 600, you are breaking it down like this
+
+1. 6 (4 + 2): The Owner (Zoe) has complete permission to Read and Write to the file.
+
+2. 0: The system Group has absolutely no permissions to see or change it.
+
+3. 0: Everyone Else on the computer has no permissions to see or change it.
+
+where by ; 
+1. 4 points = Read permission (ability to open and view the file).
+
+2. 2 points = Write permission (ability to edit or change the file).
+
+3. 1 point = Execute permission (ability to run the file like a program).
+
+4. 0 points = No access at all.1
+
+Log out of Zoe's profile 
+
+```bash
+exit
+```
+Step 6: Create Zoe's Account on Your Local PC 
+
+* Ensure youre in the pkinoti@gwekesa 
+
+```bash
+sudo adduser zdoe
+```
+
+Step 7: Make Zoe a Sudoer on your Local PC
+
+```bash
+sudo usermod -aG sudo zdoe
+```
