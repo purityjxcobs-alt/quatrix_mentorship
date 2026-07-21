@@ -485,8 +485,11 @@ Section 3 ; Memory Usage (RAM & SWAP)
 MiB Mem :   7603.8 total,    477.8 free,   6072.5 used,   2152.2 buff/cacheMiB Swap:   7847.0 total,   7647.2 free,    199.8 used.   1531.2 avail Mem
 
 1. 7603.8 total: You have roughly 8 Gigabytes of total RAM memory.
+
 2. 6072.5 used: Your open apps are currently using about 6 Gigabytes of that RAM.
+
 3. 477.8 free / 1531.2 avail Mem: You have about 1.5 Gigabytes of memory left over for opening new things.
+
 4. MiB Swap: Emergency memory on your hard drive. Since your regular RAM is almost full, Linux put a tiny bit of data (199.8 used) into your emergency pool to keep things stable.
 
 section 5 ; The top apps 
@@ -497,33 +500,33 @@ Your apps are sorted automatically by who is using the most CPU power at this ex
 
 
  # QUESTIONS AND TASKS 
+
  1. Installation of applications in Debian:
 
 i) How do you install applications on the command line? Install the following applications: gedit, kwrite, vim, rsyslog, xfce4-terminal and Google Chrome.
 
 ii)How does one uninstall an application?
  
- Step 1 . Update the package index 
+ #### Step 1 : Update the package index 
+
  * Before Installing any program , you must refresh your system knowldge of what software exists online 
 
 ```bash
 sudo apt update
 ```
-Step 2 : Installing Standard Apps (gedit, kwrite, vim, rsyslog, xfce4-terminal)
+#### Step 2 : Installing Standard Apps (gedit, kwrite, vim, rsyslog, xfce4-terminal)
 
 * The applications are open - source and and already saved inside Debian's official online library. You can install them all at the exact same time. 
 
 ```bash
 sudo apt install -y gedit kwrite vim rsyslog xfce4-terminal
 ```
-Step 3: Install Third-Party Apps (Google Chrome)
+#### Step 3: Install Third-Party Apps (Google Chrome)
 
 * Google chrome is owned by Google so debian is not allowed to keep it in its official open-source warehouse .Hence, we must download it directly from google .
 
 ```bash
-sudo apt install -y wget
-wget https://google.com
-sudo apt install ./google-chrome-stable_current_amd64.deb
+                                                                             
 ```
 To verify they have been installed ;
 
@@ -670,4 +673,67 @@ From our profile
 
 ```bash
 sudo apt update && sudo apt install -y task-xfce-desktop
+```
+Step 10 : Check the system logs and try and locate the login time for user jdoe. Capture the line showing the login action, as well as the 3 lines preceding and after that action.
+
+```bash
+sudo journalctl | grep -B 3 -A 3 "session opened for user zdoe"
+```
+Explain the command ;
+1. journalctl: The modern administrator command used to output the system's central log journal database.
+
+2. | (The Pipe): This character takes the massive output stream from journalctl and sends it directly into the next command as input.
+
+3. grep -B 3 -A 3 "...": Sifts through the incoming stream to locate the phrase "session opened for user zdoe". Once found, it prints that line, along with the 3 lines before it and the 3 lines after it.
+
+Step 10 : Your supervisor has now informed you that Jane Doe is leaving the organization. Your supervisor insists that Jane Doe's account be deleted including her home directory on the local machine. On the test.traccar server, her home user account directory should be preserved, but she should no longer be able to ssh into the server.
+
+* DELETING ZOE'S ACCOUNTS ;
+
+In local PC
+
+* Make sure your terminal prompt is pkinoti@gwekesa:~$
+
+```bash
+sudo deluser --remove-home zdoe
+```
+* In the Remote server 
+
+```bash
+ssh pkinoti@://quatrixglobal.com
+```
+the prompt should change to ; pkinoti@test-traccar:~$ 
+
+```bash
+sudo deluser zdoe
+sudo passwd -l zdoe
+```
+Explain the commands ;
+1. sudo deluser zdoe successfully detached her account from the server's user registry.
+
+2. sudo passwd -l zdoe completely locked out her account credentials, ensuring that any future SSH connection attempts will be instantly blocked by the system
+
+#### 10. Free Memory & Disk space:
+* How can one check free and used memory (RAM) on a Linux PC? What is the status of memory of your Linux PC right now?
+
+* How much used disk space do you have on your Linux PC?
+
+* For the above two tasks, how can you view this information in Gigabytes as opposed to plain bytes?
+
+1. Checking RAM Usage
+
+```bash
+free
+```
+2. Checking Disk Space Usage
+
+```bash
+df
+```
+* This lists all active, mounted storage pools, displaying their individual storage thresholds, utilized blocks, and overall capacity flags
+
+3. Viewing Information in Gigabytes
+
+```bash
+df -h
 ```
