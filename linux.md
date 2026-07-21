@@ -737,3 +737,257 @@ df
 ```bash
 df -h
 ```
+#### 12. 
+Step 1: Install Nginx
+
+```bash
+sudo apt update && sudo apt install nginx -y
+```
+Step 2: Create the Web Root Folder
+
+```bash
+sudo mkdir -p /var/www/html/pkinoti
+```
+
+Step 3: Create the index.html File
+
+* We will create a basic HTML file inside your new folder using the text editor nano
+
+open the file editor 
+
+```bash
+sudo nano /var/www/html/pkinoti/index.html
+```
+inside the editor and this text
+
+```bash
+<html>
+    This is my webpage.
+</html>
+```
+Step 4: Create the Nginx Configuration File
+
+```bash
+sudo nano /etc/nginx/sites-available/local.pkinoti.conf
+```
+
+```bash
+server {
+     server_name local.pkinoti;
+     root /var/www/html/pkinoti;
+     index index.html;
+
+     access_log  /var/log/nginx/local.pkinoti.access.log;
+     error_log  /var/log/nginx/local.pkinoti.error.log;
+
+     location / {
+         try_files $uri /index.html =404;
+     }
+}
+```
+
+Step 5: Create a Symlink
+
+* We will create a shortcut from the sites-available folder into the sites-enabled folder so Nginx actually reads your configuration.
+
+```bash
+sudo ln -s /etc/nginx/sites-available/local.pkinoti.conf /etc/nginx/sites-enabled/local.pkinoti.conf
+```
+Explain the command;
+1. ln -s: Creates a symbolic link (a shortcut pointer)
+2. The first path is the original source file.
+3. The second path is where the shortcut will be placed
+
+Step 6: Update the Hosts File
+
+* We will edit your computer's local "address book" (/etc/hosts) to point your domain name directly to your own machine (127.0.0.1).
+
+To open the hosts file ;
+
+```bash
+sudo nano /etc/hosts
+```
+```bash
+127.0.0.1 local.pkinoti
+```
+Step 7: Restart Nginx Service
+
+* We need to restart Nginx so it reads our newly added configuration files.
+
+```bash
+sudo systemctl restart nginx
+```
+#### QUESTIONS
+1. What is Nginx
+
+* It is a web server that listens to the user request which is (This is my web page) and displays the right files back to them 
+
+2. Why is the purpose of the folder you created under /var/www...?
+
+* You hit the nail on the head again! Because the server is constantly running and modifying data, /var is the dedicated, safe zone designed for files that change while the computer is active.
+
+3. Question 3: What do the two folders sites-available and sites-enabled help accomplish
+
+* sites-available folder holds all your website configuration files. Even if a website is offline, broken, or under construction, its configuration file stays safe in here. It does nothing; Nginx ignores it.
+
+* sites-enabled This folder only contains the websites you want to be live and active right now. Nginx only reads this folder.
+
+4. Question 4: What is a symlink?
+
+*  symlink (symbolic link) is a digital shortcut. It is just like a desktop shortcut on Windows . It is a tiny file that does not contain your actual configuration, but simply points directly to the real file located over in sites-available.
+
+
+5. Question 5: What is the hosts file used for? Name at least 2 uses.
+
+* It helps the computer find the location of a domain right on your own PC instead of looking on the internet.
+
+common uses ;
+1. local development , it lets you create fake webiste names so that we can build and test website locally before launching them into the real world 
+
+2. Blocking websites , it blockes harmful websites 
+
+6. Question 6: What is the difference between service and systemctl?
+
+* systemctl the modern control tool used to manage background workers (called "services") in Linux.
+
+* service  This is an older tool used in older versions of Linux to start and stop programs had fewer features.
+
+Question 7: What is the difference between restart and reload within the context of a service?
+
+* restart (The hard reset): This completely shuts down the Nginx process and kills all current connections, then turns it back on from scratch. If a user is actively downloading a file on your website when you run this, their connection breaks and they see an error screen.
+
+* reload (The live update): This does not shut down the server. Nginx stays online and keeps serving current users perfectly. It simply reads the new configuration file in the background and applies the changes instantly without any downtime.
+
+Question 8: If we edit the index.html file and add some content, do we need to restart, reload anything, or do something else to view the changes?
+
+* Nginx only needs a reload or restart if you change its configuration rules (like changing the website name or switching folders) because it reads those rules only once when it boots up.So, if you edit the text in index.html, Nginx will automatically grab the updated version the very next second someone loads the page or refeshes the page .
+
+13. postgres - (On your local PC):
+
+    Install latest Postgres version supported by Debian (or Fedora).
+
+    Explain the following:
+
+    The purpose of pg_hba.conf file. Where is it located?
+
+    Where are postgresql database server logs located?
+
+    How many types of authentication methods does postgresql offer?
+
+Step 1: Install PostgreSQL
+
+```bash
+sudo apt update && sudo apt install postgresql postgresql-contrib -y
+```
+Explain the command;
+1. postgresql: Installs the core PostgreSQL database server.
+
+2. postgresql-contrib: Installs additional popular tools and extended functionalities for Postgres
+
+Question 1: What is the purpose of the pg_hba.conf file, and where is it located?
+
+* The name pg_hba stands for PostgreSQL Host-Based Authentication.
+
+* It acts as a firewall rulebook that decides who is allowed to connect to your database. Every time a program or a user tries to log in, Postgres checks this file to see:
+
+Question 2 ; Where is it located ?
+
+```bash
+sudo find /etc/postgresql/ -name pg_hba.conf
+```
+* its in the /etc because, /etc is the universal warehouse in Linux strictly reserved for configuration files and system settings.
+
+* Since pg_hba.conf is a text file filled with security settings, rules, and instructions for how the PostgreSQL program should behave, the Linux operating system forces it to live inside /etc to keep everything perfectly organized.
+
+Question 2. Where are postgresql database server logs located?
+
+* /var being the place for files that change constantly while the computer runs. Database logs are text files that record every single error, connection, and query live as they happen.
+
+* Because logs change and grow every second, they live inside the /var/log directory.
+
+```bash
+ls /var/log/postgresql/
+```
+Question 3: How many types of authentication methods does PostgreSQL offer?
+
+PEER AUTHENTIFICATION METHOD; 
+
+* It looks at who you are logged into your computer as right now. If your Ubuntu username is pkinoti, Postgres will automatically let you into the database user named pkinoti without asking for a password, because the operating system already verified your identity.
+
+Step 1: Log Into PostgreSQL for the First Time
+
+```bash
+sudo -i -u postgres psql
+```
+Explain the command ; 
+1. sudo -i -u postgres: Switches your terminal session to act as the postgres administrator user.
+
+2. psql: Opens the interactive PostgreSQL terminal screen
+
+Step 2: See Your Database Version and Databases
+
+type this exact command into your postgres=# prompt and hit
+
+```bash
+\l
+```
+* It prints out a table listing all the default databases currently created on your system (like postgres, template0) 
+
+Step 3: Exit the Postgres 
+
+```bash
+\q
+```
+TRUST AUTHENTIFICATION 
+
+* This means "no password required." PostgreSQL blindly trusts anyone who connects. This is highly dangerous and should only be used for quick local testing on your own PC.
+
+```bash
+sudo nano /etc/postgresql/*/main/pg_hba.conf
+```
+CHANGE THIS TO ;
+
+ALT + / -TO VIEW THE BOTTOM TEXT 
+
+```bash
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            scram-sha-256
+```
+THIS ;
+
+```bash
+host    all             all             127.0.0.1/32            trust
+```
+
+To verify ; 
+
+Tell Postgres to read the changes (Reload)
+
+```bash
+sudo systemctl reload postgresql
+```
+Test the trust connection ;
+
+```bash
+psql -h 127.0.0.1 -U postgres
+```
+* postgres=# prompt immediately
+
+14. ufw - (On your local PC):
+
+Install ufw
+
+Ensure that SSH, HTTP and HTTPS ports are accessible and NO others.
+
+Enable ufw
+
+Step 1: Install UFW
+
+```bash
+sudo apt update && sudo apt install ufw -y
+```
+To enable the ufw 
+
+```bash
+sudo ufw enable
+```
