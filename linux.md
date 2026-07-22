@@ -822,6 +822,8 @@ sudo systemctl restart nginx
 
 * It is a web server that listens to the user request which is (This is my web page) and displays the right files back to them 
 
+* It is a local web server for testing webs it runs directly on your pc as a local testing environment.
+
 2. Why is the purpose of the folder you created under /var/www...?
 
 * You hit the nail on the head again! Because the server is constantly running and modifying data, /var is the dedicated, safe zone designed for files that change while the computer is active.
@@ -990,4 +992,107 @@ To enable the ufw
 
 ```bash
 sudo ufw enable
+```
+15. Fail2ban 
+
+* Fail2ban acts like an automated security guard that reads your system logs and dynamically locks out malicious actors.
+
+Step 1: Install Fail2ban
+
+```bash
+sudo apt update && sudo apt install fail2ban -y
+```
+Step 2: Create the jail.local Copy
+
+* Now we need to make your personal scratchpad configuration file (jail.local) by copying the factory default file (jail.conf). This ensures system updates won't overwrite your custom settings later.
+
+```bash
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+```
+Step 3: Open the File and Edit the SSH Section
+
+* Now we will open your new jail.local file and change the default SSH settings to be highly aggressive against attackers.
+
+```bash
+sudo nano /etc/fail2ban/jail.local
+```
+After the text editor is open ;
+
+1. Press CTRL + W 
+2. Type [sshd] and press Enter.
+3. Your cursor will jump directly to the SSH security block.
+
+Underneath sshd put this text ;
+
+```bash
+[sshd]
+
+# To use more aggressive sshd modes set filter parameter "mode" in jail.local:
+# normal (default), ddos, extra or aggressive (combines all).
+# See "tests/files/logs/sshd" or "filter.d/sshd.conf" for usage example and details.
+mode   = aggressive
+maxretry = 2
+findtime = 24h
+bantime = 196h
+port    = ssh
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s
+```
+
+Afterwards ;
+1. ctrl + 0 then enter
+2. ctrl + X
+
+Step 4: Create the Custom Website Filter File
+
+* We will create a brand new file inside Fail2ban's filter.d folder specifically to define what a bad website visitor looks like.
+
+```bash
+sudo nano /etc/fail2ban/filter.d/nginx-brute.conf
+```
+Inside the text editor ; 
+
+```bash
+[Definition]
+
+failregex =  ^<HOST> .* "(GET|POST|PUT|POST) .*(\.env|xmlrpc|\.asp|ab2g|ab2h|\.yml|git).*$
+             ^<HOST> .* "(GET|POST|PUT|POST) /(\.[a-zA-Z0-9]+|.*/\.[a-zA-Z0-9]+).*$
+             ^<HOST> .* "(GET|POST) .*robot.*\ 404\ .*$
+
+ignoreregex = .*\.well.*
+              .*/wp-json/wc/v3/system_status.*
+```
+
+Step 5: Add to the Website Jail Configuration 
+
+* We will open your jail.local file again, jump right to the bottom, and drop in the instructions that tell Fail2ban to enforce bans for your custom website rules.
+
+```bash
+sudo nano /etc/fail2ban/jail.local
+```
+Inside the text editor do ;
+1. alt + / to jump the cursor to the last line 
+2. enter to create a clean empty space 
+3. past this new config block at the bottom 
+
+```bash
+[nginx-brute]
+enabled  = true
+port     = http,https
+logpath = %(nginx_access_log)s
+bantime = 96h
+maxretry = 2
+findtime = 24h
+```
+Step 6: Restart the Fail2ban Service
+
+* After all the configuration file are ready , we just need to restart Fail2ban so it reads the brand-new settings and active filters.
+
+```bash
+sudo systemctl restart fail2ban
+```
+Step 7: Watch the Fail2ban Logs Live
+
+```bash
+sudo tail -n 20 -f /var/log/fail2ban.log
 ```
