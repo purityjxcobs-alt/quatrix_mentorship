@@ -286,6 +286,8 @@ du
 ``` 
 Expected output ;
 
+* shows number alone
+
 ```bash
 8       ./quatrix-mentorship/.git/objects/c2
 4       ./quatrix-mentorship/.git/objects/pack
@@ -293,6 +295,7 @@ Expected output ;
 232     ./quatrix-mentorship/.git
 ``` 
 Example 1 . Human readable size of the current folder
+* using -h , helps you to see the K,G,M instead of the number alone .
 
 command used ; 
 ```bash
@@ -329,10 +332,13 @@ Expected output ;
 6.7G    .
 ``` 
 Explain the command ; 
+
 This command tells your computer to break down that 6.7G total and show you the size of each individual folder sitting directly inside your current directory
 1. du - disk usage
 2. -h - human readable 
-3. --max-depth=1 - it sets a depth limit , tells the tool to only look 1 folder deep hence shows the sizes of the immediate folders and hids thousands of tiny-subfolders inside them hence the screen is clean and readable .
+3. --max-depth=1 - it sets a depth limit , tells the tool to only look 1 folder deep hence shows the sizes of the immediate folders and hides thousands of tiny-subfolders inside them hence the screen is clean and readable .
+4. 1.2/392 - The exacts storage footprint of that folder 
+
 
 #### 9. df (Disk Free)
 Shows the overall storage space available on your entire computer drives (stands for Disk Free).
@@ -479,10 +485,614 @@ Section 3 ; Memory Usage (RAM & SWAP)
 MiB Mem :   7603.8 total,    477.8 free,   6072.5 used,   2152.2 buff/cacheMiB Swap:   7847.0 total,   7647.2 free,    199.8 used.   1531.2 avail Mem
 
 1. 7603.8 total: You have roughly 8 Gigabytes of total RAM memory.
+
 2. 6072.5 used: Your open apps are currently using about 6 Gigabytes of that RAM.
+
 3. 477.8 free / 1531.2 avail Mem: You have about 1.5 Gigabytes of memory left over for opening new things.
+
 4. MiB Swap: Emergency memory on your hard drive. Since your regular RAM is almost full, Linux put a tiny bit of data (199.8 used) into your emergency pool to keep things stable.
 
 section 5 ; The top apps 
 
 Your apps are sorted automatically by who is using the most CPU power at this exact moment.
+ 
+
+
+
+ # QUESTIONS AND TASKS 
+
+ 1. Installation of applications in Debian:
+
+i) How do you install applications on the command line? Install the following applications: gedit, kwrite, vim, rsyslog, xfce4-terminal and Google Chrome.
+
+ii)How does one uninstall an application?
+ 
+ #### Step 1 : Update the package index 
+
+ * Before Installing any program , you must refresh your system knowldge of what software exists online 
+
+```bash
+sudo apt update
+```
+#### Step 2 : Installing Standard Apps (gedit, kwrite, vim, rsyslog, xfce4-terminal)
+
+* The applications are open - source and and already saved inside Debian's official online library. You can install them all at the exact same time. 
+
+```bash
+sudo apt install -y gedit kwrite vim rsyslog xfce4-terminal
+```
+#### Step 3: Install Third-Party Apps (Google Chrome)
+
+* Google chrome is owned by Google so debian is not allowed to keep it in its official open-source warehouse .Hence, we must download it directly from google .
+
+```bash
+                                                                             
+```
+To verify they have been installed ;
+
+```bash
+apt list --installed gedit kwrite vim rsyslog xfce4-terminal google-chrome-stable
+```
+II) How to uninstall Application 
+
+ a) 
+```bash
+sudo apt purge -y gedit kwrite vim rsyslog xfce4-terminal google-chrome-stable
+```
+Explanation 
+1. sudo ; Grants administrator permissions to delete system software.
+1. apt purge: Completely uninstalls the applications and destroys all of their system configuration files.
+3. -y: Automatically answers "yes" to the confirmation prompt, allowing the uninstallation to run hands-free.
+
+ b) Cleaning up leftover background files 
+
+```bash
+sudo apt autoremove -y
+```
+ c)  To verify they have been deleted 
+
+```bash
+apt list --installed gedit kwrite vim rsyslog xfce4-terminal google-chrome-stable
+```
+2. What is a Desktop Environment? Install the following Desktop Environments: KDE Plasma, Cinnamon, Xfce.
+
+* Desktop Environment , It is the graphical interface built on top of the core Linux engine. It turns lines of text into visual elements you can click with a mouse
+
+1. KDE Plasma (K Desktop Environment Plasma) , is where you can change the position of every single button and dial. By default, it looks like modern Windows, but you can customize it to look like anything one wants 
+
+2. Cinnamon Desktop Environment ,It features a traditional "Start Menu" in the bottom-left corner, a taskbar along the bottom, and clear icons on the desktop. It is designed to make users coming from Windows feel instantly at home.
+
+3. Xfce ( X Forms Common Environment ) , It removes flashy animations and heavy visual effects so it can run incredibly fast. It is perfect for old computers or making a new computer lightning fast because it uses very little computer memory (RAM).
+
+Step 1. Installing them 
+
+* The softwares are organised in packages called Task Packages 
+
+```bash
+sudo apt update && sudo apt install -y task-kde-desktop task-cinnamon-desktop task-xfce-desktop
+```
+Explain ;
+1. task-kde-desktop, task-cinnamon-desktop, task-xfce-desktop: These are the specific system names for the bundles. Using the task- prefix ensures you get all the wallpapers, login screens, and default applications made for that specific desktop style.
+
+```bash
+ssh pkinoti@test.traccar.quatrixglobal.com
+```
+8. Create the User Account for Zoe Doe 
+ 
+```bash
+sudo adduser zdoe
+```
+Explaining commands ;
+1. Sudo , grands you administrator permission to make system changes 
+2. adduser , builds a new user accounts an creates their own home directory 
+3. adoe , username for Zoe
+
+Step 2 ; Make zdoe a sudoer administrator
+
+* Adding her to the sudo group so that she can run her own administrative commands .
+
+```bash
+sudo usermod -aG sudo zdoe
+```
+Explaining commands;
+1. sudo: Grants you the admin rights needed to modify user accounts.
+
+2. usermod: Short for user modify. This command changes existing user account settings.
+     -aG , a means appen (add to) ,G group .Together, they add the user to a new group without removing them from any groups they are already in.
+
+3. sudo , The name of the target group.Hence, anyone in the sudo group gets administrator rights.
+
+4. zdoe: The username of the account we are modifying.
+
+Step 3: Generate an SSH Key Pair for Zoe using the ECDSA Protocol
+
+```bash
+ssh-keygen -t ecdsa -b 521 -C "zoe.doe@example.com"
+```
+Explaining the commands;
+1. sh-keygen -t ecdsa -b 521 -C "..."
+ssh-keygen: The tool that generate the keys
+-t ecdsa: Tells the tool to use the ECDSA protocol as requested.
+-b 521: Sets the bit size to 521, making it the strongest and most secure version of an ECDSA key possible.
+-C "zoe.doe@example.com": Attaches a clear label tag to the key.
+
+step 4 ; Allow jdoe to access test.traccar.quatrixglobal.com server.
+
+```bash
+cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+Explaining the commands ; 
+1. cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
+cat reads the newly created public key 
+(>>) the redirect tool , it copies the text and adds it to the end of a security file called the authorised_keys 
+
+2. chmod 600 ~/.ssh/authorized_keys
+chmod , alters file security permissions 
+600 Sets the permission level so that only Zoe can read and write to this file, and everyone else on the system is strictly blocked.
+
+why 600 ?
+
+When you set a file to 600, you are breaking it down like this
+
+1. 6 (4 + 2): The Owner (Zoe) has complete permission to Read and Write to the file.
+
+2. 0: The system Group has absolutely no permissions to see or change it.
+
+3. 0: Everyone Else on the computer has no permissions to see or change it.
+
+where by ; 
+1. 4 points = Read permission (ability to open and view the file).
+
+2. 2 points = Write permission (ability to edit or change the file).
+
+3. 1 point = Execute permission (ability to run the file like a program).
+
+4. 0 points = No access at all.1
+
+Log out of Zoe's profile 
+
+```bash
+exit
+```
+Step 6: Create Zoe's Account on Your Local PC 
+
+* Ensure youre in the pkinoti@gwekesa 
+
+```bash
+sudo adduser zdoe
+```
+
+Step 7: Make Zoe a Sudoer on your Local PC
+
+```bash
+sudo usermod -aG sudo zdoe
+```
+Step 9: Install the Xfce Desktop Package Locally
+From our profile 
+
+```bash
+sudo apt update && sudo apt install -y task-xfce-desktop
+```
+Step 10 : Check the system logs and try and locate the login time for user jdoe. Capture the line showing the login action, as well as the 3 lines preceding and after that action.
+
+```bash
+sudo journalctl | grep -B 3 -A 3 "session opened for user zdoe"
+```
+Explain the command ;
+1. journalctl: The modern administrator command used to output the system's central log journal database.
+
+2. | (The Pipe): This character takes the massive output stream from journalctl and sends it directly into the next command as input.
+
+3. grep -B 3 -A 3 "...": Sifts through the incoming stream to locate the phrase "session opened for user zdoe". Once found, it prints that line, along with the 3 lines before it and the 3 lines after it.
+
+Step 10 : Your supervisor has now informed you that Jane Doe is leaving the organization. Your supervisor insists that Jane Doe's account be deleted including her home directory on the local machine. On the test.traccar server, her home user account directory should be preserved, but she should no longer be able to ssh into the server.
+
+* DELETING ZOE'S ACCOUNTS ;
+
+In local PC
+
+* Make sure your terminal prompt is pkinoti@gwekesa:~$
+
+```bash
+sudo deluser --remove-home zdoe
+```
+* In the Remote server 
+
+```bash
+ssh pkinoti@://quatrixglobal.com
+```
+the prompt should change to ; pkinoti@test-traccar:~$ 
+
+```bash
+sudo deluser zdoe
+sudo passwd -l zdoe
+```
+Explain the commands ;
+1. sudo deluser zdoe successfully detached her account from the server's user registry.
+
+2. sudo passwd -l zdoe completely locked out her account credentials, ensuring that any future SSH connection attempts will be instantly blocked by the system
+
+#### 10. Free Memory & Disk space:
+* How can one check free and used memory (RAM) on a Linux PC? What is the status of memory of your Linux PC right now?
+
+* How much used disk space do you have on your Linux PC?
+
+* For the above two tasks, how can you view this information in Gigabytes as opposed to plain bytes?
+
+1. Checking RAM Usage
+
+```bash
+free
+```
+2. Checking Disk Space Usage
+
+```bash
+df
+```
+* This lists all active, mounted storage pools, displaying their individual storage thresholds, utilized blocks, and overall capacity flags
+
+3. Viewing Information in Gigabytes
+
+```bash
+df -h
+```
+#### 12. 
+Step 1: Install Nginx
+
+```bash
+sudo apt update && sudo apt install nginx -y
+```
+Step 2: Create the Web Root Folder
+
+```bash
+sudo mkdir -p /var/www/html/pkinoti
+```
+
+Step 3: Create the index.html File
+
+* We will create a basic HTML file inside your new folder using the text editor nano
+
+open the file editor 
+
+```bash
+sudo nano /var/www/html/pkinoti/index.html
+```
+inside the editor and this text
+
+```bash
+<html>
+    This is my webpage.
+</html>
+```
+Step 4: Create the Nginx Configuration File
+
+```bash
+sudo nano /etc/nginx/sites-available/local.pkinoti.conf
+```
+
+```bash
+server {
+     server_name local.pkinoti;
+     root /var/www/html/pkinoti;
+     index index.html;
+
+     access_log  /var/log/nginx/local.pkinoti.access.log;
+     error_log  /var/log/nginx/local.pkinoti.error.log;
+
+     location / {
+         try_files $uri /index.html =404;
+     }
+}
+```
+
+Step 5: Create a Symlink
+
+* We will create a shortcut from the sites-available folder into the sites-enabled folder so Nginx actually reads your configuration.
+
+```bash
+sudo ln -s /etc/nginx/sites-available/local.pkinoti.conf /etc/nginx/sites-enabled/local.pkinoti.conf
+```
+Explain the command;
+1. ln -s: Creates a symbolic link (a shortcut pointer)
+2. The first path is the original source file.
+3. The second path is where the shortcut will be placed
+
+Step 6: Update the Hosts File
+
+* We will edit your computer's local "address book" (/etc/hosts) to point your domain name directly to your own machine (127.0.0.1).
+
+To open the hosts file ;
+
+```bash
+sudo nano /etc/hosts
+```
+```bash
+127.0.0.1 local.pkinoti
+```
+Step 7: Restart Nginx Service
+
+* We need to restart Nginx so it reads our newly added configuration files.
+
+```bash
+sudo systemctl restart nginx
+```
+#### QUESTIONS
+1. What is Nginx
+
+* It is a web server that listens to the user request which is (This is my web page) and displays the right files back to them 
+
+* It is a local web server for testing webs it runs directly on your pc as a local testing environment.
+
+2. Why is the purpose of the folder you created under /var/www...?
+
+* You hit the nail on the head again! Because the server is constantly running and modifying data, /var is the dedicated, safe zone designed for files that change while the computer is active.
+
+3. Question 3: What do the two folders sites-available and sites-enabled help accomplish
+
+* sites-available folder holds all your website configuration files. Even if a website is offline, broken, or under construction, its configuration file stays safe in here. It does nothing; Nginx ignores it.
+
+* sites-enabled This folder only contains the websites you want to be live and active right now. Nginx only reads this folder.
+
+4. Question 4: What is a symlink?
+
+*  symlink (symbolic link) is a digital shortcut. It is just like a desktop shortcut on Windows . It is a tiny file that does not contain your actual configuration, but simply points directly to the real file located over in sites-available.
+
+
+5. Question 5: What is the hosts file used for? Name at least 2 uses.
+
+* It helps the computer find the location of a domain right on your own PC instead of looking on the internet.
+
+common uses ;
+1. local development , it lets you create fake webiste names so that we can build and test website locally before launching them into the real world 
+
+2. Blocking websites , it blockes harmful websites 
+
+6. Question 6: What is the difference between service and systemctl?
+
+* systemctl the modern control tool used to manage background workers (called "services") in Linux.
+
+* service  This is an older tool used in older versions of Linux to start and stop programs had fewer features.
+
+Question 7: What is the difference between restart and reload within the context of a service?
+
+* restart (The hard reset): This completely shuts down the Nginx process and kills all current connections, then turns it back on from scratch. If a user is actively downloading a file on your website when you run this, their connection breaks and they see an error screen.
+
+* reload (The live update): This does not shut down the server. Nginx stays online and keeps serving current users perfectly. It simply reads the new configuration file in the background and applies the changes instantly without any downtime.
+
+Question 8: If we edit the index.html file and add some content, do we need to restart, reload anything, or do something else to view the changes?
+
+* Nginx only needs a reload or restart if you change its configuration rules (like changing the website name or switching folders) because it reads those rules only once when it boots up.So, if you edit the text in index.html, Nginx will automatically grab the updated version the very next second someone loads the page or refeshes the page .
+
+13. postgres - (On your local PC):
+
+    Install latest Postgres version supported by Debian (or Fedora).
+
+    Explain the following:
+
+    The purpose of pg_hba.conf file. Where is it located?
+
+    Where are postgresql database server logs located?
+
+    How many types of authentication methods does postgresql offer?
+
+Step 1: Install PostgreSQL
+
+```bash
+sudo apt update && sudo apt install postgresql postgresql-contrib -y
+```
+Explain the command;
+1. postgresql: Installs the core PostgreSQL database server.
+
+2. postgresql-contrib: Installs additional popular tools and extended functionalities for Postgres
+
+Question 1: What is the purpose of the pg_hba.conf file, and where is it located?
+
+* The name pg_hba stands for PostgreSQL Host-Based Authentication.
+
+* It acts as a firewall rulebook that decides who is allowed to connect to your database. Every time a program or a user tries to log in, Postgres checks this file to see:
+
+Question 2 ; Where is it located ?
+
+```bash
+sudo find /etc/postgresql/ -name pg_hba.conf
+```
+* its in the /etc because, /etc is the universal warehouse in Linux strictly reserved for configuration files and system settings.
+
+* Since pg_hba.conf is a text file filled with security settings, rules, and instructions for how the PostgreSQL program should behave, the Linux operating system forces it to live inside /etc to keep everything perfectly organized.
+
+Question 2. Where are postgresql database server logs located?
+
+* /var being the place for files that change constantly while the computer runs. Database logs are text files that record every single error, connection, and query live as they happen.
+
+* Because logs change and grow every second, they live inside the /var/log directory.
+
+```bash
+ls /var/log/postgresql/
+```
+Question 3: How many types of authentication methods does PostgreSQL offer?
+
+PEER AUTHENTIFICATION METHOD; 
+
+* It looks at who you are logged into your computer as right now. If your Ubuntu username is pkinoti, Postgres will automatically let you into the database user named pkinoti without asking for a password, because the operating system already verified your identity.
+
+Step 1: Log Into PostgreSQL for the First Time
+
+```bash
+sudo -i -u postgres psql
+```
+Explain the command ; 
+1. sudo -i -u postgres: Switches your terminal session to act as the postgres administrator user.
+
+2. psql: Opens the interactive PostgreSQL terminal screen
+
+Step 2: See Your Database Version and Databases
+
+type this exact command into your postgres=# prompt and hit
+
+```bash
+\l
+```
+* It prints out a table listing all the default databases currently created on your system (like postgres, template0) 
+
+Step 3: Exit the Postgres 
+
+```bash
+\q
+```
+TRUST AUTHENTIFICATION 
+
+* This means "no password required." PostgreSQL blindly trusts anyone who connects. This is highly dangerous and should only be used for quick local testing on your own PC.
+
+```bash
+sudo nano /etc/postgresql/*/main/pg_hba.conf
+```
+CHANGE THIS TO ;
+
+ALT + / -TO VIEW THE BOTTOM TEXT 
+
+```bash
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            scram-sha-256
+```
+THIS ;
+
+```bash
+host    all             all             127.0.0.1/32            trust
+```
+
+To verify ; 
+
+Tell Postgres to read the changes (Reload)
+
+```bash
+sudo systemctl reload postgresql
+```
+Test the trust connection ;
+
+```bash
+psql -h 127.0.0.1 -U postgres
+```
+* postgres=# prompt immediately
+
+14. ufw - (On your local PC):
+
+Install ufw
+
+Ensure that SSH, HTTP and HTTPS ports are accessible and NO others.
+
+Enable ufw
+
+Step 1: Install UFW
+
+```bash
+sudo apt update && sudo apt install ufw -y
+```
+To enable the ufw 
+
+```bash
+sudo ufw enable
+```
+15. Fail2ban 
+
+* Fail2ban acts like an automated security guard that reads your system logs and dynamically locks out malicious actors.
+
+Step 1: Install Fail2ban
+
+```bash
+sudo apt update && sudo apt install fail2ban -y
+```
+Step 2: Create the jail.local Copy
+
+* Now we need to make your personal scratchpad configuration file (jail.local) by copying the factory default file (jail.conf). This ensures system updates won't overwrite your custom settings later.
+
+```bash
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+```
+Step 3: Open the File and Edit the SSH Section
+
+* Now we will open your new jail.local file and change the default SSH settings to be highly aggressive against attackers.
+
+```bash
+sudo nano /etc/fail2ban/jail.local
+```
+After the text editor is open ;
+
+1. Press CTRL + W 
+2. Type [sshd] and press Enter.
+3. Your cursor will jump directly to the SSH security block.
+
+Underneath sshd put this text ;
+
+```bash
+[sshd]
+
+# To use more aggressive sshd modes set filter parameter "mode" in jail.local:
+# normal (default), ddos, extra or aggressive (combines all).
+# See "tests/files/logs/sshd" or "filter.d/sshd.conf" for usage example and details.
+mode   = aggressive
+maxretry = 2
+findtime = 24h
+bantime = 196h
+port    = ssh
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s
+```
+
+Afterwards ;
+1. ctrl + 0 then enter
+2. ctrl + X
+
+Step 4: Create the Custom Website Filter File
+
+* We will create a brand new file inside Fail2ban's filter.d folder specifically to define what a bad website visitor looks like.
+
+```bash
+sudo nano /etc/fail2ban/filter.d/nginx-brute.conf
+```
+Inside the text editor ; 
+
+```bash
+[Definition]
+
+failregex =  ^<HOST> .* "(GET|POST|PUT|POST) .*(\.env|xmlrpc|\.asp|ab2g|ab2h|\.yml|git).*$
+             ^<HOST> .* "(GET|POST|PUT|POST) /(\.[a-zA-Z0-9]+|.*/\.[a-zA-Z0-9]+).*$
+             ^<HOST> .* "(GET|POST) .*robot.*\ 404\ .*$
+
+ignoreregex = .*\.well.*
+              .*/wp-json/wc/v3/system_status.*
+```
+
+Step 5: Add to the Website Jail Configuration 
+
+* We will open your jail.local file again, jump right to the bottom, and drop in the instructions that tell Fail2ban to enforce bans for your custom website rules.
+
+```bash
+sudo nano /etc/fail2ban/jail.local
+```
+Inside the text editor do ;
+1. alt + / to jump the cursor to the last line 
+2. enter to create a clean empty space 
+3. past this new config block at the bottom 
+
+```bash
+[nginx-brute]
+enabled  = true
+port     = http,https
+logpath = %(nginx_access_log)s
+bantime = 96h
+maxretry = 2
+findtime = 24h
+```
+Step 6: Restart the Fail2ban Service
+
+* After all the configuration file are ready , we just need to restart Fail2ban so it reads the brand-new settings and active filters.
+
+```bash
+sudo systemctl restart fail2ban
+```
+Step 7: Watch the Fail2ban Logs Live
+
+```bash
+sudo tail -n 20 -f /var/log/fail2ban.log
+```
