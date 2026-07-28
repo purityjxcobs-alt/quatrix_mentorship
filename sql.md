@@ -1,61 +1,123 @@
 # SQL 101 - Learning the Basics
-##### SQL & Database General Questions
+## SQL & Database General Questions
 
-1. What is Sql ?
+### 1. What is Sql ?
+
 * It stands for Structured Query Language . 
-* It is the standard programming language used to communicate with database
-* We use it to ask for data the query, insert new records ,update exiting inforation or delete data from a database
 
-2. What databases other than PostgreSQL use SQL? 
+* It is the standard programming language used to communicate with database
+
+* We use it to ask for data the query, insert new records ,update exiting 
+  inforation or delete data from a database
+
+### 2. What databases other than PostgreSQL use SQL? 
+
 * MySQL
+
 * Microsoft SQL Server
+
 * Oracale Database 
+
 * SQLite 
 
-Part 1: Setting Up the database using postgresSql 
+### 3. What is a table 
 
-step 1 ; install the sodtware in your computer
+* A structured collection of data organized into vertical columns and   
+  horizontal rows.
+
+### 4. What is a row?
+
+* A single, horizontal line in a table that hold records 
+
+### 5. What is a column 
+
+* A vertical entities that conatins the fields of which the records are 
+  placed 
+
+### 6. How do you comment out an SQL line so that it is ignored by the SQL engine?
+
+#### Single - Line comments 
 
 ```bash
-# 1. Update your system's package list
-sudo apt update
+-- This entire line is ignored by the SQL engine
+SELECT * FROM users; -- This trailing comment is also ignored
 
-# 2. Install PostgreSQL and its extra utilities
+```
+#### Multi- Line comments 
+```bash
+/* This is a multi-line comment.
+   The engine will completely skip 
+   all of these lines. */
+SELECT * FROM products;
+```
+
+Explanation ;
+
+1. Use -- to cross out the rest of one single line.
+
+2. Use /* and */ to cross out a whole paragraph.
+
+# SQL Keywords (Specific to PostgreSQL)
+
+1. CREATE DATABASE
+2. CREATE TABLE 
+3. SELECT
+4. FROM
+5. WHERE 
+6. LIMIT
+7. JOIN
+8. LEFT JOIN
+9. OUTER JOIN
+10. VIEW 
+11. BEGIN
+12. SAVEPOINT 
+13. COMMIT
+14. START TRANSACTION
+15. TRUNCATE TABLE 
+16. DROP TABLE 
+17. DROP DATABASE
+18. CREATE 
+19. DROP 
+
+
+## Part 1: Setting Up the database using postgresSql 
+
+### Step 1 : Install the Software in your computer
+
+```bash
+sudo apt update
 sudo apt install postgresql postgresql-contrib -y
 ```
 
-Step 2 ; Start and Enable the Postgres Service
+### Step 2 : Start and Enable the Postgres Service
 
 ```bash
-
-# Start the server engine right now
 sudo systemctl start postgresql
-
-# Ensure the database turns on automatically whenever you boot up your computer
 sudo systemctl enable postgresql
 ```
-Step 3; to verify it successfully running 
+### Step 3 : To verify it is successfully running 
 
 ```bash
 sudo systemctl status postgresql
 ```
-Step 4; log into the postgres console 
+### Step 4 : Log into the postgres console 
 
 ```bash
 sudo -i -u postgres
 ```
-Step 5; Launch the interactive postgres terminal 
+### Step 5 : Launch the interactive postgres terminal 
 
 ```bash
 psql
 ```
 
+# DEMONSTRATING SQL KEYWORDS
 
- # CREATING THE SYSTEM 
+# 1. CREATING THE SYSTEM 
 
 * This holds all our information .
 
-## Step 1 ; CREATE DATABASE
+## Step 1 : CREATE DATABASE KEYWORD
 
 Environment for the data school_system 
 
@@ -72,7 +134,9 @@ Explain command;
 
 1. /c - used to connect database named school_system .Hence, it intsructs the terminal to disconnect from your current database and open a new session and the target database we want to access is the school_system 
 
-## Step 3 ; Inside the database (environment) we need specific structures that hold our data .
+# 2. CREATE TABLE KEYWORD
+
+## Step 3 : Inside the database (environment) we need specific structures that hold our data .
 
 a) STRUCTURE THAT HOLDS THE LIST OF NAMES 
 
@@ -118,7 +182,7 @@ VISUAL REPRESENTATION AS IN SPREADSHEET ;
 (6 rows)
 ```
 
-## Step 5 ; Grades Table for relationship
+## Step 5 : Grades Table for relationship
  
 Grades Table ;
 
@@ -130,7 +194,7 @@ CREATE TABLE grades (
 );
 ```
 
-Insert content into the grades table ;
+* Insert content into the grades table ;
 
 ```bash
 INSERT INTO grades (student_id, subject, score) VALUES 
@@ -139,7 +203,7 @@ INSERT INTO grades (student_id, subject, score) VALUES
 (3, 'Science', 91),
 (99, 'History', 85);
 ```
-VISUAL REPRESENTATION 
+Expected Output ;
 
 ```bash
  score 
@@ -150,6 +214,8 @@ VISUAL REPRESENTATION
     85
 (4 rows)
 ```
+# 3. SELECT AND FROM KEYWORD
+
 ## Step 6 ; Using select and from in our data 
 
 * SELECT ; Tells Postgres which columns you want to look at in the data table 
@@ -216,6 +282,8 @@ SELECT 'Hello Purity';
 
 * FROM is a dependeant modifer hence it cant be used alone 
 
+# 4. WHERE KEYWORD
+
 ## Step 7 ; The use of WHERE ;
 
 * WHERE , it is a filtering tool . Hence , it filters data on your tables 
@@ -275,6 +343,8 @@ Expected Output ;
 (1 row)
 ```
 
+# 5. LIMIT KEYWORD 
+
 ## Step 8 ; Use of LIMIT 
 
 * LIMIT restricts the maximum number of rows returned on your screen. If you have millions of rows, running a plain query will crash your computer. LIMIT cuts the list short at a number you choose.
@@ -311,6 +381,8 @@ Expected Output ;
 ```
 # RELATIONSHIP PHASE 
 
+# 9. JOIN KEYWORD
+
 ## Step 9. Use of JOIN 
 
 * It is also known as INNER JOIN 
@@ -343,6 +415,8 @@ Expected Output ;
 (3 rows)
 ```
 
+# 10. LEFT JOIN KEYWORD
+
 ## Step 10. Use of LEFT JOIN
 
 * Left" refers to the first table you mention in your code (students). A LEFT JOIN says: "Give me every single student from my left table, no matter what. If they have a grade in the right table, show it. If they don't, just leave it blank (NULL)."
@@ -367,6 +441,9 @@ Expected Output ;
  Arlene     | [null]  | [null]
 (6 rows)
 ```
+
+# 11. OUTER JOIN KEYWORD
+
 ## Step 11 ; OUTER JOIN 
 
 * It is written as FULL OUTER JOIN 
@@ -394,6 +471,7 @@ Expected Output
  [null]     | History |    85
 (7 rows)
 ```
+# 12. VIEW KEYWORD
 
 ## Step 12. Use of VIEW
 
@@ -491,7 +569,9 @@ Expected Output ;
  [null]     | History |    85
 (7 rows)
 ```
-# SAFTEY PHASE 
+# SAFTEY PHASE  
+
+# 13. BEGIN KEYWORD 
 
 ## Step 13 . Use of BEGIN 
 
@@ -501,17 +581,23 @@ Expected Output ;
 
 * The asteric is Postgres signaling the safety mode has been activated 
 
+# 14. SAVEPOINT AND COMMIT KEYWORD 
+
 ### Example 1 ; Use of SAVEPOINT and COMMIT
 
-* Now that we are inside the bubble, let's test how to safely edit data. We will change Purity's last name from "Nkirote" to "Honor Student", but we will drop a safety anchor flag along the way.
-(A) . SAVEPOINT 
+* Now that we are inside the bubble, let's test how to safely edit data. We 
+  will change Purity's last name from "Nkirote" to "Honor Student", but we will drop a safety anchor flag along the way.
+  (A) . SAVEPOINT 
 
-* It is used to isolate and undo specific mistakes inside a long transaction without having to cancel all your other successful work.
+* It is used to isolate and undo specific mistakes inside a long transaction  
+  without having to cancel all your other successful work.
 
 ```bash
 SAVEPOINT before_change;
 ```
-* SAVEPOINT places a digital bookmark in your timeline. If you make a massive mistake on the next step, you can type a command to undo your work back to this exact second without destroying everything else.
+
+* SAVEPOINT places a digital bookmark in your timeline. If you make a massive 
+  mistake on the next step, you can type a command to undo your work back to this exact second without destroying everything else.
 
 (B) . Run the data 
 
@@ -545,48 +631,51 @@ Expected Output ;
 ```
 
 (D) . Make a massive mistake 
-Step 1; Open the saftey bubble 
+### Step 1; Open the saftey bubble 
 
 ```bash
 BEGIN;
 ```
-Step 2 ; Make an edit
+### Step 2 ; Make an edit
 
 ```bash
 UPDATE students SET first_name = 'SQL Maestro' WHERE student_id = 1;
 ```
-Step 3. Drop the checkpoint Flag SAVEPOINT 
+### Step 3. Drop the checkpoint Flag SAVEPOINT 
 
 ```bash
 SAVEPOINT name_changed_successfully;
 ```
-Step 4. Make the mistake 
+### Step 4. Make amistake 
 
 * Delete Zion Gitonga from the Database . 
 
 ```bash
 DELETE FROM students WHERE student_id = 3;
 ```
-To verify his deleted ; 
+* To verify his deleted ; 
 
 ```bash
 SELECT * FROM students;
 ```
-Step 4 . To go back to the exact time you deleted the name ;
+### Step 4 . To go back to the exact time you deleted the name ;
 
 ```bash
 ROLLBACK TO name_changed_successfully;
 ```
-Step 5. To verify his back
+### Step 5. To verify his back
 
 ```bash
 SELECT * FROM students;
 ```
 # DESTRUCTION PHASE
 
+# TRUNCATE TABLE KEYWORD
+
 ## Step 14. Use of TRUNCATE TABLE 
 
-* TRUNCATE is used when you want to instantly clear out all the rows of data inside a table, but you want to keep the blank table structure itself so you can reuse it later. It is like taking an eraser to a whiteboard—the writing vanishes, but the board stays on the wall.
+* TRUNCATE is used when you want to instantly clear out all the rows of data 
+  inside a table, but you want to keep the blank table structure itself so you can reuse it later. It is like taking an eraser to a whiteboard—the writing vanishes, but the board stays on the wall.
 
 ### Example 1 ; Wipe out the grades table 
 
@@ -612,6 +701,8 @@ TRUNCATE TABLE students;
 ```bash
 SELECT * FROM students;
 ```
+# 15. DROP TABLE KEYWORD
+
 ## Step 15. Use of DROP TABLE 
 
 * DROP is much more aggressive than truncate. It does not just erase the data; it destroys the table itself completely out of existence. It is like ripping the whiteboard off the wall and throwing it in the trash.
@@ -624,6 +715,8 @@ SELECT * FROM students;
 DROP TABLE grades CASCADE;
 DROP TABLE students CASCADE;
 ```
+# 16. DROP DATABASE 
+
 ### Example 2 ; Delete the Database (DROP DATABASE)
 
 ```bash
@@ -634,15 +727,110 @@ DROP TABLE students CASCADE;
 ```bash
 DROP DATABASE school_system;
 ```
-NB ; If you delete once name use this 
+
+* NB ; If you delete once name use this 
 
 ```bash
 NSERT INTO students (student_id, first_name, last_name) 
 VALUES (3, 'Zion', 'Gitonga');
 ```
-# QUERY QUESTIONS ; 
 
-### 1. Display students named Alice.
+# Create a Database, Table and Insert Records
+
+In our system the ./util/generate_exam_data.
+
+We have a table like this ;
+
+```bash
+             List of relations
+Schema |      Name       | Type  |  Owner
+--------+-----------------+-------+---------
+public | county          | table | kkiragu
+public | school          | table | kkiragu
+public | student         | table | kkiragu
+public | student_subject | table | kkiragu
+public | subject         | table | kkiragu
+(5 rows)
+```
+#### To navigate from one table to another to see the contents
+
+1. county table 
+
+```bash
+SELECT * FROM county;
+```
+2.  school table 
+
+```bash
+SELECT * FROM school;
+```
+3. student table 
+
+```bash
+SELECT * FROM student;
+```
+4. student_subject 
+
+```bash
+SELECT * FROM student_subject;
+```
+5. subject 
+
+```bash
+SELECT * FROM subject;
+```
+6. to see all the tables content at once we use 
+
+```bash
+SELECT * FROM county LIMIT 3;
+SELECT * FROM school LIMIT 3;
+SELECT * FROM student LIMIT 3;
+SELECT * FROM subject LIMIT 3;
+SELECT * FROM student_subject LIMIT 3;
+```
+### EXPECTED OUTPUT 
+
+```bash
+ id |  name   
+----+---------
+  1 | Mombasa
+  2 | Kwale
+  3 | Kilifi
+(3 rows)
+
+ id | county_id |         name         
+----+-----------+----------------------
+  1 |         1 | Mombasa - National
+  2 |         1 | Mombasa - Provincial
+  3 |         1 | Mombasa - District
+(3 rows)
+
+  id  |      name      |    phone     | county_id | school_id |        email         
+------+----------------+--------------+-----------+-----------+----------------------
+ 1001 | Amber C Atieno | 0720-729-029 |        32 |        26 | acatieno@hotmail.com
+ 1002 | Amber C Chacha | 0770-778-412 |        32 |       168 | acchacha@hotmail.com
+ 1003 | Amber C Idris  | 0738-490-302 |        43 |        85 | acidris@yahoo.com
+(3 rows)
+
+ id |    name     
+----+-------------
+  1 | Mathematics
+  2 | English
+  3 | Swahili
+(3 rows)
+
+ student_id | subject_id |  score  
+------------+------------+---------
+       1001 |          1 | 80.4028
+       1001 |          2 | 90.1712
+       1001 |          3 | 74.7042
+(3 rows)
+```
+
+## Query Questions
+
+### 1 . Display students named Alice.
+
 
 * From the students table .
 
@@ -651,9 +839,10 @@ SELECT * FROM student WHERE name LIKE 'Alice%';
 ```
 Explain the command ;
 
-1. 'Alice%'- The percentage sif=gn is a wildcard character used with he LIKE operator in SQL . It acts a placeholder that matches any sequence of characters including no characters at all . hence, it finds any students whose name start with alice followed by anything else eg ; Alice C Kimani .
+1. 'Alice%'- The percentage sif=gn is a wildcard character used with he LIKE 
+    ator in SQL . It acts a placeholder that matches any sequence of characters including no characters at all . hence, it finds any students whose name start with alice followed by anything else eg ; Alice C Kimani .
 
-### 2. How many students are from Mombasa (count_id=1) county?
+### 2 How many students are from Mombasa (count_id=1) county?
 
 To see all the counties 
 
@@ -843,7 +1032,7 @@ Now replacing with a period (.)
 ```bash
 SELECT name, REGEXP_REPLACE(name, ' ([A-Z]) ', ' \1. ') AS formatted_name FROM student;
 ```
-Explaining the command 
+Explaining the command ;
 
 1. REGEXP_REPLACE function. This function looks for a pattern where a single uppercase letter sits between two spaces, and adds a period to it.
 
@@ -1050,6 +1239,14 @@ id  |     name      | ave_score
 
 ### 2 . What are the averages scores per county
 
+* Three tables are joined together 
+
+1. The county to find the county IDs and names 
+
+2. Students table to find the students pesonal details hence knowing the specific counfty_id of the students
+
+3. student_subject table to find the raw test marks of the students 
+
 ```bash
 SELECT c.name AS county_name, ROUND(CAST(float8(AVG(ss.score)) as numeric), 4) as ave_score
 FROM county c
@@ -1058,6 +1255,20 @@ JOIN student_subject ss ON s.id = ss.student_id
 GROUP BY c.id, c.name
 ORDER BY ave_score DESC;
 ```
+Explain the command ; 
+ 
+1. JOIN student s ON c.id = s.county_id: Links the county table (c) to the
+   student table (s).
+
+2. JOIN student_subject ss ON s.id = ss.student_id: Links those students to
+   their scores (ss).
+
+3. GROUP BY c.id, c.name: Groups all scores together by county so we
+   calculate one average per county.
+
+4. ORDER BY ave_score DESC(Descending order): Sorts the list from the highest average score to
+   the lowest.
+
 Expected Output ;
 
 ```bash
@@ -1079,3 +1290,469 @@ county_name | ave_score
 
 ### 3. List all students from Turkana county. Display only the following fields: id, name and their school name.
 
+* Here we need to join three tables since they are connected to each other
+
+1. The STUDENT TABLE - to get the students ID and their NAME 
+
+2. The COUNTY TABLE - to filter names from turukana 
+
+3. The SCHOOL TABLE - to find the school the students are in 
+
+
+
+```bash
+SELECT s.id, s.name, sch.name AS school_name
+FROM student s
+JOIN county c ON s.county_id = c.id
+JOIN school sch ON s.school_id = sch.id
+WHERE c.name = 'Turkana';
+```
+Explaining the command ;
+
+1. JOIN county c ON s.county_id = c.id: Connects the student to their county so we can check for 'Turkana'.
+
+2. JOIN school sch ON s.school_id = sch.id: Connects the student to their school table so we can grab the
+   shools actual name field (sch.name)
+
+3. WHERE c.name = 'Turkana': Filters the rows so only students from Turkana appear on your screen.
+
+Expected output ; 
+
+```bash
+id  |         name         |      school_name      
+------+----------------------+-----------------------
+ 1026 | Amber K Maxx         | Kericho - Provincial
+ 1061 | Amber P Maribe       | Kitui - Homeschool
+ 1073 | Amber W Atieno       | Mandera - Private
+ 1081 | Amber W Mulanga      | Nyeri - Private
+ 1101 | Ami C Nuru           | Isiolo - National
+ 1127 | Ami L Atieno         | Baringo - Private
+ 1207 | Alice K Mulanga      | Busia - Private
+ 1235 | Alice P Atieno       | Nandi - District
+ 1284 | Beth C Ratemo        | Laikipia - Provincial
+ 1322 | Beth L Wanyonyi      | Kwale - Private
+ 1342 | Beth P Yebo          | Uasin - Provincial
+ 1370 | Conrad C Mwangi      | Kirinyaga - District
+ 1374 | Conrad C Ratemo      | Bungoma - Private
+ 1400 | Conrad L Kamau       | Bomet - Homeschool
+ 1429 | Conrad P Wambugu     | Nyeri - Provincial
+ 1446 | Conrad W Ratemo      | Elgeyo - Homeschool
+ 1460 | Edward C Mwangi      | Marsabit - Private
+ 1465 | Edward C Wambugu     | Kiambu - Homeschool
+ 1546 | Elizabeth C Kiptoo   | Marsabit - District
+ 1556 | Elizabeth C Wanyonyi | Kwale - Private
+ 1572 | Elizabeth K Ratemo   | Mandera - Private
+ 1635 | James C Kimani       | Elgeyo - National
+ 1645 | James C Wambugu      | Samburu - Homeschool
+ 1650 | James K Chacha       | Siaya - National
+ 1689 | James P Kimani       | Baringo - District
+ 1862 | Joanne L Wanyonyi    | Meru - Homeschool
+ 1924 | John K Kiptoo        | Machakos - National
+ 1972 | John P Yebo          | Tana - National
+```
+### 4. List the top students for each subject in the country, include their county name and school name.
+
+
+```bash
+SELECT ranked.subject_name, ranked.student_name, ranked.score, ranked.school_name, ranked.county_name
+FROM (
+    SELECT 
+        sub.name AS subject_name,
+        s.name AS student_name,
+        ss.score,
+        sch.name AS school_name,
+        c.name AS county_name,
+        ROW_NUMBER() OVER(PARTITION BY ss.subject_id ORDER BY ss.score DESC) as rank
+    FROM student_subject ss
+    JOIN student s ON ss.student_id = s.id
+    JOIN subject sub ON ss.subject_id = sub.id
+    JOIN school sch ON s.school_id = sch.id
+    JOIN county c ON s.county_id = c.id
+) ranked
+WHERE ranked.rank = 1;
+```
+
+Expected Output ; 
+
+
+```bash
+subject_name |    student_name    |  score  |     school_name     | county_name 
+--------------+--------------------+---------+---------------------+-------------
+ Mathematics  | Joanne K Kiptoo    | 99.8083 | Nairobi - Private   | Nyamira
+ English      | Joan K Kiptoo      | 99.9693 | Laikipia - District | Taita
+ Swahili      | Martin P Otieno    | 99.9584 | Meru - District     | Laikipia
+ Biology      | Elizabeth W Kimani | 99.9791 | Nakuru - Homeschool | Lamu
+ Chemistry    | Beth L Wanyonyi    | 99.9964 | Kwale - Private     | Turkana
+ Physics      | Joanne K Ratemo    | 99.8492 | Migori - District   | Kisii
+ Geography    | Okello W Yegon     | 99.9702 | Lamu - Private      | Samburu
+ History      | Yannis P Maxx      | 99.8125 | Narok - District    | Samburu
+ Agriculture  | Johnson L Wanyonyi | 99.9131 | Kwale - Homeschool  | Nandi
+(9 rows)
+```
+### 5. List the top 10 students in the country. Use the average score of all their subjects. Include a field that shows their ranks ie 1 to 10. Additionally, list the county and school name.
+
+```bash
+SELECT 
+    RANK() OVER(ORDER BY AVG(ss.score) DESC) as student_rank,
+    s.name AS student_name, 
+    ROUND(CAST(float8(AVG(ss.score)) as numeric), 4) as ave_score,
+    c.name AS county_name, 
+    sch.name AS school_name
+FROM student s
+JOIN student_subject ss ON s.id = ss.student_id
+JOIN county c ON s.county_id = c.id
+JOIN school sch ON s.school_id = sch.id
+GROUP BY s.id, s.name, c.name, sch.name
+ORDER BY ave_score DESC
+LIMIT 10;
+```
+Expected output ;
+
+```bash
+ student_rank |   student_name    | ave_score | county_name |     school_name      
+--------------+-------------------+-----------+-------------+----------------------
+            1 | Joanne W Wanyonyi |   97.5609 | Bomet       | Elgeyo - National
+            2 | Joanne C Yegon    |   96.6643 | Meru        | Tana - District
+            3 | John C Maribe     |   96.3209 | Machakos    | Migori - Private
+            4 | Yannis L Ratemo   |   96.0123 | Lamu        | Nyamira - Provincial
+            5 | Alice W Kiptoo    |   95.9981 | Migori      | Kilifi - Homeschool
+            6 | Mary C Atieno     |   95.9980 | Nyamira     | Nyeri - Private
+            7 | James L Mwangi    |   95.9386 | Meru        | Bungoma - National
+            8 | Beth K Wanyonyi   |   95.8104 | Isiolo      | Kericho - Provincial
+            9 | Liz P Yegon       |   95.7570 | Wajir       | Turkana - National
+           10 | Edward C Otieno   |   95.7250 | Busia       | Kirinyaga - National
+(10 rows)
+```
+
+### 6. List the top schools (school name, total number of students in each school and county name) based on type/category ie top school:
+
+* Homeschool
+
+* National
+
+* Provincial
+
+* District
+
+* Private
+
+* #### To know the categories are named in the school table 
+
+```bash
+\d school
+```
+Expected output ; 
+
+```bash
+                    Table "public.school"
+  Column   |          Type          | Collation | Nullable | Default 
+-----------+------------------------+-----------+----------+---------
+ id        | integer                |           | not null | 
+ county_id | integer                |           |          | 
+ name      | character varying(255) |           |          | 
+Indexes:
+    "school_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "school_county_id_fkey" FOREIGN KEY (county_id) REFERENCES county(id)
+Referenced by:
+    TABLE "student" CONSTRAINT "student_school_id_fkey" FOREIGN KEY (school_id) REFERENCES school(id)
+```
+
+```bash
+ SELECT 
+    sch.name AS school_name,
+    COUNT(s.id) AS total_students,
+    c.name AS county_name,
+    CASE 
+        WHEN sch.name ILIKE '%Homeschool%' THEN 'Homeschool'
+        WHEN sch.name ILIKE '%National%' THEN 'National'
+        WHEN sch.name ILIKE '%Provincial%' THEN 'Provincial'
+        WHEN sch.name ILIKE '%District%' THEN 'District'
+        WHEN sch.name ILIKE '%Private%' THEN 'Private'
+        ELSE 'Other'
+    END AS school_category
+FROM school sch
+JOIN student s ON sch.id = s.school_id
+JOIN county c ON sch.county_id = c.id
+GROUP BY sch.id, sch.name, c.name
+ORDER BY school_category, total_students DESC;
+```
+Expected Output ; 
+
+```bash
+school_name       | total_students | county_name | school_category 
+------------------------+----------------+-------------+-----------------
+ Kisumu - District      |             19 | Kisumu      | District
+ Busia - District       |             18 | Busia       | District
+ Bungoma - District     |             16 | Bungoma     | District
+ Meru - District        |             16 | Meru        | District
+ Wajir - District       |             16 | Wajir       | District
+ Machakos - District    |             15 | Machakos    | District
+ Bomet - District       |             14 | Bomet       | District
+ Lamu - District        |             14 | Lamu        | District
+ Murang'a - District    |             14 | Murang'a    | District
+ Kakamega - District    |             13 | Kakamega    | District
+ Marsabit - District    |             13 | Marsabit    | District
+ Kiambu - District      |             12 | Kiambu      | District
+ Siaya - District       |             12 | Siaya       | District
+ Isiolo - District      |             12 | Isiolo      | District
+ Homa - District        |             12 | Homa        | District
+ Baringo - District     |             12 | Baringo     | District
+ Garissa - District     |             11 | Garissa     | District
+ Nakuru - District      |             11 | Nakuru      | District
+ Mombasa - District     |             11 | Mombasa     | District
+ Migori - District      |             11 | Migori      | District
+```
+
+### 7. Similar to above query, list the top student from each school type.
+
+```bash
+SELECT school_top.school_name, school_top.student_name, school_top.ave_score
+FROM (
+    SELECT 
+        sch.name AS school_name,
+        s.name AS student_name,
+        ROUND(CAST(float8(AVG(ss.score)) as numeric), 4) as ave_score,
+        ROW_NUMBER() OVER(PARTITION BY s.school_id ORDER BY AVG(ss.score) DESC) as rank
+    FROM student s
+    JOIN student_subject ss ON s.id = ss.student_id
+    JOIN school sch ON s.school_id = sch.id
+    GROUP BY sch.id, sch.name, s.id, s.name
+) school_top
+WHERE school_top.rank = 1
+ORDER BY school_top.school_name;
+```
+Expected Output ; 
+
+```bash
+  school_name       |    student_name     | ave_score 
+------------------------+---------------------+-----------
+ Baringo - District     | Mary L Kamau        |   93.4816
+ Baringo - Homeschool   | Yannis K Mulanga    |   94.1873
+ Baringo - National     | Conrad K Kiptoo     |   91.1722
+ Baringo - Private      | Johnson L Chacha    |   85.9539
+ Baringo - Provincial   | Ami W Wambugu       |   93.6313
+ Bomet - District       | John W Kimani       |   90.6886
+ Bomet - Homeschool     | Conrad L Kamau      |   93.3883
+ Bomet - National       | Elizabeth W Kamau   |   92.7977
+ Bomet - Private        | John K Yegon        |   92.2995
+ Bomet - Provincial     | James P Nuru        |   92.2629
+ Bungoma - District     | Liz K Atieno        |   94.4172
+ Bungoma - Homeschool   | Martin W Mwangi     |   90.8181
+ Bungoma - National     | James L Mwangi      |   95.9386
+ Bungoma - Private      | Liz K Maxx          |   92.5910
+ Bungoma - Provincial   | Conrad W Ouma       |   93.7699
+ Busia - District       | Ami C Kimani        |   92.3541
+ Busia - Homeschool     | Beth W Kamau        |   93.8105
+ Busia - National       | Maryanne P Ratemo   |   78.0484
+ Busia - Private        | Ami W Kiptoo        |   92.3710
+ Busia - Provincial     | Conrad K Atieno     |   95.2727
+```
+
+# Update Data Questions
+
+#### * The following involve updating records, tables, or deleting records. Make use of database transactions to be safe.
+ 
+# 1. Delete all records for students with the name Joan and be careful not to delete Joanne
+
+## Step 1 : Display all the students going by the name joan 
+
+```bash
+SELECT id, name FROM student WHERE name LIKE 'Joan %' OR name = 'Joan';
+```
+
+## Step 2 : Start the Transaction 
+
+```bash
+BEGIN;
+```
+
+## Step 2 : Delete the name Joan scores first
+
+```bash
+DELETE FROM student_subject WHERE student_id IN (SELECT id FROM student WHERE name LIKE 'Joan %' OR name = 'Joan');
+```
+## Step 3 :  Delete Joan's student profiles next
+
+```bash
+DELETE FROM student WHERE name LIKE 'Joan %' OR name = 'Joan';
+```
+## Step 4 : To verify Joan has been deleted
+
+```bash
+SELECT COUNT(*) FROM student WHERE name LIKE 'Joan %' OR name = 'Joan';
+```
+## Step 5 : Verify we havent deleted Joanne 
+
+```bash
+SELECT COUNT(*) FROM student WHERE name LIKE 'Joanne%';
+```
+# 2. Update all students names to UPPERCASE so that e.g. Amber K Ratemo becomes AMBER K RATEMO
+
+## Step 1 : Check the county names format 
+
+```bash
+SELECT * FROM county;
+```
+## Step 2 : Start a new transaction 
+
+```bash
+BEGIN;
+```
+## Step 3 : Change them to uppercase from lower case
+
+```bash
+UPDATE county SET name = UPPER(name);
+```
+## Step 4 : Verify the changes 
+
+```bash
+SELECT name FROM county LIMIT 5;
+```
+# 4. Update all phone numbers so that they change from format 0707-155-302 to format 254707155302
+
+## Step 1 : To verify the initial phone number format
+
+```bash
+SELECT phone FROM student LIMIT 5;
+```
+## Step 2 : Start the Transaction 
+
+```bash
+BEGIN;
+```
+## Step 3 : Format the original phone number to another formation 
+
+```bash
+UPDATE student 
+SET phone = '254' || SUBSTRING(REPLACE(phone, '-', '') FROM 2);
+```
+## Step 4 : To verify the changes 
+
+```bash
+SELECT phone FROM student LIMIT 5;
+```
+# 5. Update records for students from TRANS, THARAKA and WEST counties so that they read TRANS-NZOIA, THARAKA-NITHI and WEST-POKOT respectively.
+
+## Step 1 : To verify the format before the changes 
+
+```bash
+SELECT name FROM county WHERE name LIKE 'TRANS%' OR name LIKE 'THARAKA%' OR name LIKE 'WEST%';
+```
+## Step 2 : Start the transaction
+
+```bash
+BEGIN;
+```
+## Step 3 : Update the county name 
+
+```bash
+UPDATE county SET name = 'TRANS-NZOIA' WHERE name = 'TRANS';
+UPDATE county SET name = 'THARAKA-NITHI' WHERE name = 'THARAKA';
+UPDATE county SET name = 'WEST-POKOT' WHERE name = 'WEST';
+```
+## Step 4 : Verify the changes 
+
+```bash
+SELECT name FROM county WHERE name LIKE 'TRANS%' OR name LIKE 'THARAKA%' OR name LIKE 'WEST%';
+```
+# 6. Update all students with ALICE .... to ALLISA.
+
+## Step 1 . Verify their is a student called Alice
+
+```bash
+SELECT name FROM student WHERE name ILIKE 'Alice%';
+```
+## Step 2. Start the transaction 
+
+```bash
+BEGIN;
+```
+## Step 3. Update the name from Alice to ALLISA
+
+```bash
+UPDATE student 
+SET name = REGEXP_REPLACE(name, '^Alice', 'ALLISA', 'i');
+```
+## Step 4. Verify the changes 
+
+```bash
+SELECT name FROM student WHERE name LIKE 'ALLISA%' LIMIT 5;
+```
+# 7. Write an SQL query where that shows the letter grade using the following scale - If a student's average score is between:
+
+* 95 and 100 then the grade => 'A'
+
+* 90 and 95 then the grade => 'A-'
+
+* 85 and 90 then the grade => 'B+'
+
+* 80 and 85 then the grade => 'B'
+
+* 75 and 80 then the grade => 'B-'
+
+* 70 and 75 then the grade => 'C+'
+
+
+* 60 and 65 then the grade => 'C-'
+
+* 55 and 60 then the grade => 'D+'
+
+* 50 and 55 then the grade => 'D'
+
+* 49 and below, the grade => 'FAIL'
+
+## Step 1 : The query Structure
+
+```bash
+SELECT 
+    s.id, 
+    s.name, 
+    ROUND(CAST(float8(AVG(ss.score)) as numeric), 0) as score,
+    CASE 
+        WHEN AVG(ss.score) >= 95 AND AVG(ss.score) <= 100 THEN 'A'
+        WHEN AVG(ss.score) >= 90 AND AVG(ss.score) < 95   THEN 'A-'
+        WHEN AVG(ss.score) >= 85 AND AVG(ss.score) < 90   THEN 'B+'
+        WHEN AVG(ss.score) >= 80 AND AVG(ss.score) < 85   THEN 'B'
+        WHEN AVG(ss.score) >= 75 AND AVG(ss.score) < 80   THEN 'B-'
+        WHEN AVG(ss.score) >= 70 AND AVG(ss.score) < 75   THEN 'C+'
+        WHEN AVG(ss.score) >= 65 AND AVG(ss.score) < 70   THEN 'C'
+        WHEN AVG(ss.score) >= 60 AND AVG(ss.score) < 65   THEN 'C-'
+        WHEN AVG(ss.score) >= 55 AND AVG(ss.score) < 60   THEN 'D+'
+        WHEN AVG(ss.score) >= 50 AND AVG(ss.score) < 55   THEN 'D'
+        ELSE 'FAIL'
+    END AS grade
+FROM student s
+JOIN student_subject ss ON s.id = ss.student_id
+GROUP BY s.id, s.name
+ORDER BY s.id ASC;
+```
+
+Expected Output ;
+
+```bash
+  id  |         name         | score | grade 
+------+----------------------+-------+-------
+ 1001 | Amber C Atieno       |    81 | B
+ 1002 | Amber C Chacha       |    81 | B
+ 1003 | Amber C Idris        |    91 | A-
+ 1004 | Amber C Kamau        |    80 | B-
+ 1005 | Amber C Kimani       |    86 | B+
+ 1006 | Amber C Kiptoo       |    62 | C-
+ 1007 | Amber C Maribe       |    63 | C-
+ 1008 | Amber C Maxx         |    77 | B-
+ 1009 | Amber C Mulanga      |    86 | B+
+ 1010 | Amber C Mwangi       |    82 | B
+ 1011 | Amber C Nuru         |    92 | A-
+ 1012 | Amber C Otieno       |    71 | C+
+ 1013 | Amber C Ouma         |    81 | B
+ 1014 | Amber C Ratemo       |    56 | D+
+ 1015 | Amber C Wambugu      |    56 | D+
+ 1016 | Amber C Wanyonyi     |    82 | B
+ 1017 | Amber C Yegon        |    76 | B-
+ 1018 | Amber C Yebo         |    70 | C
+ 1019 | Amber K Atieno       |    60 | D+
+ 1020 | Amber K Chacha       |    93 | A-
+```
+
+# Securing PostgreSQL Databases
