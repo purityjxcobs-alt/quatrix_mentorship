@@ -506,10 +506,10 @@ MiB Mem :   7603.8 total,    477.8 free,   6072.5 used,   2152.2 buff/cacheMiB S
 
 Your apps are sorted automatically by who is using the most CPU power at this exact moment.
  
- 
+
  # QUESTIONS AND TASKS 
 
- 1. Installation of applications in Debian:
+ ## 1. Installation of applications in Debian:
 
 i) How do you install applications on the command line? Install the following applications: gedit, kwrite, vim, rsyslog, xfce4-terminal and Google Chrome.
 
@@ -590,7 +590,7 @@ Explain ;
 ```bash
 ssh pkinoti@test.traccar.quatrixglobal.com
 ```
-8. Create the User Account for Zoe Doe 
+2. Create the User Account for Zoe Doe 
  
 ```bash
 sudo adduser zdoe
@@ -634,13 +634,13 @@ Explaining the commands;
 
 ssh-keygen: The tool that generate the keys
 
--t ecdsa: Tells the tool to use the ECDSA protocol as requested.
+* -t ecdsa: Tells the tool to use the ECDSA protocol as requested.
 
--b 521: Sets the bit size to 521, making it the strongest and most secure version of an ECDSA key possible.
+* -b 521: Sets the bit size to 521, making it the strongest and most secure version of an ECDSA key possible.
 
--C "zoe.doe@example.com": Attaches a clear label tag to the key.
+* -C : "zoe.doe@example.com": Attaches a clear label tag to the key.
 
-### Step 4 ; Allow jdoe to access test.traccar.quatrixglobal.com server.
+### Step 4 : Allow jdoe to access test.traccar.quatrixglobal.com server.
 
 ```bash
 cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
@@ -650,20 +650,18 @@ Explaining the commands ;
 
 1. cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
 
-cat reads the newly created public key 
+* cat reads the newly created public key 
 
-(>>) the redirect tool , it copies the text and adds it to the end of a security file called the authorised_keys 
+* (>>) the redirect tool , it copies the text and adds it to the end of a security file called the authorised_keys 
 
 2. chmod 600 ~/.ssh/authorized_keys
 
-chmod , alters file security permissions 
+* chmod , alters file security permissions 
 
-600 Sets the permission level so that only Zoe can read and write to this 
+* 600 Sets the permission level so that only Zoe can read and write to this 
 file, and everyone else on the system is strictly blocked.
 
-  why 600 ?
-
-When you set a file to 600, you are breaking it down like this
+* why 600 ?. when you set a file to 600, you are breaking it down like this
 
 1. 6 (4 + 2): The Owner (Zoe) has complete permission to Read and Write to the file.
 
@@ -885,13 +883,13 @@ sudo systemctl restart nginx
 
 ## Question 1. What is Nginx
 
-* It is a web server that listens to the user request which is (This is my 
+* It is a web server that listens to the user request which is (This is my  
 
-web page) and displays the right files back to them 
+  web page) and displays the right files back to them 
 
 * It is a local web server for testing webs it runs directly on your pc as a
 
-local testing environment.
+  local testing environment.
 
 ##  Question 2 ; Why is the purpose of the folder you created under /var/www...?
 
@@ -910,13 +908,13 @@ local testing environment.
 
 ## Question 5: What is the hosts file used for? Name at least 2 uses.
 
-* It helps the computer find the location of a domain right on your own PC instead of looking on the internet.
+* It helps the computer find the location of a domain right on your own PC   instead of looking on the internet.
 
-common uses ;
+ common uses ;
 
-1. local development , it lets you create fake webiste names so that we can 
+1. Local development , it lets you create fake webiste names so that we can 
 
-build and test website locally before launching them into the real world 
+   build and test website locally before launching them into the real world 
 
 2. Blocking websites , it blockes harmful websites 
 
@@ -924,11 +922,11 @@ build and test website locally before launching them into the real world
 
 * systemctl the modern control tool used to manage background workers (called 
 
-"services") in Linux.
+  "services") in Linux.
 
 * service  This is an older tool used in older versions of Linux to start and 
 
-stop programs had fewer features.
+  stop programs had fewer features.
 
 ## Question 7: What is the difference between restart and reload within the context of a service?
 
@@ -1030,14 +1028,16 @@ sudo nano /etc/postgresql/*/main/pg_hba.conf
 
 * CHANGE THIS TO ;
 
-ALT + / -TO VIEW THE BOTTOM TEXT 
+ALT + /  -  TO VIEW THE BOTTOM TEXT 
 
 
 ```bash
 # IPv4 local connections:
 host    all             all             127.0.0.1/32            scram-sha-256
 ```
+
 THIS ;
+
 
 ```bash
 host    all             all             127.0.0.1/32            trust
