@@ -1185,3 +1185,79 @@ sudo systemctl restart fail2ban
 ```bash
 sudo tail -n 20 -f /var/log/fail2ban.log
 ```
+## Step 8 :
+
+```bash
+sudo fail2ban-client status sshd
+```
+* To check who is trying to hack your web server or website
+
+```bash
+sudo fail2ban-client status nginx-brute
+```
+* To check who is trying to hack your admin command line SSH 
+
+## Step 7 ; How to test the filter 
+
+* Using .env file 
+
+
+
+```bash
+sudo fail2ban-regex '192.168.1.50 - - "GET /.env HTTP/1.1" 404' /etc/fail2ban/filter.d/nginx-brute.conf
+```
+
+1. sudo fail2ban-regex : This activates Fail2Ban's built-in testing tool
+
+2. '192.168.1.50 - - "GET /.env HTTP/1.1" 404': This is a piece of fake log data that mimics a malicious request. It tells the simulator
+
+3. /etc/fail2ban/filter.d/nginx-brute.conf: This points the simulator to the custom rules file we created
+
+Expected Output ;
+
+```bash
+Running tests
+=============
+
+Use      filter file : nginx-brute, basedir: /etc/fail2ban
+Use      single line : 192.168.1.50 - - "GET /.env HTTP/1.1" 404
+
+
+Results
+=======
+
+Failregex: 2 total
+|-  #) [# of hits] regular expression
+|   1) [1] ^<HOST> .* "(GET|POST|PUT|POST) .*(\.env|xmlrpc|\.asp|ab2g|ab2h|\.yml|git).*$
+|   2) [1] ^<HOST> .* "(GET|POST|PUT|POST) /(\.[a-zA-Z0-9]+|.*/\.[a-zA-Z0-9]+).*$
+`-
+
+Ignoreregex: 0 total
+
+Date template hits:
+
+Lines: 1 lines, 0 ignored, 1 matched, 0 missed
+[processed in 0.01 sec]
+```
+
+Explanation ;
+
+1. The Threat Matches (Failregex: 2 total)
+
+* The first one spotted the forbidden word .env inisde the request and triggered the match 
+
+* The second one recognizes that someeone wa trying to access the hidden files starting with a dot and triggered a match 
+
+* 1 lines: The engine processed the 1 fake log line you provided.
+
+* 1 matched: The security engine successfully isolated the attacker's IP address (192.168.1.50) and flagged it for a ban.
+
+* 0 missed: The engine did not let the threat slip through undetected.
+
+##### Other bad files 
+
+1. .git/ — Exposes your entire source code history and secret access tokens.
+
+2. config.php.bak / wp-config.php.old — Contains plain-text database usernames and passwords.
+
+3. dump.sql / backup.zip / db.sql — Downloads your entire database structure and user data.

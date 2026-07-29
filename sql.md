@@ -1084,7 +1084,7 @@ acatieno7886
 
 QUERY USED 
 
-* Displaying the initia data 
+* Displaying the initial  data 
 
 ```bash
 SELECT name, phone FROM student LIMIT 10;
@@ -1477,6 +1477,11 @@ JOIN county c ON sch.county_id = c.id
 GROUP BY sch.id, sch.name, c.name
 ORDER BY school_category, total_students DESC;
 ```
+Explain the Output ; 
+
+1. ILIKE: This is a case-insensitive search. It matches keywords regardless of whether they are uppercase or lowercase (e.g., %National% will match "National High", "national academy", or "NATIONAL SCHOOL").
+
+
 Expected Output ; 
 
 ```bash
@@ -1756,3 +1761,151 @@ Expected Output ;
 ```
 
 # Securing PostgreSQL Databases
+
+# 1. What type of authentication did we utilize in the above user creation ie given that we have matched the database user to the Linux system username?
+
+* Peer Authentication 
+
+#### Why we use it 
+
+* No Double Passwords: You only log into Linux.
+
+* Automatic Trust: PostgreSQL trusts the Linux kernel identity.
+
+* High Security: No passwords pass over local networks.
+
+# 2. What/how did the sed statement in step #9 help accomplish?
+ 
+
+* # Peer $ Ident 
+* # md5 vs scram-sha-256
+Upgrading password encryption from MD5 to SCRAM -SHA-256
+
+    * md5 has been used for years but has some potential security flaws e.g. collision attacks.
+
+    * scram-sha-256
+
+## Step 1 : Edit postgresql
+
+```bash
+sudo vi /etc/postgresql/17/main/postgresql.conf
+```
+Press / to locate the exact line ;
+
+Change it from ; 
+
+```bash
+#password_encryption = md5		# md5 or scram-sha-256
+```
+To ;
+
+```bash
+password_encryption = scram-sha-256
+```
+## Step 2 : Updating The network authentication (pg_hba.conf)
+
+* To aqcquie this new encryption method when the users try to log in via local network connections . We do this in the host based authentification file pg_hba.conf
+
+```bash
+sudo vi /etc/postgresql/17/main/pg_hba.conf
+```
+press / to get you to the exact line 
+
+Change ; 
+
+```bash
+host    all             all             127.0.0.1/32            md5
+```
+
+To ;
+
+```bash
+host    all             all             127.0.0.1/32            scram-sha-256
+```
+
+## Step 3 : Restart Postgresql 
+
+```bash
+sudo service postgresql restart
+```
+* This shuts down the database engine cleanly and starts it back up, forcing it to load your new SCRAM-SHA-256 security rules into memory.
+
+## Step 4 : Verify the Global Encryption 
+
+* We log in to the database and check the status of the global passwor encryption setting 
+
+* Log in to the Postgresql as the superuser 
+
+
+```bash
+sudo -u postgres psql
+```
+
+Once we see ; postgres=# prompt
+
+```bash
+SHOW password_encryption;
+```
+* This explicitly asks the active database engine what encryption method it will apply to any new or updated passwords. It should return scram-sha-256.
+
+Expected Output ; 
+
+
+```bash
+psql (17.10 (Debian 17.10-0+deb13u1))
+Type "help" for help.
+
+postgres=# SHOW password_encryption;
+ password_encryption 
+---------------------
+ scram-sha-256
+(1 row)
+```
+## step 5 : Check user roles and encryption 
+
+```bash
+SELECT rolpassword, rolname FROM pg_authid;
+```
+
+Expected Output ; 
+
+
+```bash
+                                                             rolpassword                                                              |           rolname           
+---------------------------------------------------------------------------------------------------------------------------------------+-----------------------------
+                                                                                                                                       | postgres
+                                                                                                                                       | pg_database_owner
+                                                                                                                                       | pg_read_all_data
+                                                                                                                                       | pg_write_all_data
+                                                                                                                                       | pg_monitor
+                                                                                                                                       | pg_read_all_settings
+                                                                                                                                       | pg_read_all_stats
+                                                                                                                                       | pg_stat_scan_tables
+                                                                                                                                       | pg_read_server_files
+                                                                                                                                       | pg_write_server_files
+                                                                                                                                       | pg_execute_server_program
+                                                                                                                                       | pg_signal_backend
+                                                                                                                                       | pg_checkpoint
+                                                                                                                                       | pg_maintain
+                                                                                                                                       | pg_use_reserved_connections
+                                                                                                                                       | pg_create_subscription
+ SCRAM-SHA-256$4096:AIS2GlB4MK75Ko3cjG7Shw==$4hh2b8rdATAPQFqqSmFVBYs73yaQeF+i3GsOCen6eOQ=:RBBeZ19/MWEMygZjBbiFAv/XRKYjORv9I0BdPSzFHVQ= | gwekesa
+ SCRAM-SHA-256$4096:wtj6sSoUnBLYzS0+jTSUJw==$9XtjIhyCY1Zl2Kz6lkUP+vFE1kW8l0Ie0oMuaKvuu/8=:Pg7JntySBznwIHAx3qcggMuNQRG92911hHOUPxuxD5s= | pkinoti
+(18 rows)
+```
+
+* #### This output means that we have successfully upgraded our users accounts to a new security standard .
+
+* #### The system roles have empty passwords , the postgres , pg_database have blank spaces next to them this means they do not have a network password set . They rely fully on the Peer authentication .
+
+* #### 4096 This represents the iteration count. The algorithm runs 4,000+ times to scramble the password, making it incredibly slow and difficult for hackers to guess via brute force.
+
+* # LDAP vs Kerberos
+
+## LDAP (Lightweight Directory Access Protocol)
+
+* It stores and organizes information about users, computers, and groups 
+
+##  Kerberos
+
+* It handles Authentication (proving exactly who you are) using a "Single Sign-On" (SSO) system.
