@@ -1909,3 +1909,41 @@ Expected Output ;
 ##  Kerberos
 
 * It handles Authentication (proving exactly who you are) using a "Single Sign-On" (SSO) system.
+
+* # Troubleshooting Permission Denied Errors
+
+* After creating the database user dont automatically mean they can interact with every database or table because they are locked down tightly . Henc , we use GRANT statements t solve permission issues 
+
+## Step 1 : log into the database 
+
+```bash
+sudo -u postgres psql
+```
+
+
+## Step 2 : Connect to the Exam Database
+
+```bash
+\c exam
+```
+## Step 3 : Grant the permission 
+
+* Exam database
+
+```bash
+GRANT ALL PRIVILEGES ON DATABASE exam TO pkinoti;
+```
+* Connection privelege to the exam database 
+
+```bash
+GRANT CONNECT ON DATABASE exam TO pkinoti;
+```
+* Privelege for the exam database to ; 
+
+```bash
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO pkinoti;
+```
+
+* # Installing and using pgAdmin
+
+# Accessing a Remote Database (Traccar)
