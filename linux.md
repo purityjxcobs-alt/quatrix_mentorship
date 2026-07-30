@@ -1199,9 +1199,13 @@ sudo fail2ban-client status nginx-brute
 
 ## Step 7 ; How to test the filter 
 
-* Using .env file 
+* Using .env file - It stands for Environment , this file contains your private database passwords and secret encryption keys and the only people typing ://yourwebsite.com into a browser are automated hacker bots. They are fishing for misconfigured servers where the administrator accidentally left this file publicly downloadable 
 
+* To view the ngnix log file for .env 
 
+```bash
+sudo grep ".env" /var/log/nginx/access.log
+```
 
 ```bash
 sudo fail2ban-regex '192.168.1.50 - - "GET /.env HTTP/1.1" 404' /etc/fail2ban/filter.d/nginx-brute.conf
@@ -1212,6 +1216,10 @@ sudo fail2ban-regex '192.168.1.50 - - "GET /.env HTTP/1.1" 404' /etc/fail2ban/fi
 2. '192.168.1.50 - - "GET /.env HTTP/1.1" 404': This is a piece of fake log data that mimics a malicious request. It tells the simulator
 
 3. /etc/fail2ban/filter.d/nginx-brute.conf: This points the simulator to the custom rules file we created
+
+4. - - "GET /.env : This is the malicious action the bot actively requesting to view and download your secrect file
+
+5. 404 : This is the web defense web servers defence . it means the server responsed with a not found error code 
 
 Expected Output ;
 
@@ -1261,3 +1269,5 @@ Explanation ;
 2. config.php.bak / wp-config.php.old — Contains plain-text database usernames and passwords.
 
 3. dump.sql / backup.zip / db.sql — Downloads your entire database structure and user data.
+
+
