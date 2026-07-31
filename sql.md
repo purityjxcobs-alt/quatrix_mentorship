@@ -34,28 +34,6 @@
 * A vertical entities that conatins the fields of which the records are 
   placed 
 
-### 6. How do you comment out an SQL line so that it is ignored by the SQL engine?
-
-#### Single - Line comments 
-
-```bash
--- This entire line is ignored by the SQL engine
-SELECT * FROM users; -- This trailing comment is also ignored
-
-```
-#### Multi- Line comments 
-```bash
-/* This is a multi-line comment.
-   The engine will completely skip 
-   all of these lines. */
-SELECT * FROM products;
-```
-
-Explanation ;
-
-1. Use -- to cross out the rest of one single line.
-
-2. Use /* and */ to cross out a whole paragraph.
 
 # SQL Keywords (Specific to PostgreSQL)
 
@@ -1774,16 +1752,27 @@ Expected Output ;
 
 * High Security: No passwords pass over local networks.
 
-# 2. What/how did the sed statement in step #9 help accomplish?
- 
 
 * # Peer $ Ident 
+
+| Feature | Peer Authentication | Ident Authentication |
+| :--- | :--- | :--- |
+| **Network Scope** | Local only (via Unix domain sockets). | Remote or network-based (via TCP/IP). |
+| **How it Works** | Database asks the OS for the username of the process making the connection. | Database contacts an external `identd` daemon running on the client machine. |
+| **Source of Trust** | Trusted local kernel/operating system. | Trusted remote client machine (vulnerable if client is compromised). |
+| **Configuration Entry** | Specified as `peer` in `pg_hba.conf`. | Specified as `ident` in `pg_hba.conf`, usually mapping to an `ident` map file. |
+| **Spoofing Risk** | Extremely low (requires root/kernel level exploit on the host). | High (if an attacker controls the client machine, they can fake the ident response). |
+
 * # md5 vs scram-sha-256
 Upgrading password encryption from MD5 to SCRAM -SHA-256
 
-    * md5 has been used for years but has some potential security flaws e.g. collision attacks.
+  * md5 has been used for years but has some potential security flaws e.g. collision attacks.
+
+  * It is a password  authentication methods 
 
     * scram-sha-256
+
+* Salted Challenge Response Authentication Mechanism , is a highly secure, modern authentication protocol used to verify user identities over networks without exposing plaintext passwords or vulnerable hashes. It is the default authentication standard for modern systems like PostgreSQL and MongoDB.
 
 ## Step 1 : Edit postgresql
 

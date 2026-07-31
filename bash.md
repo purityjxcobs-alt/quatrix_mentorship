@@ -910,3 +910,25 @@ to verify in the main directory as well ;
 ```bash
 ls -la
 ```
+### 6. How do you comment out an SQL line so that it is ignored by the SQL engine?
+
+#### Single - Line comments 
+
+```bash
+-- This entire line is ignored by the SQL engine
+SELECT * FROM users; -- This trailing comment is also ignored
+
+```
+#### Multi- Line comments 
+```bash
+/* This is a multi-line comment.
+   The engine will completely skip 
+   all of these lines. */
+SELECT * FROM products;
+```
+
+Explanation ;
+
+1. Use -- to cross out the rest of one single line.
+
+2. Use /* and */ to cross out a whole paragraph.
