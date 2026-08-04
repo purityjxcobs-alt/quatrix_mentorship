@@ -1401,6 +1401,74 @@ Expected output ;
            10 | Edward C Otieno   |   95.7250 | Busia       | Kirinyaga - National
 (10 rows)
 ```
+### 5b . List a column with the county name and another county as well 
+
+```bash
+SELECT 
+    s.id, 
+    s.name, 
+    c.name AS county_name,
+    sch.name AS school_name 
+FROM student s 
+JOIN county c ON s.county_id = c.id 
+JOIN school sch ON s.school_id = sch.id 
+WHERE c.name IN ('Turkana', 'Lamu');
+```
+Expected Output ; 
+```bash
+id  |         name         | county_name |      school_name       
+------+----------------------+-------------+------------------------
+ 1026 | Amber K Maxx         | Turkana     | Kericho - Provincial
+ 1061 | Amber P Maribe       | Turkana     | Kitui - Homeschool
+ 1062 | Amber P Maxx         | Lamu        | Nyamira - National
+ 1073 | Amber W Atieno       | Turkana     | Mandera - Private
+ 1081 | Amber W Mulanga      | Turkana     | Nyeri - Private
+ 1093 | Ami C Idris          | Lamu        | Tharaka - Provincial
+ 1101 | Ami C Nuru           | Turkana     | Isiolo - National
+ 1127 | Ami L Atieno         | Turkana     | Baringo - Private
+ 1170 | Ami W Maxx           | Lamu        | Kericho - Private
+ 1173 | Ami W Nuru           | Lamu        | Isiolo - National
+ 1174 | Ami W Otieno         | Lamu        | Embu - Provincial
+ 1206 | Alice K Maxx         | Lamu        | Nyandarua - Provincial
+ 1207 | Alice K Mulanga      | Turkana     | Busia - Private
+ 1214 | Alice K Wanyonyi     | Lamu        | Elgeyo - National
+ 1218 | Alice L Chacha       | Lamu        | Busia - Homeschool
+ 1221 | Alice L Kimani       | Lamu        | Samburu - National
+ 1235 | Alice P Atieno       | Turkana     | Nandi - District
+ 1284 | Beth C Ratemo        | Turkana     | Laikipia - Provincial
+ 1322 | Beth L Wanyonyi      | Turkana     | Kwale - Private
+ 1324 | Beth L Yebo          | Lamu        | Samburu - Homeschool
+ 1342 | Beth P Yebo          | Turkana     | Uasin - Provincial
+ 1351 | Beth W Mulanga       | Lamu        | Kirinyaga - Homeschool
+ 1370 | Conrad C Mwangi      | Turkana     | Kirinyaga - District
+ 1374 | Conrad C Ratemo      | Turkana     | Bungoma - Private
+ 1400 | Conrad L Kamau       | Turkana     | Bomet - Homeschool
+ 1429 | Conrad P Wambugu     | Turkana     | Nyeri - Provincial
+ 1444 | Conrad W Otieno      | Lamu        | Embu - Homeschool
+ 1446 | Conrad W Ratemo      | Turkana     | Elgeyo - Homeschool
+ 1457 | Edward C Maribe      | Lamu        | Kericho - District
+ 1460 | Edward C Mwangi      | Turkana     | Marsabit - Private
+ 1465 | Edward C Wambugu     | Turkana     | Kiambu - Homeschool
+ 1475 | Edward K Maribe      | Lamu        | Garissa - District
+ 1490 | Edward L Kamau       | Lamu        | Kericho - Provincial
+ 1546 | Elizabeth C Kiptoo   | Turkana     | Marsabit - District
+ 1556 | Elizabeth C Wanyonyi | Turkana     | Kwale - Private
+ 1572 | Elizabeth K Ratemo   | Turkana     | Mandera - Private
+ 1617 | Elizabeth W Kimani   | Lamu        | Nakuru - Homeschool
+ 1624 | Elizabeth W Otieno   | Lamu        | Meru - Homeschool
+ 1635 | James C Kimani       | Turkana     | Elgeyo - National
+ 1645 | James C Wambugu      | Turkana     | Samburu - Homeschool
+ 1650 | James K Chacha       | Turkana     | Siaya - National
+ 1651 | James K Idris        | Lamu        | Laikipia - National
+ 1688 | James P Kamau        | Lamu        | Nyamira - National
+ 1689 | James P Kimani       | Turkana     | Baringo - District
+ 1703 | James W Atieno       | Lamu        | Kajiado - Homeschool
+ 1738 | Joan C Yebo          | Lamu        | Bungoma - National
+ 1746 | Joan K Maxx          | Lamu        | Machakos - District
+ 1853 | Joanne L Maribe      | Lamu        | Kakamega - National
+ 1862 | Joanne L Wanyonyi    | Turkana     | Meru - Homeschool
+ 1917 | John C Yegon         | Lamu        | Nyeri - Homeschool
+```
 
 ### 6. List the top schools (school name, total number of students in each school and county name) based on type/category ie top school:
 
@@ -1772,7 +1840,19 @@ Upgrading password encryption from MD5 to SCRAM -SHA-256
 
     * scram-sha-256
 
-* Salted Challenge Response Authentication Mechanism , is a highly secure, modern authentication protocol used to verify user identities over networks without exposing plaintext passwords or vulnerable hashes. It is the default authentication standard for modern systems like PostgreSQL and MongoDB.
+* Salted Challenge Response Authentication Mechanism , is a highly secure, modern 
+  authentication protocol used to verify user identities over networks without exposing plaintext passwords or vulnerable hashes. It is the default authentication standard for modern systems like PostgreSQL and MongoDB.
+
+## Differences in md5 and scram
+
+
+| Feature | MD5 Password Method | SCRAM-SHA-256 Method |
+| :--- | :--- | :--- |
+| **Security Status** | Broken and unsafe |  Ultra-secure standard |
+| **Output Size** | 128 bits (32 characters) | 256 bits (64 characters) |
+| **Salting** | No salt (Same password = same hash) |  Built-in salt (Same password = unique hash) |
+| **Network Safety** | Sends the hash over the wire |  Uses a secure cryptographic handshake |
+| **Cracking Risk** | High (Vulnerable to Rainbow Tables) | Zero (Protected against guessing attacks) |
 
 ## Step 1 : Edit postgresql
 
@@ -1793,7 +1873,7 @@ password_encryption = scram-sha-256
 ```
 ## Step 2 : Updating The network authentication (pg_hba.conf)
 
-* To aqcquie this new encryption method when the users try to log in via local network connections . We do this in the host based authentification file pg_hba.conf
+* To aquire this new encryption method when the users try to log in via local network connections . We do this in the host based authentification file pg_hba.conf
 
 ```bash
 sudo vi /etc/postgresql/17/main/pg_hba.conf
@@ -1821,7 +1901,7 @@ sudo service postgresql restart
 
 ## Step 4 : Verify the Global Encryption 
 
-* We log in to the database and check the status of the global passwor encryption setting 
+* We log in to the database and check the status of the global password encryption setting 
 
 * Log in to the Postgresql as the superuser 
 
@@ -1889,15 +1969,6 @@ Expected Output ;
 
 * #### 4096 This represents the iteration count. The algorithm runs 4,000+ times to scramble the password, making it incredibly slow and difficult for hackers to guess via brute force.
 
-* # LDAP vs Kerberos
-
-## LDAP (Lightweight Directory Access Protocol)
-
-* It stores and organizes information about users, computers, and groups 
-
-##  Kerberos
-
-* It handles Authentication (proving exactly who you are) using a "Single Sign-On" (SSO) system.
 
 * # Troubleshooting Permission Denied Errors
 
@@ -1908,7 +1979,6 @@ Expected Output ;
 ```bash
 sudo -u postgres psql
 ```
-
 
 ## Step 2 : Connect to the Exam Database
 
@@ -1932,7 +2002,3 @@ GRANT CONNECT ON DATABASE exam TO pkinoti;
 ```bash
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO pkinoti;
 ```
-
-* # Installing and using pgAdmin
-
-# Accessing a Remote Database (Traccar)
