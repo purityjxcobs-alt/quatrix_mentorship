@@ -1638,7 +1638,8 @@ SELECT COUNT(*) FROM student WHERE name LIKE 'Joan %' OR name = 'Joan';
 ```bash
 SELECT COUNT(*) FROM student WHERE name LIKE 'Joanne%';
 ```
-# 2. Update all students names to UPPERCASE so that e.g. Amber K Ratemo becomes AMBER K RATEMO
+# 2. Update all county names to UPPERCASE.
+
 
 ## Step 1 : Check the county names format 
 
