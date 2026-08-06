@@ -2003,3 +2003,190 @@ GRANT CONNECT ON DATABASE exam TO pkinoti;
 ```bash
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO pkinoti;
 ```
+
+# Installing and using pgAdmin
+
+* pgAdmin is a helpful tool to easily run queries on the fly similar to psql but can come in handy if you:
+
+## Step 1 : Install pgadmin
+
+```bash
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+sudo apt install pgadmin4
+```
+## Step 2 : edit the pg_hba.conf
+
+* You might need to edit your local pg_hba.conf file e.g. sudo vi /etc/postgresql/17/main/pg_hba.conf and add the following line (right below the line # IPv4 local connections: line): 
+
+```bash
+host    all             all             127.0.0.1/32            trust
+```
+## Step 3 : Now uninstall and install it again 
+
+```bash
+sudo apt-get purge --auto-remove pgadmin4 pgadmin4-desktop pgadmin4-web pgadmin4-server -y
+```
+* purge: Tells the system to delete not just the application, but all of its configuration files too.
+
+* --auto-remove: Cleans up leftover background software packages that were only installed to support pgAdmin
+
+* -y: Automatically answers "yes" to confirmation prompts.
+
+## Step 4 :  Delete left-over directories
+
+```bash
+sudo rm -rf /var/lib/pgadmin /var/log/pgadmin /etc/pgadmin
+```
+
+* /var/lib/pgadmin & /var/log/pgadmin: Removes the old configuration databases and event log files.
+
+## Step 5 : Download the official GPG security key
+
+* The left side downloads the security key from the internet, and the right side converts and saves it securely onto your computer.
+
+```bash
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+```
+Explain the command ; 
+
+* Downloading the Public Key
+
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub
+
+1. curl: A command-line tool used to transfer data to or from a network server (essentially a terminal-based web browser).
+
+2. f (Fail silently): If the website is down or the link is broken, this prevents the terminal from outputting a messy HTML error page.
+
+3. -s (Silent mode): Hides the download progress bar, keeping your terminal screen completely clean.
+
+4. -S (Show error): If the download fails completely, this forces curl to show a single line explaining why 
+
+5. https://www.pgadmin.org/...: The official web address where pgAdmin hosts their public cryptographic security key.
+
+* The Connector (The Pipe)
+
+1. | (Pipe) It takes the text output from the first command (curl) and injects it directly as the input for the second command (gpg).
+
+* Converting and Saving the Key
+
+sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+
+1. sudo: Grants root (administrative) permissions 
+
+2. gpg: GNU Privacy Guard. This is the built-in encryption engine Linux uses to verify digital signatures
+
+3. --dearmor: The key downloaded from the website is written in plain text format 
+
+4. o (Output): Tells the command where to save the newly converted binary file.
+
+5. /usr/share/keyrings/packages-pgadmin-org.gpg: The exact secure folder path where Linux stores trusted security keys
+
+
+## Step 6 : Create the repository list file and update
+
+* Downloaded address to your system records and refresh your application logs
+
+* It uses sh -c to run them all with administrative power (sudo)
+
+* uses echo to write a text configuration
+
+* uses && to trigger a system update.
+
+
+```bash
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+```
+
+Explain the command :
+
+1. sudo: Grants root (administrative) privileges
+
+2. sh -c: Opens a temporary background shell processor to execute the long string of commands wrapped inside the single quotes '
+
+* echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" 
+
+1. echo: A basic terminal command that prints out whatever text comes after it.
+
+2. deb: Tells your system that this download source hosts pre-compiled, ready-to-install Linux packages.
+
+3. [signed-by=...]: A security rule forcing Linux to use that specific GPG security key to verify the pgAdmin packages before installing them.
+
+4. https://ftp.postgresql.org...: The official web server URL where the pgAdmin software files are stored.
+
+5. $(lsb_release -cs): A dynamic variable. When executed, your terminal replaces this text with your exact Linux version codename (for example: bookworm) This ensures your computer pulls software designed specifically for your operating system version.
+
+* Creating the Source List File
+
+1. The "redirection" operator > . Instead of printing the echo text onto your screen, this arrow forces the text directly into a file.
+
+2. /etc/apt/sources.list.d/pgadmin4.list: The exact folder and file path where Linux stores third-party software download addresses.
+
+* The Safety Chain and Index Refresh - && apt update
+
+1. &&: A logical operator meaning "AND". It tells the terminal: "Only run the next command if the first part finished successfully without any errors."
+
+2. apt update: Refreshes your local software catalog. Now that you have added the new address file, this command tells your machine to scan that specific pgAdmin URL and download a fresh list of available packages, making pgadmin4 ready to install.
+
+## Step 7 : Install the pgAdmin package
+
+```bash
+sudo apt install pgadmin4 -y
+```
+
+* pgadmin4: This acts as a combined bundle package that automatically reinstalls both the standalone desktop window interface and the web server components.
+
+
+## Step 8 : Initialize the web server interface
+
+* configure your browser login settings 
+
+```bash
+sudo /usr/pgadmin4/bin/setup-web.sh
+```
+* This runs the official setup script which builds a new underlying storage database, prompts you for a clean login email/password, and automatically wires up the Apache HTTP web server redirect link.
+
+What has been done in short ; 
+
+1. Removed Old Files: Completely erased the previous pgAdmin 4 software packages and their background configuration records from your system.
+
+2. Downloaded Security Key: Fetched the official pgAdmin public encryption key (packages-pgadmin-org.pub) directly from their server.
+
+3. ecured the Key: Converted that plain-text security key into a binary format and saved it into your system’s trusted keyring folder.
+
+4. Registered the Repository: Created a new dedicated software source file (pgadmin4.list) so your computer knows the exact web address to find pgAdmin.
+
+5. Updated System Index: Refreshed your local package manager catalog (apt update) to recognize the newly added pgAdmin download path.
+
+6. Reinstalled pgAdmin: Successfully deployed a fresh instance of the full pgadmin4 desktop and web bundle onto your machine.
+
+7. Configured Web Server: Initialized the web application, created a new administrative login (purity.jxcobs@gmail.com), and successfully restarted the Apache web server on your browser port.
+
+
+# Creting a PostgreSql Database 
+
+## Step 1 : Access your initial traccar 
+
+```bash
+ssh pkinoti@test.traccar.quatrixglobal.com
+```
+## Step 2 : Access the postgres 
+
+```bash
+sudo -u postgres psql
+```
+## Step 3 :  Create Your Account
+
+```bash
+CREATE ROLE pkinoti WITH LOGIN SUPERUSER PASSWORD 'kinoti1234';
+```
+## Step 4 : Verify the Account
+
+```bash
+\du
+```
+## Step 5 : Exit the shell 
+
+```bash
+\q
+```
