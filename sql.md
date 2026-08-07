@@ -2190,3 +2190,262 @@ CREATE ROLE pkinoti WITH LOGIN SUPERUSER PASSWORD 'kinoti1234';
 ```bash
 \q
 ```
+# Accessing a Remote Database (Traccar)
+
+* You will need to access the test.traccar database for the following questions. We will access the test.traccar database using ssh tunneling as outlined below: Create an ssh tunnel to test.traccar server
+
+## Step 1 : Setting up the SSH Tunnel
+
+```bash
+ssh -f -o ExitOnForwardFailure=yes -L 63334:localhost:5432 yourusername@test.traccar.quatrixglobal.com sleep 30
+```
+
+* ### The Traccar database server is remote and secure. It does not allow direct connections from the internet to its database port (5432) to prevent hacking attempts. However, it does allow secure SSH connections.
+
+
+* ### By running this command, we create a secure, encrypted "tunnel" (like a private pipeline) between your local computer and the remote server. We are telling your computer: "Take anything I send to my local port 63333, securely send it through SSH, and drop it directly into the remote server's database port 5432 as if I were sitting right at the server."
+
+* ### The sleep 30 at the end keeps the tunnel open for 30 seconds to give you time to connect. Once you connect, the tunnel will stay alive as long as your connection is active.
+
+## Step 2 : Connecting to the Traccar Database
+
+* ### Now that the tunnel is open, we need to log into the actual PostgreSQL database server using the psql command-line utility
+
+* ### We are telling psql:
+
+* Connect to the database named traccar (-d traccar)
+
+* Look for it on our own machine (-h localhost
+
+* Use our new, open tunnel gateway port (-p 63334)
+
+* Log in as your database user account (-U pkinoti)
+
+```bash
+psql -d traccar -h localhost -p 63334 -U pkinoti
+```
+
+## Step 3 : Connect the remote traccar to the pgadmin 
+
+* In pgadmin4 : 
+
+1. right-click on Servers at the very top of your left panel and select Create Server
+
+2. In the General tab:
+
+* Name: Type Remote Traccar Test 
+
+3. In the Connection tab:
+
+* Host name/address: localhost - the tunnel brings the remote database to my local machine
+
+* Port: 63334 (matching your -L 63334 flag)
+
+* Username: pkinoti 
+
+* Password: Enter your database password. (kinoti1234)
+
+* Click save 
+
+* ### Once connected, look under your new server's Databases ➡️ traccar ➡️ Schemas ➡️ public ➡️ Tables folder to see all the device and position tables.
+
+## Step 4 : Open the Query Tool
+
+* On the task bar there is the psql tool 
+
+B) . On the new server tree on the left.
+
+* Right-click on the traccar database name
+
+* Select Query Tool from the context menu. A large text editor tab will open on the right side of your screen where you can write and execute your SQL code.
+
+# Step 5 : Run the Report Queries
+
+# Question 1 . All devices and their corresponding groups using one query.
+
+
+```bash
+SELECT 
+    d.id AS device_id,
+    d.name AS device_name,
+    d.uniqueid,
+    g.name AS group_name
+FROM tc_devices d
+LEFT JOIN tc_groups g ON d.groupid = g.id;
+```
+Expected Output ; 
+
+```bash
+device_id |       device_name        |         uniqueid         | group_name 
+-----------+--------------------------+--------------------------+------------
+      1902 | KAY485M                  | 355139085072210          | Truck
+      1904 | KBA480Q                  | 355139085738547          | Truck
+      1851 | 0                        | 254112225128             | Motorcycle
+      1852 | BIKE-25239168            | 254710555089             | Bicycle
+      1748 | KCE948J                  | 353701094216971          | Truck
+      1475 | KBK771X                  | 353701094237704          | Truck
+      1907 | KBL795K                  | 355139085833660          | Truck
+      1580 | KBZ059Q                  | 353701094236649          | Truck
+      1011 | KMER787R                 | 254724071640             | Motorcycle
+       790 | KMGB216P                 | 254115730334             | Motorcycle
+      1935 | KDW936Z                  | 355139085833611          | Truck
+      1260 | KMGH853Z                 | 254711761390             | Motorcycle
+       891 | KMFX289E                 | 254701620278             | Motorcycle
+      1778 | KDG052D                  | 353701094225881          | Truck
+      1906 | KBJ532W                  | 355139085834809          | Truck
+      1930 | KDM357V                  | 355139085843032          | Truck
+       782 | KMDY364B                 | 254727257595             | Motorcycle
+      1874 | KMFW326T                 | 254720210335             | Motorcycle
+       784 | KMFX211R                 | 254757959740             | Bicycle
+      1946 | X-KCX053S                | X-353701094217672        | Truck
+       104 | KMFF747Y                 | 254712608767             | Motorcycle
+      1663 | KCC627M                  | 353701094231434          | Truck
+      1942 | X-KCL032A                | X-353701094237845        | Truck
+       677 | KMFK886A                 | 254715964467             | Motorcycle
+      1457 | KAJ531V                  | 353701094234206          | Truck
+      1384 | KMGE973L                 | 254723544404             | Motorcycle
+       461 | KMFS728L                 | 254720827885             | Motorcycle
+      1948 | X-KDL078W                | X-353701094216534        | Truck
+       485 | BIKE035B                 | 254723021212             | Bicycle
+       714 | KMCN322M                 | 254701866380             | Motorcycle
+       493 | KMFZ160P                 | 254704148603             | Motorcycle
+      1585 | KDC049G                  | 353701094218399          | Truck
+      1446 | KAE628U                  | 353701094220221          | Truck
+      1463 | KAU635F                  | 353701094216690          | Truck
+       697 | KMDQ087Q                 | 254728624207             | Motorcycle
+        77 | KMFC794L                 | 254707424001             | Motorcycle
+      1412 | KBS476T                  | 353701094230774          | Truck
+       238 | KMEY472A                 | 254728508778             | Motorcycle
+       437 | KMEB352Z                 | 254724496529             | Motorcycle
+      1410 | KBK871X                  | 353701094230824          | Truck
+        27 | KMFP148U                 | 254717574849             | Motorcycle
+      1787 | KAT695H                  | 353701094219579          | Truck
+         9 | KMFP728Z                 | 254717734327             | Motorcycle
+       566 | KMEA570A                 | 254797282970             | Motorcycle
+      1423 | KCG651X                  | 353701094216914          | Truck
+       141 | KDC001A                  | 254723841328             | Pickup
+      1938 | X-KCC666Z                | X-353701094221377        | Truck
+      1660 | KCN267N                  | 353701094229263          | Truck
+      1941 | X-KCK912T                | X-353701094217243        | Truck
+      1364 | KMGG044H                 | 254702416627             | Motorcycle
+      1713 | KCJ298F                  | 353701094217896          | Truck
+```
+
+# Question 2 : All position data for the last 1 day should including vehicle and the group
+
+```bash
+SELECT 
+    p.id AS position_id,
+    p.devicetime,
+    p.latitude,
+    p.longitude,
+    p.speed,
+    d.name AS vehicle_name,
+    g.name AS group_name
+FROM tc_positions p
+JOIN tc_devices d ON p.deviceid = d.id
+LEFT JOIN tc_groups g ON d.groupid = g.id
+WHERE p.devicetime >= NOW() - INTERVAL '1 day';
+```
+
+Expected Output ; 
+
+```bash
+position_id |       devicetime        |        latitude         |     longitude      |         speed          | vehicle_name | group_name 
+-------------+-------------------------+-------------------------+--------------------+------------------------+--------------+------------
+   153044874 | 2026-08-06 10:18:07.781 |              -1.3256783 |         36.8610117 |    0.07875250279903412 | KMEG358X     | Motorcycle
+   153046288 | 2026-08-06 11:40:14.941 |     -1.1920716666666666 | 36.997233333333334 |              31.317506 | KDB237E      | Truck
+   153046289 | 2026-08-06 11:40:15.802 |               -0.980235 |  36.58296222222222 |              15.118796 | KDT668G      | Truck
+   153046290 | 2026-08-06 11:40:21.233 |     -1.2659416666666667 | 36.904133333333334 |     24.838022000000002 | KDA089J      | Truck
+   153046291 | 2026-08-06 11:40:21.65  |     -1.3064533333333332 | 36.841681111111114 |              20.518366 | KDE183U      | Van
+   153046292 | 2026-08-06 11:40:22.339 |     -1.0593044444444446 |  37.17892888888889 |              16.738667 | KCD632S      | Truck
+   153046293 | 2026-08-06 11:40:22.558 |     -1.3061355555555556 |  36.88200277777778 |              11.339097 | KBL795K      | Truck
+   153046303 | 2026-08-06 11:40:46.004 |     -0.9789116666666666 | 36.581473333333335 |     14.038882000000001 | KDT668G      | Truck
+   153046304 | 2026-08-06 11:40:46.627 |      -1.307223888888889 |  36.84296666666667 |               9.179269 | KDE183U      | Van
+   153046305 | 2026-08-06 11:40:46.653 |     -1.0586572222222221 | 37.180863888888894 |              21.058323 | KCD632S      | Truck
+   153046331 | 2026-08-06 11:41:26.281 |     -1.0570555555555556 |  37.18562333333333 |              29.157678 | KCD632S      | Truck
+   153046332 | 2026-08-06 11:41:29.105 |               -1.280505 |  36.90140888888889 |      5.399570000000001 | KCM312R      | Truck
+   153046333 | 2026-08-06 11:41:29.22  |     -1.3016916666666667 | 36.884910000000005 |              23.758108 | KBL795K      | Truck
+   153046334 | 2026-08-06 11:41:30.126 |     -1.3090555555555554 |           36.84546 |              16.738667 | KDE183U      | Van
+   153046335 | 2026-08-06 11:41:31.194 |     -1.2625149999999998 |  36.90727555555555 |     12.419011000000001 | KDA089J      | Truck
+   153046336 | 2026-08-06 11:41:35.019 |     -1.1846583333333334 | 36.993404444444444 |              22.678194 | KDB237E      | Truck
+   153046337 | 2026-08-06 11:41:36.145 |     -1.0566322222222222 | 37.186883333333334 |     28.077764000000002 | KCD632S      | Truck
+   153046338 | 2026-08-06 11:41:37.023 |     -0.9754433333333333 | 36.578586666666666 |              25.917936 | KDT668G      | Truck
+   153046339 | 2026-08-06 11:41:39.102 |               -1.280755 |  36.90155333333334 |      5.399570000000001 | KCM312R      | Truck
+   153046340 | 2026-08-06 11:41:39.148 |                 -1.3008 | 36.885465555555555 |              20.518366 | KBL795K      | Truck
+   153046341 | 2026-08-06 11:41:42.715 |     -1.2620600000000002 |  36.90783777777778 |     16.198710000000002 | KDA089J      | Truck
+   153046342 | 2026-08-06 11:41:45.055 |     -1.1840366666666666 | 36.992424444444445 |              25.917936 | KDB237E      | Truck
+   153046343 | 2026-08-06 11:41:45.719 |     -1.0562166666666666 |  37.18811722222222 |              27.537807 | KCD632S      | Truck
+   153046344 | 2026-08-06 11:41:45.981 |     -0.9748133333333334 |  36.57756444444445 |              24.298065 | KDT668G      | Truck
+   153046345 | 2026-08-06 11:41:47.835 |     -1.3001861111111113 |  36.88578166666667 |     16.198710000000002 | KBL795K:
+```
+
+# Question 3 . All devices that are not motorcycles and not trucks
+
+```bash
+SELECT 
+    id, 
+    name, 
+    uniqueid, 
+    category
+FROM tc_devices
+WHERE category NOT IN ('motorcycle', 'truck') 
+   OR category IS NULL;
+```
+
+```bash
+
+ id  |           name           |         uniqueid         |  category  
+------+--------------------------+--------------------------+------------
+ 1852 | BIKE-25239168            | 254710555089             | Bicycle
+ 1475 | KBK771X                  | 353701094237704          | Truck
+ 1874 | KMFW326T                 | 254720210335             | Motorcycle
+  784 | KMFX211R                 | 254757959740             | bicycle
+ 1663 | KCC627M                  | 353701094231434          | Truck
+ 1457 | KAJ531V                  | 353701094234206          | Truck
+  485 | BIKE035B                 | 254723021212             | bicycle
+ 1446 | KAE628U                  | 353701094220221          | Truck
+ 1463 | KAU635F                  | 353701094216690          | Truck
+ 1410 | KBK871X                  | 353701094230824          | Truck
+ 1787 | KAT695H                  | 353701094219579          | Truck
+  141 | KDC001A                  | 254723841328             | pickup
+ 1660 | KCN267N                  | 353701094229263          | Truck
+ 1430 | UBH603L                  | 353701094219710          | Truck
+ 1434 | KAP549R                  | 353701094242514          | Truck
+ 1533 | KAP354K                  | 987654321003443          | Truck
+ 1873 | KMFT730Z                 | 254797158928             | Motorcycle
+ 1872 | KMFS446A                 | 254721460342             | Motorcycle
+ 1603 | KAS464T                  | 353701093004154          | Truck
+ 1540 | KBX132B                  | 353701094216120          | Truck
+ 1936 | X-KCA617L                | X-862304020116995        | Truck
+ 1504 | KCG258W                  | 353701094221906          | Truck
+ 1705 | KAL972V                  | 353701094235922          | Truck
+ 1453 | KCK298V                  | 353701094241128          | Truck
+ 1738 | KCK923W                  | 353701094237118          | Truck
+ 1622 | KAW049Y                  | 353701094244239          | pickup
+ 1521 | KBV856S_KBU856S_Ponty    | 353701094224256          | Truck
+ 1532 | KBH288V                  | 353701094238447          | Truck
+ 1390 | KBY625F                  | 353701094233133          | Truck
+ 1876 | KMGB472P                 | 254741436294             | Motorcycle
+ 1612 | KCJ596A                  | 353701094231822          | Truck
+ 1576 | KCV814H                  | 353701094221674          | Truck
+  268 | BIKE023B                 | 254748050383             | bicycle
+ 1658 | KBZ127R                  | 353701094237779          | Truck
+ 1620 | KCP106F                  | 353701094220395          | Truck
+ 1695 | KBU366C                  | 353701094234438          | Truck
+ 1853 | EBIKE-36624308           | 254728388813             | Bicycle
+ 1554 | KCG232Y                  | 353701094243017          | Truck
+ 1499 | KBR014R                  | 353701094220148          | Truck
+ 1824 | KDB237E                  | 353701094217706          | Truck
+ 1470 | KCD013Z                  | 353701094217235          | Truck
+ 1875 | KMFZ163M                 | 254792450639             | Motorcycle
+ 1899 | KMGW834L                 | 254726157890             | Motorcycle
+ 1336 | E-BIKE03                 | 254742233505             | bicycle
+ 1556 | KBH965V                  | 353701094230113          | Truck
+ 1755 | KBA324N                  | 353701094238405          | Truck
+ 1539 | KCN210V                  | 353701094218902          | Truck
+ 1588 | KAK081F                  | 358899052123877          | Truck
+ 1893 | KMGP509Q                 | 254722591915             | Motorcycle
+ 1723 | KBX944A                  | 353701094236540          | Truck
+ 1551 | KAW227V                  | 353701094225899          | Truck
+```
