@@ -2163,7 +2163,7 @@ What has been done in short ;
 7. Configured Web Server: Initialized the web application, created a new administrative login (purity.jxcobs@gmail.com), and successfully restarted the Apache web server on your browser port.
 
 
-# Creting a PostgreSql Database 
+# Creating a PostgreSql Database 
 
 ## Step 1 : Access your initial traccar 
 
@@ -2259,7 +2259,72 @@ B) . On the new server tree on the left.
 
 * Select Query Tool from the context menu. A large text editor tab will open on the right side of your screen where you can write and execute your SQL code.
 
-# Step 5 : Run the Report Queries
+# Creating a New server (yours) in pgadmin 
+
+## Step 1: Create a New Server
+ 
+1. Open **pgAdmin**.
+2. Right-click **Servers**.
+3. Select **Register → Server...**
+ 
+---
+ 
+## Step 2: Configure the Connection
+ 
+Navigate to the **Connection** tab and enter the following information.
+ 
+| Field | Value |
+|-------|-------|
+| Host name / address | `localhost` or `127.0.0.1` | use 127.0.0.1
+| Port | `5432` |
+| Maintenance database | `postgres` *(or your target database)* |
+| Username | `postgres` *(or your PostgreSQL user)* |
+| Password | *Your PostgreSQL password* |
+ 
+> **Note:** Even though the database is hosted remotely, the host should remain `localhost` because pgAdmin connects through the SSH tunnel.
+ 
+---
+ 
+# Step 3: Configure the SSH Tunnel
+ 
+Open the **SSH Tunnel** tab and configure the following:
+ 
+| Field | Value |
+|-------|-------|
+| Use SSH tunneling | ✅ Enabled |
+| Tunnel host | `test.traccar.quatrixglobal.com` |
+| Tunnel port | `22` |
+| Username | `pkinoti` |
+| Authentication | Password **or** Identity File (SSH Key) | "kinoti1234"
+ 
+### Option 1: Password Authentication
+ 
+Provide:
+ 
+- SSH Username
+- SSH Password
+ 
+### Option 2: SSH Key Authentication (Recommended)
+ 
+Provide:
+ 
+- SSH Username
+- Path to your private key (e.g. `~/.ssh/id_rsa`)
+ 
+If your key is encrypted, provide the passphrase when prompted.
+ 
+# What we used in the ssh ;
+
+* Access the .ssh file in your pc and select your public key and select the file to pgadmin4
+
+ 
+# Step 4: Save the Connection
+ 
+1. Click **Save**.
+2. pgAdmin will establish the SSH tunnel automatically.
+3. If the connection is successful, the remote PostgreSQL server will appear under **Servers**
+
+# Run the Report Queries
 
 # Question 1 . All devices and their corresponding groups using one query.
 
@@ -2383,69 +2448,272 @@ position_id |       devicetime        |        latitude         |     longitude 
 # Question 3 . All devices that are not motorcycles and not trucks
 
 ```bash
-SELECT 
-    id, 
-    name, 
-    uniqueid, 
-    category
-FROM tc_devices
-WHERE category NOT IN ('motorcycle', 'truck') 
+SELECT id, name, uniqueid, category 
+FROM tc_devices 
+WHERE UPPER(category) NOT IN ('MOTORCYCLE', 'TRUCK') 
    OR category IS NULL;
 ```
 
 ```bash
-
- id  |           name           |         uniqueid         |  category  
-------+--------------------------+--------------------------+------------
+ id  |           name           |         uniqueid         | category 
+------+--------------------------+--------------------------+----------
  1852 | BIKE-25239168            | 254710555089             | Bicycle
- 1475 | KBK771X                  | 353701094237704          | Truck
- 1874 | KMFW326T                 | 254720210335             | Motorcycle
   784 | KMFX211R                 | 254757959740             | bicycle
- 1663 | KCC627M                  | 353701094231434          | Truck
- 1457 | KAJ531V                  | 353701094234206          | Truck
   485 | BIKE035B                 | 254723021212             | bicycle
- 1446 | KAE628U                  | 353701094220221          | Truck
- 1463 | KAU635F                  | 353701094216690          | Truck
- 1410 | KBK871X                  | 353701094230824          | Truck
- 1787 | KAT695H                  | 353701094219579          | Truck
   141 | KDC001A                  | 254723841328             | pickup
- 1660 | KCN267N                  | 353701094229263          | Truck
- 1430 | UBH603L                  | 353701094219710          | Truck
- 1434 | KAP549R                  | 353701094242514          | Truck
- 1533 | KAP354K                  | 987654321003443          | Truck
- 1873 | KMFT730Z                 | 254797158928             | Motorcycle
- 1872 | KMFS446A                 | 254721460342             | Motorcycle
- 1603 | KAS464T                  | 353701093004154          | Truck
- 1540 | KBX132B                  | 353701094216120          | Truck
- 1936 | X-KCA617L                | X-862304020116995        | Truck
- 1504 | KCG258W                  | 353701094221906          | Truck
- 1705 | KAL972V                  | 353701094235922          | Truck
- 1453 | KCK298V                  | 353701094241128          | Truck
- 1738 | KCK923W                  | 353701094237118          | Truck
  1622 | KAW049Y                  | 353701094244239          | pickup
- 1521 | KBV856S_KBU856S_Ponty    | 353701094224256          | Truck
- 1532 | KBH288V                  | 353701094238447          | Truck
- 1390 | KBY625F                  | 353701094233133          | Truck
- 1876 | KMGB472P                 | 254741436294             | Motorcycle
- 1612 | KCJ596A                  | 353701094231822          | Truck
- 1576 | KCV814H                  | 353701094221674          | Truck
   268 | BIKE023B                 | 254748050383             | bicycle
- 1658 | KBZ127R                  | 353701094237779          | Truck
- 1620 | KCP106F                  | 353701094220395          | Truck
- 1695 | KBU366C                  | 353701094234438          | Truck
  1853 | EBIKE-36624308           | 254728388813             | Bicycle
- 1554 | KCG232Y                  | 353701094243017          | Truck
- 1499 | KBR014R                  | 353701094220148          | Truck
- 1824 | KDB237E                  | 353701094217706          | Truck
- 1470 | KCD013Z                  | 353701094217235          | Truck
- 1875 | KMFZ163M                 | 254792450639             | Motorcycle
- 1899 | KMGW834L                 | 254726157890             | Motorcycle
  1336 | E-BIKE03                 | 254742233505             | bicycle
- 1556 | KBH965V                  | 353701094230113          | Truck
- 1755 | KBA324N                  | 353701094238405          | Truck
- 1539 | KCN210V                  | 353701094218902          | Truck
- 1588 | KAK081F                  | 358899052123877          | Truck
- 1893 | KMGP509Q                 | 254722591915             | Motorcycle
- 1723 | KBX944A                  | 353701094236540          | Truck
- 1551 | KAW227V                  | 353701094225899          | Truck
+ 1205 | Bike-08                  | 254723627262             | bicycle
+  354 | BIKE033B                 | 254113276466             | bicycle
+  290 | BIKE029B                 | 254112128091             | bicycle
+  131 | KMMB051B                 | 254726396506             | bicycle
+ 1167 | E-BIKE01                 | 254790392219             | bicycle
+ 1403 | 6532ae2652b2164c0d39862d | 6532ae2652b2164c0d39862d | 
+  751 | Bike001                  | 254792310498             | bicycle
+ 1388 | KCA996Q                  | 353701094227465          | van
+ 1903 | KAY812Z                  | 353701094240963          | van
+ 1925 | KDE183U                  | 355139085737937          | van
+ 1534 | KDK127A                  | 353701094217144          | pickup
+  543 | KMFX130X                 | 254790360627             | bicycle
+ 1360 | E-BIKE02                 | 254769393830             | bicycle
+  334 | BIKE014B                 | 254723150111             | bicycle
+  213 | BIKE011B                 | 254758740753             | bicycle
+ 1810 | KCX324P                  | 353701094229420          | van
+ 1323 | Ebee-E-Bike-39717169     | 254799083977             | bicycle
+ 1775 | KAP695T                  | 353701094234024          | van
+  619 | BIKE1987                 | 254727261484             | bicycle
+  205 | BIKE003B                 | 254757921593             | bicycle
+  312 | BIKE0323A                | 254700356710             | bicycle
+ 1688 | KDJ978N                  | 353701094234172          | van
+ 1614 | KCJ273D                  | 353701094218456          | van
+ 1218 | Ebike-05                 | 254701000967             | bicycle
+  295 | BIKE031B                 | 254707058072             | bicycle
+ 1161 | Ebee-E-Bike-37744883     | 254748780404             | bicycle
+ 1132 | KDL153M                  | 254746885358             | pickup
+```
+
+# Give Access to Other Users to exam Database
+
+* #### Create a user account/role for a fellow mentee (if you're a remote Quatrix mentee, the admin will suggest a fellow mentee's names). The following should apply:
+
+1. Ensure they can access the database using Ident Authentication meaning they should also have a regular Linux system user account on your local PC.
+
+2. Give them read only access to the exam database.
+
+## Step 1 : Loging in to the server
+
+```bash
+ssh pkinoti@test.traccar.quatrixglobal.com
+```
+## Step 2 : Interactive session with the database 
+
+```bash
+sudo -u postgres psql
+```
+## Step 3 : To display all users 
+
+```bash
+\du
+```
+## Step 4 : Accessing the Ident Authentification 
+
+```bash
+sudo nano /etc/postgresql/16/main/pg_hba.conf
+```
+Edit ; The peer to ident
+
+
+```bash
+local   traccar         amumbi                                  peer
+```
+
+To ; 
+
+
+```bash
+local   traccar         amumbi                                  ident
+```
+
+1. Press Ctrl + O then Enter to save.
+
+2. Press Ctrl + X to exit back to the command line.
+
+## Step 5 : Reload the server 
+
+```bash
+sudo systemctl reload postgresql
+```
+
+## Step 6 : Log into the databse again 
+
+```bash
+sudo -u postgres psql -d traccar
+```
+
+## Step 7 : Grant one user privileges 
+
+* Display the current users 
+
+```bash
+\du
+```
+## Step 8 : Grant the permission to the user amumbi 
+
+```bash
+GRANT CONNECT ON DATABASE traccar TO ann;
+```
+* She can connect to the database and look at it 
+
+## Step 9 : 
+
+```bash
+GRANT USAGE ON SCHEMA public TO ann;
+```
+* She can see the folder structures contained in the specific tables 
+
+## Step 10 :
+
+```bash
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO ann;
+```
+* She can only have the reading -only access 
+
+## Step 11 ; To verify what she can see
+
+* Verify the tables exists ; 
+
+
+```bash
+\dt
+```
+* To verify the privilege application 
+
+```bash
+SELECT table_name, privilege_type 
+FROM information_schema.role_table_grants 
+WHERE grantee = 'amumbi' 
+ORDER BY table_name;
+```
+Expected Output ;
+
+```bash
+    table_name       | privilege_type 
+------------------------+----------------
+ databasechangelog      | SELECT
+ databasechangeloglock  | SELECT
+ tc_actions             | SELECT
+ tc_attributes          | SELECT
+ tc_calendars           | SELECT
+ tc_commands            | SELECT
+ tc_commands_queue      | SELECT
+ tc_device_attribute    | SELECT
+ tc_device_command      | SELECT
+ tc_device_device       | SELECT
+ tc_device_driver       | SELECT
+ tc_device_geofence     | SELECT
+ tc_device_maintenance  | SELECT
+ tc_device_notification | SELECT
+ tc_device_order        | SELECT
+ tc_device_report       | SELECT
+ tc_devices             | SELECT
+ tc_drivers             | SELECT
+ tc_events              | SELECT
+ tc_geofences           | SELECT
+ tc_group_attribute     | SELECT
+ tc_group_command       | SELECT
+ tc_group_driver        | SELECT
+ tc_group_geofence      | SELECT
+ tc_group_maintenance   | SELECT
+ tc_group_notification  | SELECT
+ tc_group_order         | SELECT
+ tc_group_report        | SELECT
+ tc_groups              | SELECT
+ tc_keystore            | SELECT
+ tc_maintenances        | SELECT
+ tc_notifications       | SELECT
+ tc_orders              | SELECT
+ tc_positions           | SELECT
+ tc_reports             | SELECT
+ tc_revoked_tokens      | SELECT
+ tc_servers             | SELECT
+ tc_statistics          | SELECT
+ tc_user_attribute      | SELECT
+ tc_user_calendar       | SELECT
+ tc_user_command        | SELECT
+ tc_user_device         | SELECT
+ tc_user_driver         | SELECT
+ tc_user_geofence       | SELECT
+ tc_user_group          | SELECT
+ tc_user_maintenance    | SELECT
+ tc_user_notification   | SELECT
+ tc_user_order          | SELECT
+ tc_user_report         | SELECT
+```
+## If we want the user to have the other priveleges
+
+## Step 1 : Creating the role
+
+```bash
+CREATE ROLE amumbi WITH LOGIN;
+```
+## Step 2 : Granting access to the user in the database
+
+```bash
+GRANT CONNECT ON DATABASE traccar TO amumbi;
+```
+## Step 3 : Switch to the traccar
+
+```bash
+\c traccar
+```
+## Step 4 : Connecting the user to the schema
+
+```bash
+GRANT USAGE ON SCHEMA public TO amumbi;
+```
+## Step 5 : Giving her privileges
+
+```bash
+GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO amumbi;
+```
+*To verify :
+
+```bash
+SELECT table_name, privilege_type 
+FROM information_schema.role_table_grants 
+WHERE grantee = 'amumbi' 
+ORDER BY table_name;
+```
+## To remove the privileges 
+
+* Strips the ability to create , change , or remove data records
+
+```bash
+REVOKE INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public FROM amumbi;
+```
+
+* Cleans up any accidental administrative background permissions 
+
+```bash
+REVOKE ALL PRIVILEGES ON DATABASE traccar FROM amumbi;
+```
+
+# How to make a user a super user in your Local PC
+
+## Step 1 : We alter the role 
+
+```bash
+ALTER ROLE amumbi WITH SUPERUSER;
+```
+## Step 2 : To prove it worked 
+
+```bash
+\du
+```
+## Step 3 : To strip back the superuser power
+
+```bash
+ALTER ROLE amumbi WITH NOSUPERUSER;
 ```
