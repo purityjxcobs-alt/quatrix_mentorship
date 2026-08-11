@@ -48,7 +48,20 @@
 9. OUTER JOIN
 10. VIEW 
 11. BEGIN
-12. SAVEPOINT 
+12.  = 9999;
+DELETE 1
+traccar=# SELECT id, name, uniqueid, category FROM tc_devices WHERE id = 9999;
+ id | name | uniqueid | category 
+----+------+----------+----------
+(0 rows)
+
+traccar=# RESET ROLE;
+RESET
+traccar=# SELECT current_user
+;
+ current_user 
+--------------
+SAVEPOINT 
 13. COMMIT
 14. START TRANSACTION
 15. TRUNCATE TABLE 
@@ -2656,12 +2669,12 @@ Expected Output ;
 ## Step 1 : Creating the role
 
 ```bash
-CREATE ROLE amumbi WITH LOGIN;
+CREATE ROLE purity WITH LOGIN;
 ```
 ## Step 2 : Granting access to the user in the database
 
 ```bash
-GRANT CONNECT ON DATABASE traccar TO amumbi;
+GRANT CONNECT ON DATABASE traccar TO purity;
 ```
 ## Step 3 : Switch to the traccar
 
@@ -2671,12 +2684,12 @@ GRANT CONNECT ON DATABASE traccar TO amumbi;
 ## Step 4 : Connecting the user to the schema
 
 ```bash
-GRANT USAGE ON SCHEMA public TO amumbi;
+GRANT USAGE ON SCHEMA public TO purity;
 ```
 ## Step 5 : Giving her privileges
 
 ```bash
-GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO amumbi;
+GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO purity;
 ```
 *To verify :
 
@@ -2691,13 +2704,13 @@ ORDER BY table_name;
 * Strips the ability to create , change , or remove data records
 
 ```bash
-REVOKE INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public FROM amumbi;
+REVOKE INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public FROM purity;
 ```
 
 * Cleans up any accidental administrative background permissions 
 
 ```bash
-REVOKE ALL PRIVILEGES ON DATABASE traccar FROM amumbi;
+REVOKE ALL PRIVILEGES ON DATABASE traccar FROM purity;
 ```
 
 # How to make a user a super user in your Local PC
@@ -2705,7 +2718,7 @@ REVOKE ALL PRIVILEGES ON DATABASE traccar FROM amumbi;
 ## Step 1 : We alter the role 
 
 ```bash
-ALTER ROLE amumbi WITH SUPERUSER;
+ALTER ROLE purity WITH SUPERUSER;
 ```
 ## Step 2 : To prove it worked 
 
@@ -2715,5 +2728,331 @@ ALTER ROLE amumbi WITH SUPERUSER;
 ## Step 3 : To strip back the superuser power
 
 ```bash
-ALTER ROLE amumbi WITH NOSUPERUSER;
+ALTER ROLE purity WITH NOSUPERUSER;
+```
+# Differences in the attributes 
+
+* To switch to the other user , you use SET ROLE username;
+
+* SELECT current_user; – Shows the new user you switched to.
+
+* SELECT session_user; – Shows the original user who first authenticated.
+
+* \conninfo – Will still show the original user because the physical connection details haven't changed.
+
+# QUESTION 1 : Testing the CREATE ROLE Attribute
+
+```bash
+SET ROLE purity;
+```
+## Step 1 : Check which user youre on
+
+```bash
+SELECT current_user;
+```
+
+## Step 2 : Try creating roles in the user purity 
+
+```bash
+CREATE ROLE test_user WITH LOGIN;
+```
+
+Expected Output : 
+
+```bash
+ERROR:  permission denied to create role
+DETAIL:  Only roles with the CREATEROLE attribute may create roles.
+```
+## Step 3 : Granting CREATEROLE to see the change
+
+* ### Switch back to your admin account so you have the authority to alter roles:
+
+```bash
+RESET ROLE;
+```
+* ### Check which user we are using at the moment 
+
+```bash
+SELECT current_user;
+```
+
+## Step 4 : Grant her the specific attribute
+
+```bash
+ALTER ROLE purity WITH CREATEROLE;
+```
+## Step 5 : Change to purity user to check if the priviledge has been added
+
+```bash
+SET ROLE purity;
+```
+## Step 6 : To test it again 
+
+```bash
+CREATE ROLE test_user WITH LOGIN;
+```
+## Step 7 : What can the new user do with th new privilege 
+
+1. ###  Delete a user ;
+
+* ### Check which user we are in ; 
+
+```bash
+SELECT current_user;
+```
+* ### Delete the user we want to delete with our new user who has privileges
+
+```bash
+DROP ROLE ann;
+```
+* ### We cant use this because PostesSql enforces strict ownership over roles . even though purity has the create role attribute a role cannot drop another role unless it explicitly has thr ADMIN option 
+
+## Step 7b) Reset back to the Postgres Superuser
+
+```bash
+RESET ROLE;
+```
+* ### Check the current user 
+
+```bash
+SELECT current_user;
+```
+* ### Grant Admin Option on ann to purity 
+
+```bash
+GRANT ann TO purity WITH ADMIN OPTION;
+```
+* ### Reassing the ownership of ann's database to purity from the superuser 
+
+```bash
+SELECT current_user;
+```
+```bash
+REASSIGN OWNED BY ann TO purity;
+```
+* ### Drop ann as user purity 
+
+```bash
+SET ROLE purity;
+```
+* ### Confirm the user 
+
+```bash
+SELECT current_user;
+```
+* ### Verify the deletion 
+
+```bash
+\du
+```
+* ### Drop user ann as user purity 
+
+```bash
+DROP ROLE ann;
+```
+* ### Verify the new user
+
+```bash
+\du
+```
+# Question 2 : Attribute Create DB 
+
+## Step 1: Verify purity Lacks CREATEDB Privilege
+
+```bash
+\du purity
+```
+Expected Output ; 
+
+```bash
+     List of roles
+ Role name | Attributes  
+-----------+-------------
+ purity    | Create role
+```
+
+## Step 2: Grant Database Creation Privilege
+
+* ### Change to the superuser account to grant the privelege to purity 
+
+```bash
+RESET ROLE;
+```
+* ### Check the current user 
+
+```bash
+SELECT current_user;
+```
+* ### Alter the create DB role to purity 
+
+```bash
+ALTER ROLE purity WITH CREATEDB;
+```
+
+## Step 3 : Switch to the purity User
+
+```bash
+SET ROLE purity;
+```
+* ### Verify the added attribute 
+
+```bash
+\du purity
+```
+
+## Step 4 : Create a New Database as purity
+
+```bash
+CREATE DATABASE purity_test_db;
+```
+* ### To verify the new database
+
+```bash
+\l
+```
+Expected output ;
+
+
+```bash
+                                                      List of databases
+      Name      |  Owner   | Encoding | Locale Provider | Collate |  Ctype  | ICU Locale | ICU Rules |   Access privileges   
+----------------+----------+----------+-----------------+---------+---------+------------+-----------+-----------------------
+ postgres       | postgres | UTF8     | libc            | C.UTF-8 | C.UTF-8 |            |           | 
+ purity_test_db | purity   | UTF8     | libc            | C.UTF-8 | C.UTF-8 |            |           | 
+ template0      | postgres | UTF8     | libc            | C.UTF-8 | C.UTF-8 |            |           | =c/postgres          +
+                |          |          |                 |         |         |            |           | postgres=CTc/postgres
+ template1      | postgres | UTF8     | libc            | C.UTF-8 | C.UTF-8 |            |           | =c/postgres          +
+                |          |          |                 |         |         |            |           | postgres=CTc/postgres
+ traccar        | postgres | UTF8     | libc            | C.UTF-8 | C.UTF-8 |            |           | =Tc/postgres         +
+                |          |          |                 |         |         |            |           | postgres=CTc/postgres+
+                |          |          |                 |         |         |            |           | kkiragu=c/postgres   +
+                |          |          |                 |         |         |            |           | ywanjiku=c/postgres  +
+                |          |          |                 |         |         |            |           | eirungu=c/postgres   +
+                |          |          |                 |         |         |            |           | jkipkorir=c/postgres +
+                |          |          |                 |         |         |            |           | tajode=c/postgres    +
+                |          |          |                 |         |         |            |           | kkiarie=c/postgres   +
+                |          |          |                 |         |         |            |           | amumbi=c/postgres    +
+                |          |          |                 |         |         |            |           | purity=c/postgres
+(5 rows)
+
+```
+
+* ### Hence , a database is a giant container on your server , inside it , we can create tables to hold the actual data . 
+
+## Step 5 : How to use the new database
+
+* ### Connect to the new database 
+
+```bash
+\c purity_test_db
+```
+* ### Create tables inide it 
+
+```bash
+CREATE TABLE employees (id SERIAL PRIMARY KEY, name VARCHAR(50));
+```
+* ### Insert Data into the table 
+
+```bash
+INSERT INTO employees (name) VALUES ('Purity'), ('Ann');
+```
+
+* ### Verify our data 
+
+```bash
+SELECT * FROM employees;
+```
+* ### To delete all data and keep the empty table 
+
+```bash
+TRUNCATE TABLE employees;
+```
+* ### Delete the Table completely
+
+```bash
+DROP TABLE employees;
+```
+
+# The attribute SUPERUSER
+
+* ### A Superuser has absolute control over the entire database server, bypassing all security checks and permission restrictions. Because this is the highest level of authority, we must switch back to your original postgres superuser account to grant it.
+
+## Step 1 : Revert to the postgres Superuser
+
+```bash
+RESET ROLE;
+```
+## Step 2: Grant Superuser Attribute to purity
+
+```bash
+ALTER ROLE purity WITH SUPERUSER;
+```
+* ### Verify the new attribute added 
+
+```bash
+\du purity
+```
+
+## Step 3 : Switch back to purity and utilize the attribute 
+
+```bash
+SET ROLE purity;
+```
+## Step 4 : Access all the tables in the traccar database
+
+```bash
+\dt
+```
+## Step 5 : Select one table 
+
+```bash
+\dt tc_devices
+```
+## Step 6 : Read Data from tc_devices
+
+```bash
+SELECT id, name, uniqueid, category FROM tc_devices LIMIT 5;
+```
+## Step 7 : Insert a New Row into tc_devices
+
+```bash
+INSERT INTO tc_devices (id, name, uniqueid, category) VALUES (9999, 'TEST-BIKE', '9999999999', 'bicycle');
+```
+* ### Insert data in to the row 
+
+```bash
+INSERT INTO tc_devices (id, name, uniqueid, category) VALUES (9999, 'TEST-BIKE', '9999999999', 'bicycle');
+```
+* ### Verify the insertion 
+
+```bash
+SELECT id, name, uniqueid, category FROM tc_devices WHERE id = 9999;
+```
+## Step 8 : Delete the new row
+
+```bash
+DELETE FROM tc_devices WHERE id = 9999;
+```
+* ### Verify the deletion 
+
+```bash
+SELECT id, name, uniqueid, category FROM tc_devices WHERE id = 9999;
+```
+
+# To strip off all given attributes 
+
+## Step 1 : Switch Back to the postgres Superuser
+
+```bash
+RESET ROLE;
+```
+## Step 2 : Remove all attributes from purity 
+
+```bash
+ALTER ROLE purity NOSUPERUSER NOCREATEROLE NOCREATEDB;
+```
+## Step 3 : Verify the deletion 
+
+```bash
+\du purity
 ```
