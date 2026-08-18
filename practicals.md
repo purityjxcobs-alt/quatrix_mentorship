@@ -1,10 +1,17 @@
 # Practical Assessment #1 - Test Traccar
 
-* This is a hands-on practical assessment where you work on one of our test servers: test.traccar.quatrixglobal.com
+* ## This is a hands-on practical assessment where you work on one of our test servers: test.traccar.quatrixglobal.com
 
 # Basic Linux Administration
 
-### Step 1 : Set Up Mobile SSH Emergency Access
+## Access :
+
+### 1. ssh into the server to ensure you have access.
+
+### 2. Add an ssh key for your account that you will use to access the server using juice-ssh or a different mobile ssh client of your choice. This is just in case your IP is blocked by fail2ban, you can use your phone to log in and unban the IP
+
+
+### Question 1 : Set Up Mobile SSH Emergency Access
 
 * Downloaded Terminus on my mobile phone
 
@@ -16,6 +23,7 @@
 vi ~/.ssh/authorized_keys
 ```
 Then press ;
+
 1. Uppercase letter G to jump the cursore to the bottom line 
 
 2. Press the lowercase letter o on your keyboard. This creates a fresh new line 
@@ -23,13 +31,20 @@ Then press ;
 ```bash
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGQ9BJUp7l4vdy0T5v4RHA7XuRyNccdf78tjKLAco4zv pkinoti-iphone-termius
 ```
-4. Save and exit 
+Save and exit 
 
 1. ESC
+
 2. :wq
+
 3. enter
 
-### Step 5: Check System Versions Using cat
+
+## Question 2 ; Check the current version of:
+
+1. Linux
+
+2. Debian
 
 ```bash
 cat /etc/os-release
@@ -54,7 +69,7 @@ BUG_REPORT_URL="https://bugs.debian.org/"
 
 * The Debian Part: The user interface, package tools, and system setup are built by Debian.
 
-* so, your system version can be accurately summarized as Debian GNU/Linux 13 (Trixie).
+  so, your system version can be accurately summarized as Debian GNU/Linux 13 (Trixie).
 
 * The GNU is the body interior the tools , like cat , grep ,sed ,vi and the bash terminal itself however , they were missing the engine to make it all run
 
@@ -62,17 +77,89 @@ BUG_REPORT_URL="https://bugs.debian.org/"
 
 * When they combine they create a complete OS hence Debian GNU/LINUX
 
-### Step 6 : Fully Upgrade the Debian Packages
+## Question 3 ; Run updates on the system. Update Debian to version 13.0 (Trixie).
+
+### What is an update and an upgrade
+
+### 1. Update
+
+* Checks for newer software versions.
+
+* Does not change any installed programs.
+
+* Refreshes local package lists.
+
+### 2. Upgrade
+
+* Replaces old software with new versions.
+
+* Fixes bugs and security flaws.
+
+* Changes files on your hard drive.
+
+### Differences 
+
+
+| Feature | `update` | `upgrade` | `full-upgrade` / `dist-upgrade` |
+| :--- | :--- | :--- | :--- |
+| **Primary Purpose** | Refreshes the software catalog. | Installs newer versions of existing apps. | Upgrades apps and manages complex system changes. |
+| **What it Modifies** | Only updates the local database packages list. | Modifies existing software packages. | Modifies packages, installs new dependencies, removes old ones. |
+| **App Deletion** | Never deletes any applications. | Never deletes any applications. | May delete old apps if they conflict with new ones. |
+| **System Risk** | Zero risk (safe to run anytime). | Very low risk (safely updates current apps). | Low-to-medium risk (can remove packages to resolve conflicts). |
+| **Real-world Analogy** | Checking a restaurant menu for new items. | Ordering a newer, better version of your current meal. | Revamping the entire kitchen, replacing old tools with new ones. |
+| **Ubuntu/Debian Command** | `sudo apt update` | `sudo apt upgrade` | `sudo apt full-upgrade` |
+
+### Example ;
+
+1. Update: Your system checks the internet and learns that version 3.1 is now available. VLC remains at version 3.0.
+
+2. Upgrade: Your system downloads version 3.1 and overwrites version 3.0.
+
+3. Full-Upgrade: If version 3.1 requires a brand-new helper library to work—or if it needs to delete an old, conflicting file a full-upgrade handles those complex dependency changes. A standard upgrade might hold VLC back and refuse to install it.
+
+### Step 1 ; Running an update 
+
+```bash
+sudo apt update
+```
+Expected output ;
+
+```bash
+kinoti@gwekesa:~$ sudo apt update
+Get:1 http://security.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Hit:2 http://deb.debian.org/debian trixie InRelease                                                             
+Get:3 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]                                           
+Hit:4 https://packages.microsoft.com/repos/code stable InRelease                                                     
+Hit:5 https://dl.google.com/linux/chrome-stable/deb stable InRelease                
+Hit:6 https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/trixie pgadmin4 InRelease 
+Fetched 90.7 kB in 1s (92.7 kB/s)
+28 packages can be upgraded. Run 'apt list --upgradable' to see them.
+```
+* #### It means your system checked for updates and found 28 software programs that have newer versions available to download.No software has been changed or installed yet. The system is simply waiting for your permission to install them.
+
+### Step 2 : Running the update pn the software packages 
+
+```bash
+sudo apt upgrade -y
+```
+* Installs the available updates for your current software packages
+
+
+## Question 4 : Update Debian to version 13.0 (Trixie). Update the apt repositories and then fully upgrade the test.traccar Debian Linux.
+
+### Step 1 ; Fully update your current system
 
 ```bash
 sudo apt update && sudo apt full-upgrade -y
 ```
-### Step 7 : Update the hostname so that it reads test-traccar
+### Step 2 : Open and edit the repository source file to point to Trixie
 
 ```bash
-hostname
+
 ```
+
 # Step 8 : Fail2ban updating : 
+
 ### Step 8 a) . Check the nginx logs for potential intrusion attacks. Usually requests that end in 404 are potential attacks
 
 * We will use grep to search the live Nginx access log file for failed requests resulting in a 404 Not Found status error code.
