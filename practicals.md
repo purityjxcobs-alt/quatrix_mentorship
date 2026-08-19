@@ -8,6 +8,11 @@
 
 ### 1. ssh into the server to ensure you have access.
 
+
+```bash
+ssh pkinoti@test.traccar.quatrixglobal.com
+```
+
 ### 2. Add an ssh key for your account that you will use to access the server using juice-ssh or a different mobile ssh client of your choice. This is just in case your IP is blocked by fail2ban, you can use your phone to log in and unban the IP
 
 
@@ -53,31 +58,20 @@ Expected Output :
 
 
 ```bash
-PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
 NAME="Debian GNU/Linux"
-VERSION_ID="13"
-VERSION="13 (trixie)"
-VERSION_CODENAME=trixie
-DEBIAN_VERSION_FULL=13.6
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+VERSION_CODENAME=bookworm
 ID=debian
 HOME_URL="https://www.debian.org/"
 SUPPORT_URL="https://www.debian.org/support"
 BUG_REPORT_URL="https://bugs.debian.org/"
 ```
 
-* The Linux Part: The underlying engine (the kernel) running your system is Linux.
-
-* The Debian Part: The user interface, package tools, and system setup are built by Debian.
-
-  so, your system version can be accurately summarized as Debian GNU/Linux 13 (Trixie).
-
-* The GNU is the body interior the tools , like cat , grep ,sed ,vi and the bash terminal itself however , they were missing the engine to make it all run
-
-* Linux is the engine (kernel) , that talks directly to your computer hardware , memory and cpu 
-
-* When they combine they create a complete OS hence Debian GNU/LINUX
-
 ## Question 3 ; Run updates on the system. Update Debian to version 13.0 (Trixie).
+
+* #### From bookworm to trixie 
 
 ### What is an update and an upgrade
 
@@ -125,17 +119,29 @@ sudo apt update
 Expected output ;
 
 ```bash
-kinoti@gwekesa:~$ sudo apt update
-Get:1 http://security.debian.org/debian-security trixie-security InRelease [43.4 kB]
-Hit:2 http://deb.debian.org/debian trixie InRelease                                                             
-Get:3 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]                                           
-Hit:4 https://packages.microsoft.com/repos/code stable InRelease                                                     
-Hit:5 https://dl.google.com/linux/chrome-stable/deb stable InRelease                
-Hit:6 https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/trixie pgadmin4 InRelease 
-Fetched 90.7 kB in 1s (92.7 kB/s)
-28 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Hit:1 http://security.debian.org/debian-security bookworm-security InRelease
+Hit:2 http://deb.debian.org/debian bookworm InRelease                                                              
+Hit:3 http://deb.debian.org/debian bookworm-updates InRelease                                                      
+Hit:4 http://deb.debian.org/debian bookworm-backports InRelease                                                    
+Get:5 http://apt.postgresql.org/pub/repos/apt bookworm-pgdg InRelease [189 kB]                                     
+Hit:6 https://repos-droplet.digitalocean.com/apt/droplet-agent main InRelease                                      
+Get:7 http://apt.postgresql.org/pub/repos/apt bookworm-pgdg/main amd64 Packages [839 kB]
+Fetched 1028 kB in 2s (682 kB/s) 
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+6 packages can be upgraded. Run 'apt list --upgradable' to see them.
 ```
-* #### It means your system checked for updates and found 28 software programs that have newer versions available to download.No software has been changed or installed yet. The system is simply waiting for your permission to install them.
+
+Explain the output ;
+
+1. Hit:: Your system checked the standard Debian repositories and the DigitalOcean cloud provider tools. No new changes were found there since your last check.
+
+2. Get:: Your system actively pulled down a brand new list of available software from the official PostgreSQL database repository 
+
+3. 6 packages can be upgraded
+
+* ### The local software list is now fully up to date, and it has found 6 packages that have newer versions available.
 
 ### Step 2 : Running the update pn the software packages 
 
@@ -147,16 +153,83 @@ sudo apt upgrade -y
 
 ## Question 4 : Update Debian to version 13.0 (Trixie). Update the apt repositories and then fully upgrade the test.traccar Debian Linux.
 
-### Step 1 ; Fully update your current system
+### Step 1 : Stop the traccar 
+
+```bash
+sudo systemctl stop traccar
+```
+* Prevent data corruption during the upgrades
+
+
+### Step 2 : Fully update your current system
 
 ```bash
 sudo apt update && sudo apt full-upgrade -y
+sudo apt autoremove -y
 ```
-### Step 2 : Open and edit the repository source file to point to Trixie
+### Step 3 :Update Repositories to "Trixie"
+
+* #### Back up the current source list 
 
 ```bash
-
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
 ```
+
+### Step 2 : Switch the keywords from bookworm to trixie
+
+```bash
+sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
+```
+* #### Instead of manually editing lines, use this standard sed command to swap every instance of "bookworm" to "trixie"
+
+* #### Manually :
+
+```bash
+sudo nano /etc/apt/sources.list
+```
+### Step 3 : Refresh Package Database
+
+```bash
+sudo apt update
+```
+* #### pulls the new system catalogs
+
+### Step 4 : Perform the deep upgrade that handles complex version dependencies
+
+```bash
+sudo apt upgrade --without-new-pkgs -y
+```
+
+* This upgrades existing packages that don't require adding or deleting other software to resolve dependencies.
+
+
+```bash
+sudo apt full-upgrade -y
+```
+* Replacing the core system architecture, processing major database updates, and completely migrating you to Debian 13.
+
+### Step 5 :  Reboot the server to initialize the new system kernel
+
+```bash
+sudo reboot
+```
+### Step 6 : Verifying 
+
+```bash
+cat /etc/os-release
+```
+### Step 7 : Cleanup
+
+```bash
+sudo apt autoremove --purge -y
+sudo apt clean
+```
+### Step 8 : Restart the service 
+```bash
+sudo systemctl start traccar
+sudo systemctl status traccar
+```
+## Question 5 : Update the hostname so that it reads test-traccar
 
 # Step 8 : Fail2ban updating : 
 
