@@ -356,10 +356,17 @@ sudo systemctl status traccar
 
 3. #### Run the change command on that window:
 
+* #### Before changing verify the original static name 
+
+```bash
+hostnamectl
+```
+* #### Then change 
+
 ```bash
 sudo hostnamectl set-hostname test-traccar
 ```
-4. #### Update the /etc/hosts file on the server using the steps above.
+4. #### Update the /etc/hosts file on the server using the steps above
 
 ```bash
 sudo vi /etc/hosts
@@ -372,7 +379,7 @@ sudo vi /etc/hosts
 6. #### Change the test to test-traccar 
 
 ```bash
-127.0.0.1       localhost test
+127.0.0.1       localhost test-traccar
 ```
 7. #### Save and Exit 
 
@@ -387,6 +394,40 @@ sudo vi /etc/hosts
 ```bash
 hostnamectl
 ```
+### Expected Output 
+
+```bash
+Static hostname: test-traccar
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: 26f89979ac0f4b4da717c7b918c8476e
+         Boot ID: 7dd5fb4357df40419bedabd4f6a47bf8
+  Virtualization: kvm
+Operating System: Debian GNU/Linux 13 (trixie)    
+          Kernel: Linux 6.1.0-31-amd64
+    Architecture: x86-64
+ Hardware Vendor: DigitalOcean
+  Hardware Model: Droplet
+Firmware Version: 20171212
+```
+
+### Explain the Output 
+
+1. #### Static hostname: test-traccar — The permanent name of your server. Your update was successful.
+
+2. #### Icon name / Chassis: computer-vm / vm — Confirms this is a Virtual Machine, not a physical server.
+
+3. #### Machine ID / Boot ID: Unique tracking codes used by the system loggers to identify this specific system and this specific boot session.
+
+4. #### Virtualization: kvm — The specific hypervisor technology running your virtual server.
+
+5. #### Operating System: Debian GNU/Linux 13 (trixie) — You are running the newest version of the Debian Linux operating system.
+
+6. #### Kernel: Linux 6.1.0-31-amd64 — The core engine of the operating system managing the hardware.
+
+7. #### Architecture: x86-64 — The standard 64-bit CPU type required for most modern server applications.
+
+8. #### Hardware Vendor / Model: DigitalOcean / Droplet — Your cloud provider is DigitalOcean, and this server is one of their standard virtual private servers (Droplets).
 
 ### Explain some of the terms 
 
