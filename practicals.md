@@ -295,6 +295,10 @@ sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
 ```bash
 sudo nano /etc/apt/sources.list
 ```
+
+* #### /etc/apt/sources.list : A configuration file containing a list of external repository URLs (software sources).It tells the apt package manager exactly where to look for updates and new software downloads.You edit this file when you need to add official third-party software repositories or change mirror download speeds.
+
+
 ### Step 3 : Refresh Package Database
 
 ```bash
@@ -333,14 +337,64 @@ sudo apt autoremove --purge -y
 sudo apt clean
 ```
 ### Step 8 : Restart the service 
+
 ```bash
 sudo systemctl start traccar
 sudo systemctl status traccar
 ```
 ## Question 5 : Update the hostname so that it reads test-traccar
 
+#### * Local machine: pkinoti@gwekesa (User: pkinoti, Machine: gwekesa)
 
-# Step 8 : Fail2ban updating : 
+#### * Remote server: pkinoti@test (User: pkinoti, Machine: test)
+
+### Step 1 : How to apply the changes to the servers name 
+
+1. #### SSH into your server
+
+2. #### Ensure your terminal prompt says pkinoti@test
+
+3. #### Run the change command on that window:
+
+```bash
+sudo hostnamectl set-hostname test-traccar
+```
+4. #### Update the /etc/hosts file on the server using the steps above.
+
+```bash
+sudo vi /etc/hosts
+```
+5. #### Look for the line containg the old hostname test 
+
+```bash
+127.0.0.1       localhost test
+```
+6. #### Change the test to test-traccar 
+
+```bash
+127.0.0.1       localhost test
+```
+7. #### Save and Exit 
+
+* #### CTRL + O 
+
+* #### ENTER 
+
+* #### CRTL + X
+
+8. #### Verify the change 
+
+```bash
+hostnamectl
+```
+
+### Explain some of the terms 
+
+1. #### Hostnamectl : A built-in command-line tool used to control and change the Linux system hostname , t permanently updates the machine's name in the system kernel without requiring a full reboot.
+
+2. #### /etcIt acts like a private address book that your server checks before asking an external DNS server , It acts like a private address book that your server checks before asking an external DNS server.
+
+6. #### Step 8 : Fail2ban updating : 
 
 ### Step 8 a) . Check the nginx logs for potential intrusion attacks. Usually requests that end in 404 are potential attacks
 
