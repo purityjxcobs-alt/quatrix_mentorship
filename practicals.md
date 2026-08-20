@@ -435,7 +435,80 @@ Firmware Version: 20171212
 
 2. #### /etc/hosts : It acts like a private address book that your server checks before asking an external DNS server , It acts like a private address book that your server checks before asking an external DNS server.
 
-6. #### Step 8 : Fail2ban updating : 
+# Question 6 : Fail2ban updating 
+
+### Small notes on analysing web server logs .
+
+### Nginx Log Analysis & Intrusion Detection for Fail2ban
+
+Analyzing web server logs is one of the most effective ways to spot malicious activity, configure active defense tools like **Fail2ban**, and secure your server.
+
+---
+
+### Part 1: Web Server Error Codes & Attack Vectors
+
+When an attacker scans or exploits a web server, their automated tools generate specific HTTP status codes.
+
+### HTTP Error Status Codes
+
+| Status Code | Meaning | Security Significance |
+| :--- | :--- | :--- |
+| **404 Not Found** | The requested resource does not exist. | **High Attack Indicator:** Attackers run automated scanners (like DirBuster, Nikto, or Gobuster) looking for sensitive files, unlinked admin pages, or forgotten backup scripts. |
+| **403 Forbidden** | Server understood the request, but refuses to authorize it. | **Medium/High Indicator:** Occurs when attackers try accessing restricted files (e.g., `.env`, `.git/config`, `wp-config.php`), or when web application firewalls (WAFs) block malicious payloads. |
+| **401 Unauthorized** | Authentication is required and has failed or hasn't been provided. | **Brute-Force Indicator:** Generated during repeated, failed login attempts against protected directories, administrative panels, or APIs. |
+| **400 Bad Request** | The server cannot process the request due to client error. | **Exploit Attempt:** Often seen when an attacker sends malformed HTTP headers, oversized payloads, or raw exploit strings trying to trigger a buffer overflow or parser bug. |
+| **405 Method Not Allowed** | The request method (e.g., `TRACE`, `PUT`, `DELETE`) is disabled. | **Reconnaissance:** Attackers testing which HTTP verbs are enabled on the server to find alternative upload or inspection methods. |
+| **500 Internal Server Error**| The server encountered an unexpected condition. | **Successful Injection Signal:** Often caused by SQL Injection (SQLi), Command Injection, or Local File Inclusion (LFI) payloads that crash backend application code or database queries. |
+
+### Common Potential Attacks Hidden in Nginx Logs
+
+1.  **Directory Traversal & Path Discovery:**
+   * *What it looks like:* Requests containing `../` or targeting sensitive configurations like `GET /../../etc/passwd` or `GET /config.json`.
+   * #### *Log Signal:* High volume of **404** and **403** errors in rapid succession.
+
+2. **Automated Vulnerability Scanning (Bot Probing):**
+   * *What it looks like:* Requests searching for common CMS admin pages or database tools (`GET /wp-login.php`, `GET /phpmyadmin/`, `GET /v2/_catalog`).
+   * *Log Signal:* Bursts of **404** errors targeting unrelated paths within seconds.
+
+3. **Brute-Force Login Attacks:**
+   * *What it looks like:* Hitting an authentication endpoint hundreds of times with different credential combinations.
+   * *Log Signal:* Repeated **401** or **200** response codes to a single URL (like `/login` or `/xmlrpc.php`) originating from one or more IP addresses.
+
+4. **Web Application Exploitation (SQLi / XSS / LFI):**
+   * *What it looks like:* URIs containing script tags (`<script>`), SQL commands (`SELECT * FROM`), or system commands (`/bin/sh`).
+   * *Log Signal:* A mixture of **400**, **404**, and **500** response codes.
+
+---
+
+## Part 2: Commands, Syntax, and Symbols Explained
+
+To analyze Nginx log files on a Linux terminal, administrators combine standard command-line tools using **pipes** (`|`).
+
+### Core Linux Commands Used in Log Analysis
+
+* **`cat`** (*Concatenate*): Reads a file and prints its entire contents to the output stream.
+* **`zcat`** / **`zgrep`**: Versions of `cat` and `grep` capable of reading compressed log files (e.g., archived `.gz` logs like `access.log.2.gz`) without decompressing them to disk first.
+* **`grep`** (*Global Regular Expression Print*): Searches through lines of text for a specific matching string or pattern.
+* **`awk`**: A powerful text-processing language. It reads text line-by-line and splits each line into fields/columns separated by whitespace or custom delimiters.
+* **`sort`**: Alphabetically or numerically arranges lines of text output.
+* **`uniq`**: Filters out repeated adjacent lines. When combined with the `-c` flag, it counts how many times identical lines appear.
+* **`head`** / **`tail`**: Prints the first few lines (`head`) or last few lines (`tail`) of an output stream.
+
+### Essential Shell Symbols Explained
+
+* **`|` (Pipe):** Takes the standard output of the command on its left and feeds it as standard input into the command on its right. It lets you chain operations together.
+* **`"` or `'` (Quotes):** Groups strings or search terms together so the terminal treats spaces inside them as text, not separate arguments.
+* **`$` (Dollar Sign in `awk`):** Refers to specific column numbers in a line of text. For instance, `$1` means column 1, `$9` means column 9, and `$NF` means the very last column.
+* **`*` (Wildcard):** Represents zero or more characters in filenames or pattern matches (e.g., `access.log*` matches `access.log`, `access.log.1`, `access.log.2.gz`).
+
+---
+
+## Question 6b)  Check the nginx logs for potential intrusion attacks. Usually requests that end in 404 are potential attacks
+
+### Step 1: Count Total 404 Errors in the Main Access Log
+
+```bash
+grep ' 404 ' /var/log/nginx/access.log | wc -l
 
 ### Step 8 a) . Check the nginx logs for potential intrusion attacks. Usually requests that end in 404 are potential attacks
 
