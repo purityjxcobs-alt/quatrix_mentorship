@@ -1,6 +1,6 @@
 # Practical Assessment #1 - Test Traccar
 
-* ## This is a hands-on practical assessment where you work on one of our test servers: test.traccar.quatrixglobal.com
+* ### This is a hands-on practical assessment where you work on one of our test servers: test.traccar.quatrixglobal.com
 
 # Basic Linux Administration
 
@@ -16,7 +16,7 @@ ssh pkinoti@test.traccar.quatrixglobal.com
 ### 2. Add an ssh key for your account that you will use to access the server using juice-ssh or a different mobile ssh client of your choice. This is just in case your IP is blocked by fail2ban, you can use your phone to log in and unban the IP
 
 
-### Question 1 : Set Up Mobile SSH Emergency Access
+## Question 1 : Set Up Mobile SSH Emergency Access
 
 * ####  Downloaded Terminus on my mobile phone
 
@@ -179,7 +179,7 @@ BUG_REPORT_URL="https://bugs.debian.org/"
 
 ## Question 3 ; Run updates on the system. Update Debian to version 13.0 (Trixie).
 
-* #### From bookworm to trixie 
+* ### From bookworm to trixie 
 
 ### What is an update and an upgrade
 
