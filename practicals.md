@@ -433,7 +433,7 @@ Firmware Version: 20171212
 
 1. #### Hostnamectl : A built-in command-line tool used to control and change the Linux system hostname , t permanently updates the machine's name in the system kernel without requiring a full reboot.
 
-2. #### /etcIt acts like a private address book that your server checks before asking an external DNS server , It acts like a private address book that your server checks before asking an external DNS server.
+2. #### /etc/hosts : It acts like a private address book that your server checks before asking an external DNS server , It acts like a private address book that your server checks before asking an external DNS server.
 
 6. #### Step 8 : Fail2ban updating : 
 
