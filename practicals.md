@@ -583,6 +583,14 @@ To analyze Nginx log files on a Linux terminal, administrators combine standard 
 ```bash
 sudo tail -n 50 /var/log/nginx/access.log
 ```
+
+or ;
+
+
+```bash
+tail -n 100 /var/log/nginx/access.log | grep "404"
+```
+
 ### Expected output :
 
 ```bash
@@ -705,7 +713,28 @@ failregex = ^<HOST> - .* "(GET|POST|HEAD) .* HTTP\/.*" 404 .*
 ignoreregex =
 ```
 
-### Step 5 : Test the filter 
+#### or if you find other rules add your rule ;
+
+```bash
+[Definition]
+failregex = ^<HOST> .* "GET .*\.env.*$
+            ^<HOST> .* "POST .*\.env.*$
+            ^<HOST> .* "POST .*database.*$
+            ^<HOST> .* "POST .*yml.*$
+            ^<HOST> .* "POST .*ab2g.*$
+            ^<HOST> - .* "(GET|POST|HEAD) .* HTTP\/.*" 404 .*
+
+ignoreregex =
+
+```
+### Step 5 : Apply the chnage
+
+```bash
+sudo fail2ban-client reload nginx-brute
+```
+#### * Tells fail2ban to read and update the list
+
+### Step 6 : Test the filter 
 
 ```bash
 sudo fail2ban-regex /var/log/nginx/access.log /etc/fail2ban/filter.d/nginx-404.conf
@@ -753,29 +782,106 @@ Missed line(s): too many to print.  Use --print-all-missed to print all 325 line
 ```bash
 sudo nano /etc/fail2ban/jail.local
 ```
-2. ### Pate this jail config text
+#### * CTRL + W , to search for this lines
 
+#### A) sshd which should be active;
 
 ```bash
-[nginx-404]
-enabled  = true
-port     = http,https
-filter   = nginx-404
-logpath  = /var/log/nginx/access.log
-maxretry = 5
-findtime = 60
-bantime  = 3600
+[sshd]
+enabled = true
 ```
-### Step 7 : Activate the new config and verify 
+#### B) [nginx-brute]
 
-#### 1. Restart the Fail2ban 
+#### * Change the ngnix-brute to nginx-404
+```bash
+[nginx-404]
+enabled = true
+port = http,https
+filter = nginx-404
+logpath = /var/log/nginx/access.log
+maxretry = 20
+findtime = 60
+bantime = 3600
+```
+#### C) To add and ignore certain ips
+
+#### * In the [DEFAULT] page seacrch for ignoreip
+
+#### 1. Remove the # symbol at the very front of the word.
+
+#### 2 . at the very endo of this line ; ignoreip = 127.0.0.1/8 ::1 
+
+#### 3. Add the other ips this should be the output 
+
+```bash
+ignoreip = 127.0.0.1/8 ::1 197.232.10.45 197.232.20.89 197.232.30.12
+```
+#### * When a line starts with a hash, the computer skips over it entirely [Definition]. By deleting the #, you changed the line from an inactive comment into an active instruction that the server must execute.
+
+### Step 7 : Boot up the service 
 
 ```bash
 sudo systemctl restart fail2ban
 ```
-#### 2. Verify the jail is active
+
+### Step 8 : Vrify your system actively 
 
 ```bash
 sudo fail2ban-client status nginx-404
 ```
-s
+
+# OTHERS
+
+### Step 1 : To run a diagnostic test on the test editor
+
+```bash
+sudo fail2ban-client -d
+```
+
+### Step 2 : Show the Text Added to the Filter File
+
+```bash
+grep -vE '^\s*(#|$)' /etc/fail2ban/filter.d/nginx-404.conf
+```
+
+### Expected Output :
+
+```bash
+[Definition]
+failregex = ^<HOST> .* "GET .*\.env.*$
+            ^<HOST> .* "POST .*\.env.*$
+            ^<HOST> .* "POST .*database.*$
+            ^<HOST> .* "POST .*yml.*$
+            ^<HOST> .* "POST .*ab2g.*$
+            ^<HOST> - .* "(GET|POST|HEAD) .* HTTP\/.*" 404 .*
+
+```
+
+
+### Step 3 : Show the Text Added to the Jail Local File
+
+```bash
+grep -E '(ignoreip|^\[nginx-)' -A 7 /etc/fail2ban/jail.local
+```
+
+### Expected Output :
+
+``bash
+ignoreip = 127.0.0.1/8 ::1 197.232.10.45 197.232.20.89 197.232.30.12
+--
+[nginx-php]
+enabled  = true
+port     = http,https
+filter   = nginx-php
+logpath  = /var/log/nginx/access.log
+bantime = 96h
+maxretry = 1
+--
+[nginx-404]
+enabled  = true
+port     = http,https
+filter   = nginx-404  
+logpath  = /var/log/nginx/access.log
+bantime = 96h
+maxretry = 2
+```
