@@ -857,7 +857,6 @@ failregex = ^<HOST> .* "GET .*\.env.*$
 
 ```
 
-
 ### Step 3 : Show the Text Added to the Jail Local File
 
 ```bash
@@ -866,7 +865,7 @@ grep -E '(ignoreip|^\[nginx-)' -A 7 /etc/fail2ban/jail.local
 
 ### Expected Output :
 
-``bash
+```bash
 ignoreip = 127.0.0.1/8 ::1 197.232.10.45 197.232.20.89 197.232.30.12
 --
 [nginx-php]
@@ -884,4 +883,112 @@ filter   = nginx-404
 logpath  = /var/log/nginx/access.log
 bantime = 96h
 maxretry = 2
+```
+
+# Question 7 ; Create user accounts for your fellow interns - They should all be able to log in (only using ssh keys as the authentication mode) and verify sudo authorization. Format for usernames should be e.g. for Jane Doe, her username should be jdoe
+
+#### Use amumbi as you user
+
+
+### Step 1 : Create Ann's Account & Password
+
+```bash
+sudo adduser amumbi
+```
+
+### Step 2 : Grant Ann Sudo Permissions
+
+```bash
+sudo usermod -aG sudo amumbi
+```
+#### * usermod -aG sudo: Append Group. This adds her to the administrative group (sudo) without altering her access to normal everyday folders
+
+### Step 3 : Create the SSH Directory and Safely Label Her Keys
+
+```bash
+sudo mkdir -p /home/amumbi/.ssh
+sudo nano /home/amumbi/.ssh/authorized_keys
+```
+#### * What to paste in the authosized_keys file 
+
+```bash
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMuAQ50z4MzO2id8hOyTXM+tc3Pv0h7F3/0ILfzh1jeX amumbi@lwachira
+```
+
+#### * To view the added authorized_key 
+
+```bash
+cat /.ssh.authozrized_keys
+```
+### Step 4 : Lock Down Folder Permissions
+
+```bash
+sudo chown -R amumbi:amumbi /home/amumbi/.ssh
+sudo chmod 700 /home/amumbi/.ssh
+sudo chmod 600 /home/amumbi/.ssh/authorized_keys
+```
+
+#### 1. chown -R: Changes the ownership of the files from the root system Administrator directly over to Ann (amumbi:amumbi).
+
+#### 2. chmod 700: Restricts the .ssh folder so only Ann can open it.
+
+#### 3. chmod 600: Encrypts her key list file so no other regular users on the server can read it.
+
+### Step 5 : Enforce Key-Only Login globally
+
+#### * o ensure the server completely rejects password logins but still demands a password when running sudo, make sure your master config is configured correctly.
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+#### * Ensure this lone are active inside the file
+
+```bash
+PubkeyAuthentication yes
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+```
+#### * Make it live 
+
+```bash
+sudo systemctl restart ssh
+```
+
+
+### Step 6 : Testing anns access 
+
+#### * Open Ann's Key File
+
+```bash
+sudo nano /home/amumbi/.ssh/authorized_keys
+```
+
+### Step 7 : Paste Her Key
+
+```bash
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMuAQ50z4MzO2id8hOyTXM+tc3Pv0h7F3/0ILfzh1jeX amumbi@lwachira
+```
+
+#### * Ctrl + O 
+
+#### * Enter
+
+#### * Ctrl + X
+
+
+### Step 8 : Lock down her folder permissions
+
+```bash
+sudo chown -R amumbi:amumbi /home/amumbi/.ssh
+sudo chmod 700 /home/amumbi/.ssh
+sudo chmod 600 /home/amumbi/.ssh/authorized_keys
+```
+
+#### * chmod 600: Sets the file read/write access explicitly to the file owner only.
+
+
+### Step 9 : Loging in from her pc
+
+```bash
+ssh amumbi@your_server_ip
 ```
