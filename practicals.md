@@ -992,3 +992,403 @@ sudo chmod 600 /home/amumbi/.ssh/authorized_keys
 ```bash
 ssh amumbi@your_server_ip
 ```
+
+# Test Traccar - Upgrade & Configuration
+
+## Update test traccar to the version 6.9.1. Keenly read the release notes as sometimes Traccar changes major items when a new version comes through. The default URL points to the modern UI. However, we still provide the Legacy UI for stubborn users who have refused to switch over to the modern UI that is now the default and ONLY UI supported by Traccar developers.
+
+## * Prior to starting the process, make sure to:
+
+### 1. Study and the existing traccar nginx configurations to understand how the reverse proxy works. Note down different components of custom nginx configuration files specifically used for `Test Traccar Web Applications.
+
+## Step 1 : Listing the Nginx configuration file to see the custom config for test traccar
+
+
+```bash
+ls -la /etc/nginx/sites-available/ /etc/nginx/conf.d/
+```
+Explain the output :
+
+1. ls: Lists the contents of directories.
+
+2. -la: Shows file details (permissions, sizes) including hidden files.
+
+3. /etc/nginx/sites-available/ and /etc/nginx/conf.d/: Tells Linux where to look for Nginx config files.
+
+### * sites-available/: The storage library. This is where you write and keep all your site configuration files, whether they are active, turned off, or under testing. Nginx does not read or run files directly from here.
+
+#### * sites-enabled/: The active switch. This directory contains shortcuts (symlinks) pointing to files inside sites-available/. Nginx only runs and loads configurations linked inside this folder.
+
+#### * conf.d/: configuration directory
+
+Hence , in the /etc/nginx/sites-available/ file we have this output files ;
+
+```bash
+-rw-r--r-- 1 root root  972 Apr 21  2024 legacy.test.traccar.quatrixglobal.com.conf
+-rw-r--r-- 1 root root    0 Jun  9  2022 proxy.traccar.quatrixglobal.com.conf
+-rw-r--r-- 1 root root  922 Apr 21  2024 test.traccar.quatrixglobal.com.conf
+```
+
+## Step 2 : Check which of these files are actually enabled and active right now
+
+```bash
+ls -la /etc/nginx/sites-enabled/
+```
+
+Expected Output :
+
+```bash
+total 16
+drwxr-xr-x 2 root root 4096 Apr 21  2024 .
+drwxr-xr-x 8 root root 4096 Aug 19 06:47 ..
+lrwxrwxrwx 1 root root   34 Dec  9  2021 default -> /etc/nginx/sites-available/default
+lrwxrwxrwx 1 root root   69 Apr 21  2024 legacy.test.traccar.quatrixglobal.com.conf -> /etc/nginx/sites-available/legacy.test.traccar.quatrixglobal.com.conf
+lrwxrwxrwx 1 root root   63 Jun  9  2022 proxy.traccar.quatrixglobal.com.conf -> /etc/nginx/sites-available/proxy.traccar.quatrixglobal.com.conf
+lrwxrwxrwx 1 root root   57 Dec  8  2021 test.traccar.quatrixglobal.com -> /etc/nginx/sites-available/test.traccar.quatrixglobal.com
+
+```
+#### * All are active 
+
+#### * If they werent active this would have been the output :
+
+```bash
+lrwxrwxrwx 1 root root  34 Dec  9  2021 default -> /etc/nginx/sites-available/default
+```
+## Step 3 : Viewing the main traccar configuration files to see how the reverse proxy rules are written 
+
+```bash
+cat /etc/nginx/sites-available/test.traccar.quatrixglobal.com
+```
+
+### Expected Output 
+
+```bash
+server {
+	listen 80;
+        server_name test.traccar.quatrixglobal.com;
+	return 301 https://$host$request_uri;
+}
+
+
+server {
+	#listen 80;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+
+	server_name test.traccar.quatrixglobal.com;
+	# redirect all to https
+	#return 301 https://$host$request_uri;
+	ssl_certificate /etc/letsencrypt/live/test.traccar.quatrixglobal.com/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/test.traccar.quatrixglobal.com/privkey.pem;
+	include /etc/letsencrypt/options-ssl-nginx.conf;
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+
+	location / {
+		proxy_pass http://127.0.0.1:8082;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+		proxy_cookie_path / "/; secure; HttpOnly; SameSite=None";
+	}
+
+	location /api/socket {
+		proxy_pass http://localhost:8082/api/socket;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+		proxy_cookie_path / "/; secure; HttpOnly; SameSite=None";
+	}
+}
+
+```
+
+## Explain the output 
+
+### 1. The HTTP Front Door (Port 80)
+
+```bash
+server {
+	listen 80;
+        server_name test.traccar.quatrixglobal.com;
+	return 301 https://$host$request_uri;
+}
+```
+#### a listen 80;: The guard keeps an eye on standard HTTP requests.
+
+#### b server_name test.traccar.quatrixglobal.com;: The site the client has requested
+
+#### c return 301 https://$host$request_uri;: The guard says, "You came in through the unsecure door. Please go around to the VIP secure door (HTTPS/Port 443) instead." It redirects the guest immediately.the 301 is a rdirection status code
+
+### 2. The Secure Entrance & Directing Traffic (Port 443)
+
+```bash
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name test.traccar.quatrixglobal.com;
+```
+#### a listen 443 ssl http2;: The guard listens on the secure port (443) using SSL (Secure Socket Layer ) which is security technology that encrypts data sent between a website and a web browser. 
+
+#### * [::]:443 the [::], represents  is a shortcut used in IPv6 , 443 is the port 443 
+
+```bash
+ssl_certificate /etc/letsencrypt/live/test.traccar.quatrixglobal.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/test.traccar.quatrixglobal.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+```
+#### * Showing ID cards at the door,These lines point to your Let's Encrypt SSL certificates. They prove to the visitor's browser that your server really is test.traccar.quatrixglobal.com and encrypt all data in transit.
+
+### 3 Forwarding Standard Web Pages (location /)
+
+```bash
+location / {
+        proxy_pass http://127.0.0.1:8082;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_cookie_path / "/; secure; HttpOnly; SameSite=None";
+ }  
+```
+#### a . The guard handing notes back and forth between the visitor and Room 8082.
+
+#### b. location /: Matches any general web page request sent to the site.
+
+#### c. proxy_pass [http://127.0.0.1:8082](http://127.0.0.1:8082);: The key reverse proxy command. It tells Nginx: "Take this request and pass it to Traccar running internally on port 8082."
+
+#### d. proxy_set_header Upgrade & Connection "upgrade": Allows the connection to upgrade to faster real-time protocols if needed.
+
+#### e. proxy_cookie_path: Adds safety rules to session cookies so login info stays secure.
+
+### 4 Handling Real-Time Live Tracking (location /api/socket)
+
+```bash
+ location /api/socket {
+        proxy_pass http://localhost:8082/api/socket;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_cookie_path / "/; secure; HttpOnly; SameSite=None";
+    }
+```
+
+#### a. Opening a live channel 
+
+#### b. location /api/socket: Specifically targets WebSocket connections used for live GPS location updates.
+
+#### c. WebSockets keep an open live channel so vehicle positions update live on your map screen without needing to reload the web page.
+
+
+## Step 4 Check the Legacy Configuration
+
+### * see how Nginx currently routes traffic for the legacy interface.
+
+```bash
+cat /etc/nginx/sites-available/legacy.test.traccar.quatrixglobal.com.conf
+```
+
+### a. Static Files Served Directly (root /opt/traccar/legacy; & index release.html;)
+
+#### * Unlike the main config that proxy-passes everything (/) to port 8082, this legacy config serves the frontend HTML/JS files directly from the server disk folder /opt/traccar/legacy.
+
+#### * When users go to legacy.test.traccar.quatrixglobal.com, Nginx directly loads release.html from that directory.
+
+### b. API Proxying (location /api)
+
+#### * Since the static web page lives locally on disk, the legacy interface still needs to talk to the backend database to fetch device data. Nginx routes all /api requests back to the Traccar service running on [http://127.0.0.1:8082/api](http://127.0.0.1:8082/api).
+
+### c. WebSocket Proxying (location /api/socket)
+
+#### * Just like the modern UI, live tracking data streams straight from port 8082 via WebSockets.
+
+
+###  Expected Output 
+
+```bash
+server {
+	#listen 80;
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+
+	root /opt/traccar/legacy;
+	index release.html;
+
+	server_name legacy.test.traccar.quatrixglobal.com;
+
+	ssl_certificate /etc/letsencrypt/live/legacy.test.traccar.quatrixglobal.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/legacy.test.traccar.quatrixglobal.com/privkey.pem;
+        include /etc/letsencrypt/options-ssl-nginx.conf;
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+	location /api {
+		proxy_pass http://127.0.0.1:8082/api;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+		proxy_cookie_path / "/; secure; HttpOnly; SameSite=None";
+	}
+
+	location /api/socket {
+		proxy_pass http://localhost:8082/api/socket;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+		proxy_cookie_path / "/; secure; HttpOnly; SameSite=None";
+	}
+}
+
+```
+## Summary notes
+
+### 1. Main UI (test.traccar.quatrixglobal.com): Fully reverse-proxies all requests (/) to the internal Traccar server on 127.0.0.1:8082.
+
+### 2. Legacy UI (legacy.test.traccar.quatrixglobal.com.conf): Serves static web page files straight from the /opt/traccar/legacy folder on disk, and routes backend calls (/api) to 127.0.0.1:8082.
+
+### 3. Proxy placeholder (proxy.traccar.quatrixglobal.com.conf): Empty 0-byte file (inactive).
+
+#### NB forward slash / represents the root location of your website—meaning everything that comes after your domain name
+
+## Step 5 . Check the status of the server traccar before upgrading it 
+
+```bash
+systemctl status traccar
+```
+### Expected Output 
+
+#### * It was inactive
+
+
+```bash
+○ traccar.service - traccar
+     Loaded: loaded (/etc/systemd/system/traccar.service; enabled; preset: enabled)
+     Active: inactive (dead) since Wed 2026-08-19 09:32:29 UTC; 5 days ago
+   Duration: 16h 33min 56.723s
+   Main PID: 778 (code=exited, status=143)
+        CPU: 4min 1.643s
+
+Warning: some journal files were not opened due to insufficient permissions.
+```
+### b. Check the Installed Traccar Version & Directory Structure
+
+```bash
+ls -la /opt/traccar/
+```
+#### * Lists all files and directories inside /opt/traccar/ (the default installation directory for Traccar on Linux). Opt (Optional Software ) used to store add-on or third-party software packages that are not part of the core operating system
+
+#### * The /opt/traccar folder acts as the central hub containing all the files necessary to run your tracking server. Inside this directory, you will find
+
+   #### a . conf/: Contains the critical Traccar XML configuration file (traccar.xml) where you manage ports, database connections, and server attributes.
+
+   #### b . logs/: Stores system log files used to troubleshoot tracking devices and protocol identification.
+
+   #### c. data/: Holds internal data and the default H2 database (though external databases like PostgreSQL or MySQL are recommended for production).
+
+   #### d. tracker-server.jar: The executable Java archive file that actually drives the Traccar background service.
+   
+   #### e. legacy/: Holds the older web interface files (which your Nginx legacy config was pointing to)
+
+### Expected Output 
+
+```bash
+drwxr-xr-x 11 root root    4096 Feb 27  2025 .
+drwxr-xr-x  4 root root    4096 Feb 27  2025 ..
+drwxr-xr-x  2 root root    4096 Feb 27  2025 conf
+drwxr-xr-x  2 root root    4096 Feb 27  2025 data
+drwxr-xr-x  8 root root    4096 Feb 27  2025 jre
+drwxr-xr-x  6 root root    4096 Feb 27  2025 legacy
+drwxr-xr-x  2 root root   20480 Feb 27  2025 lib
+drwxr-xr-x  2 root root    4096 Aug 19 00:08 logs
+drwxr-xr-x  2 root root    4096 Feb 27  2025 schema
+drwxr-xr-x  5 root root    4096 Feb 27  2025 templates
+-rw-r--r--  1 root root 3792686 Feb 27  2025 tracker-server.jar
+drwxr-xr-x  3 root root    4096 Feb 27  2025 web
+
+```
+
+## Step 6 . Find the current version of traccar 
+
+```bash
+cat /etc/systemd/system/traccar.service
+```
+
+## Step 7 .  Create a Backup Directory and Copy Configurations
+
+```bash
+mkdir -p ~/traccar_backup && cp /opt/traccar/conf/traccar.xml ~/traccar_backup/
+```
+### Explaining the command 
+
+#### 1. mkdir -p ~/traccar_backup: Creates a directory named traccar_backup in your user home directory.
+
+#### 2. cp /opt/traccar/conf/traccar.xml ~/traccar_backup/: Copies traccar.xml safely into the backup folder.
+
+## Step 8 . To verify 
+
+
+```bash
+ls -la ~/traccar_backup/
+```
+#### * configuration file traccar.xml is safely backed up in ~/traccar_backup/.
+
+## Step 9 . Display the contents inside the traccar.xml
+
+
+```bash
+cat ~/traccar_backup/traccar.xml
+```
+
+### Explain the output
+
+#### Database Engine  PostgreSQL (running locally on port 5432).
+
+#### Database Name: traccar
+
+#### User: traccar
+
+#### History Retention: 90 days of data
+
+#### Custom Reverse Geocoder: Custom Nominatim server ([http://nominatim.quatrixglobal.com/reverse.php](http://nominatim.quatrixglobal.com/reverse.php)).
+
+## Step 10 . Back Up the PostgreSQL Database
+
+#### * Since we were using the psotgresql the database is inside the postgresql outside the /opt/traccar hence we are backing up thr database
+
+
+```bash
+PGPASSWORD='bebavitu' pg_dump -U traccar -h 127.0.0.1 traccar > ~/traccar_backup/traccar_db_backup.sql
+```
+
+## Step 11. Verify the database backup
+
+```bash
+ls -lh ~/traccar_backup/
+```
+
+## Step 12. Download and run the traccar 6.91 installer
+
+
+```bash
+cd ~ && wget https://github.com/traccar/traccar/releases/download/v6.9.1/traccar-other-6.9.1.zip
+```
+## Step 13. Unzip it 
+
+```bash
+unzip traccar-linux-64-6.9.1.zip
+```
+## Step 14 . Execute the installer:
+
+```bash
+sudo ./traccar.run
+```
+## Step 15 .Restore your saved configuration:
+
+```bash
+sudo cp ~/traccar_backup/traccar.xml /opt/traccar/conf/traccar.xml
+```
+## Step 16 . Start Traccar
+
+```bash
+sudo systemctl start traccar && systemctl status traccar
+```
