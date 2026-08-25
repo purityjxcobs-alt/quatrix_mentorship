@@ -1005,7 +1005,7 @@ ssh amumbi@your_server_ip
 
 
 ```bash
-ls -la /etc/nginx/sites-available/ /etc/nginx/conf.d/
+ls -la /etc/nginx/sites-available/ 
 ```
 Explain the output :
 
@@ -1013,7 +1013,7 @@ Explain the output :
 
 2. -la: Shows file details (permissions, sizes) including hidden files.
 
-3. /etc/nginx/sites-available/ and /etc/nginx/conf.d/: Tells Linux where to look for Nginx config files.
+3. /etc/nginx/sites-available/  Tells Linux where to look for Nginx config files.
 
 ### * sites-available/: The storage library. This is where you write and keep all your site configuration files, whether they are active, turned off, or under testing. Nginx does not read or run files directly from here.
 
