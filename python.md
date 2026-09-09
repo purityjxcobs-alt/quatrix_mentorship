@@ -92,3 +92,93 @@ pip install numpy
 ```
 
 #### * Numerical Python (numpy) - it is a tool that allows Python to handle massive amounts of numbers and math extremely fast.
+
+
+
+# W3SChools learning and practicing  - Python Module 
+
+## Python Syntax
+
+## A . Using test editor VS Code
+
+
+### Step 1 ; Opening th file in Nano 
+
+```bash
+nano python.py
+```
+### Step 2 : Write the code
+
+```bash
+print("learning Python")
+```
+### Step 3 : Save and Exit 
+
+### * Ctrl + o then enter to save 
+
+### * CTrl + X to exit the editor
+
+### Step 4 : Run the file
+
+```bash
+python3 python.py
+```
+## B . Using the terminal 
+
+```bash
+python3 -c 'print("learning python")'
+```
+#### * -c (command) flag to pass the Python code straight into the terminal as a single line string.
+
+## C . Using a Multi-line via cat 
+
+```bash
+python3 << 'EOF'
+python = "Programming Language and Scripting Language"
+print(f"learning python: {python}")
+EOF
+```
+
+### EXplain the command
+
+#### 1. python3 << 'EOF': This tells your computer, "Start up the Python 3 interpreter
+
+
+#### 2. python = "Programming Language and Scripting Language" - This creates a variable named python and stores the text string inside it 
+
+#### 3. print(f"learning python: {python}") - F string (formated string) , {python} actas as a placeholder , Python looks at the variable (python) created and takes its value (Programming Language and Scripting Language)
+
+#### 4 . EOF - End of the line , means i am done typing my code 
+
+## D . Using the Interactive python shell 
+
+### * Right in the virtual enironment 
+
+```bash
+(quatrix-mentorship) pkinoti@gwekesa:~/quatrix_mentorship$
+```
+
+### Step 1 : Type python to change your prompt to >>>
+
+```bash
+(quatrix-mentorship) pkinoti@gwekesa:~/quatrix_mentorship$ python3
+```
+### Step 2 : Type your code
+
+```bash
+print ("learning python")
+```
+### Step 3 : Type exit () Ctrl + D to quit and go back to the normal terminal 
+
+```bash
+exit()
+```
+### Expected code format :
+
+```bash
+(quatrix-mentorship) pkinoti@gwekesa:~/quatrix_mentorship$ python3
+>>> print("learning python")
+learning python
+>>> exit()
+(quatrix-mentorship) pkinoti@gwekesa:~/quatrix_mentorship$ 
+```
