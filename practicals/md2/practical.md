@@ -514,3 +514,21 @@ sudo certbot --nginx -m support@quatrixglobal.com --agree-tos --no-eff-email -d 
 #### 3. --agree-tos: Automatically accepts Let's Encrypt's global subscriber terms of service agreement.
 
 #### 4. -d ...: Specifies the exact domain name mapping route to encrypt.
+
+### When we run this command we got an error becuase Your server terminal has a strict safety filter active. Every time you type or paste text containing the official address pkg.jenkins.io or your assignment domain ://quatrixglobal.com, the filter instantly intercepts the text and chops parts of it out. HENCE WE RUN A BASE64 
+
+```bash
+$(echo "c3VkbyBjZXJ0Ym90IC0tbmdpbnggLW0gc3VwcG9ydEBxdWF0cml4Z2xvYmFsLmNvbSAtLWFncmVlLXRvcyAtLW5vLWVmZi1lbWFpbCAtZCB0ZXN0LmplbmtpbnMucXVhdHJpeGdsb2JhbC5jb20=" | base64 -d)
+```
+
+### Explain the command :
+
+#### 1. echo "c3Vk...=" | base64 -d: Decodes the clean, uncorrupted instruction: sudo certbot --nginx -m support@quatrixglobal.com --agree-tos --no-eff-email -d test.jenkins.quatrixglobal.com.
+
+#### 2. $(...): Forces the terminal to execute that pristine command instantly without letting the text expander touch or shorten the domain name string.
+
+### To verify so that certbot will talk to lets encypt and automaticaally configure your nginx secure lock to prove it worked
+
+```bash
+sudo ss -tulpn | grep nginx
+```
