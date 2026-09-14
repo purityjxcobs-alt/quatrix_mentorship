@@ -94,7 +94,7 @@ hostnamectl
 ```bash
 cat /etc/hosts
 ```
-!!!!!!
+# Question 3 : Creating a user (follow the steps in practical assessment one)
 
 # Networking & Security
 
@@ -296,3 +296,221 @@ sudo fail2ban-client status sshd
 sudo fail2ban-client get sshd ignoreip
 ```
 
+# CI/CD - Jenkins
+
+## Question 1 : Install Jenkins 
+
+#### * Jenkins is written in Java, so we must install the Java runtime environment first, then add the official Jenkins software repository to your Debian 13 (Trixie) system.
+
+### Step 1 : Install Java version 21  
+
+```bash
+sudo apt update && sudo apt install -y openjdk-21-jre-headless
+```
+### Explain the commands :
+
+#### 1. apt update: Refreshes your package index using your fixed Trixie repository lines.
+
+#### 2. apt install -y: Installs Java automatically without stopping to ask you for confirmation.
+
+#### 3. Openjdk - This is the open-source version of Java.
+
+#### 4 . 21 - this is the version number
+
+#### 5 . JRE VS JDK : JRE stands for Java Runtime Environment . it contains the only tools needed to run and existing java program like jenkins . JDK Or Development kit id for writing codes 
+
+#### 6 . Headless : this means it does not include graphical user interface compenents like windows , buttons pr desktop wallapapers because our linux server has no screen we dont need to waste space or meomery graphic 
+
+
+### * Check the version 
+
+```bash
+java -version
+```
+
+### Step 2 : Download and install the jenkins GPG key
+
+```bash
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://jenkins.io
+```
+### Explain command:
+
+#### 1. wget -O [path]: Downloads the official Jenkins encryption security key from their website and saves it directly to your shared system keyrings folder.
+
+### Step 3 : Add the official Jenkins Reposiory link 
+
+```bash
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://jenkins.io binary/" | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+```
+
+### Explain the command :
+
+#### 1. echo "...": Formats the exact repository configuration layout.
+
+#### 2. tee: Creates a dedicated standalone package mirror list file named /etc/apt/sources.list.d/jenkins.list.
+
+
+### Step 4 : Update the list and intasll jenkins 
+
+```bash
+sudo apt update && sudo apt install -y jenkins
+```
+## Veifications 
+
+### Step 1 : Verify the Reposiroty Address file 
+
+#### * We need to make sure the address book points to the official warehouse (pkg.jenkins.io) and not the homepage website.
+
+```bash
+cat /etc/apt/sources.list.d/jenkins.list
+```
+### Expected Output :
+
+```bash
+deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+
+```
+
+### Step 2 : Veify the security Key file 
+
+```bash
+file /usr/share/keyrings/jenkins-keyring.asc && wc -c /usr/share/keyrings/jenkins-keyring.asc
+```
+
+### Expected Output :
+
+```bash
+/usr/share/keyrings/jenkins-keyring.asc: PGP public key block Public-Key (old)
+1680 /usr/share/keyrings/jenkins-keyring.asc
+```
+### Explain the output:
+
+### /usr/share/keyrings/jenkins-keyring.asc: PGP public key block Public-Key (old)
+
+#### 1 . The file command looks inside the document to see its format structure. Seeing PGP public key block proves this is a real, uncorrupted security credential certificate (not a human web page or a broken file).
+
+### 1680 /usr/share/keyrings/jenkins-keyring.asc
+
+#### 1. The wc -c (word count -bytes) command measures the exact data size. 1680 means the file contains exactly 1,680 characters. This matches the official 2026 Jenkins cryptographic signature length perfectly.
+
+### Step 3 . Verifing the unaltered cryporaphic PGP signature file 
+
+```bash
+cat /usr/share/keyrings/jenkins-keyring.asc
+```
+
+# Question 2 . Configure nginx and certbot to use the domain name https://test.jenkins.quatrixglobal.com to access Jenkins installation (If an email address is requested during certificate creation, use support@quatrixglobal.com)
+
+### Step 1 : Install Nginx 
+
+```bash
+sudo apt-get install -y nginx
+```
+
+### Verify the status 
+
+```bash
+sudo systemctl status nginx
+```
+
+### Step 2 : Linking the Nginx server blocks to activate the mapping path for our server .
+
+#### Check nginx configuration file if it exists 
+
+```bash
+cat /etc/nginx/sites-available/test.jenkins.quatrixglobal.com
+```
+
+### If it does not  create one 
+
+
+```bash
+sudo nano /etc/nginx/sites-available/test.jenkins.quatrixglobal.com
+```
+
+### Write this inside the text editor
+
+```bash
+server {
+    listen 80;
+    server_name test.jenkins.quatrixglobal.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+```
+### Step 3 : Check if the the domain name maps poperly to an ip address
+
+```bash
+host test.jenkins.quatrixglobal.com || ping -c 1 test.jenkins.quatrixglobal.com
+```
+
+### Expected Output :
+
+```bash
+test.jenkins.quatrixglobal.com has address 165.232.162.109
+```
+
+### Step 4 : Link the Route and Run Pre-Flight Syntax Tests
+
+```bash
+sudo ln -s /etc/nginx/sites-available/://quatrixglobal.com /etc/nginx/sites-enabled/
+```
+### To verify : 
+
+```bash
+ls -l /etc/nginx/sites-enabled/
+```
+
+### Expected Output :
+
+```bash
+total 0
+lrwxrwxrwx 1 root root 34 Sep 14 09:19 default -> /etc/nginx/sites-available/default
+lrwxrwxrwx 1 root root 57 Sep 14 10:05 test.jenkins.quatrixglobal.com -> /etc/nginx/sites-available/test.jenkins.quatrixglobal.com
+```
+
+### To check the active folder :
+
+```bash
+sudo nginx -t
+```
+
+### Step 5 : Install the Certbot
+
+```bash
+sudo apt-get install -y certbot python3-certbot-nginx
+```
+### Explain the command :
+
+#### 1. certbot: The core application that handles requesting and renewing security certificates from Let's Encrypt
+
+#### 2. python3-certbot-nginx: The plugin that allows Certbot to read your Nginx configurations and insert the encryption keys automatically.
+
+### Step 6 : Verify the version 
+
+```bash
+certbot --version
+```
+
+### Step 7 : Run Certbot to encrpy the connection with out lets encrypt SSL certifacate 
+
+```bash
+sudo certbot --nginx -m support@quatrixglobal.com --agree-tos --no-eff-email -d ://quatrixglobal.com
+```
+
+### Explain the command :
+
+#### 1. --nginx: Tells Certbot to automatically find your Nginx server block and upgrade it from insecure HTTP to secure HTTPS (port 443).
+
+#### 2. -m support@quatrixglobal.com: Registers your tech support team address to receive urgent security updates or expiration reminders.
+
+#### 3. --agree-tos: Automatically accepts Let's Encrypt's global subscriber terms of service agreement.
+
+#### 4. -d ...: Specifies the exact domain name mapping route to encrypt.
