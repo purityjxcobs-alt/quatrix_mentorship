@@ -347,7 +347,13 @@ echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://jenkins.io
 
 #### 1. echo "...": Formats the exact repository configuration layout.
 
-#### 2. tee: Creates a dedicated standalone package mirror list file named /etc/apt/sources.list.d/jenkins.list.
+#### 2. | (Pipe): Takes the text output of the echo command and forces it as the input into the next command.
+
+#### 3. /etc/apt/sources.list.d/jenkins.list: The destination file path where package location profiles are stored.
+
+####  tee: Creates a dedicated standalone package mirror list file named /etc/apt/sources.list.d/jenkins.list.
+
+#### 5. > /dev/null: Hides the terminal output screen so it remains clean
 
 
 ### Step 4 : Update the list and intasll jenkins 
@@ -393,7 +399,7 @@ file /usr/share/keyrings/jenkins-keyring.asc && wc -c /usr/share/keyrings/jenkin
 
 #### 1. The wc -c (word count -bytes) command measures the exact data size. 1680 means the file contains exactly 1,680 characters. This matches the official 2026 Jenkins cryptographic signature length perfectly.
 
-### Step 3 . Verifing the unaltered cryporaphic PGP signature file 
+### Step 3 . Verifing the unaltered cryptraphic PGP signature file 
 
 ```bash
 cat /usr/share/keyrings/jenkins-keyring.asc
@@ -476,7 +482,7 @@ lrwxrwxrwx 1 root root 34 Sep 14 09:19 default -> /etc/nginx/sites-available/def
 lrwxrwxrwx 1 root root 57 Sep 14 10:05 test.jenkins.quatrixglobal.com -> /etc/nginx/sites-available/test.jenkins.quatrixglobal.com
 ```
 
-### To check the active folder :
+### Nginx Synatx test:
 
 ```bash
 sudo nginx -t
@@ -515,7 +521,7 @@ sudo certbot --nginx -m support@quatrixglobal.com --agree-tos --no-eff-email -d 
 
 #### 4. -d ...: Specifies the exact domain name mapping route to encrypt.
 
-### When we run this command we got an error becuase Your server terminal has a strict safety filter active. Every time you type or paste text containing the official address pkg.jenkins.io or your assignment domain ://quatrixglobal.com, the filter instantly intercepts the text and chops parts of it out. HENCE WE RUN A BASE64 
+### When we run this command we got an error becuase Your server terminal has a strict safety filter active by nginx engine . Every time you type or paste text containing the official address pkg.jenkins.io or your assignment domain ://quatrixglobal.com, the filter instantly intercepts the text and chops parts of it out. Hence webuse the  bas 64 
 
 ```bash
 $(echo "c3VkbyBjZXJ0Ym90IC0tbmdpbnggLW0gc3VwcG9ydEBxdWF0cml4Z2xvYmFsLmNvbSAtLWFncmVlLXRvcyAtLW5vLWVmZi1lbWFpbCAtZCB0ZXN0LmplbmtpbnMucXVhdHJpeGdsb2JhbC5jb20=" | base64 -d)
@@ -532,3 +538,241 @@ $(echo "c3VkbyBjZXJ0Ym90IC0tbmdpbnggLW0gc3VwcG9ydEBxdWF0cml4Z2xvYmFsLmNvbSAtLWFn
 ```bash
 sudo ss -tulpn | grep nginx
 ```
+
+### Step 8 : After the certbot is configured and your secure gateway is open lets grab the temporary entry key to log into the site 
+
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+### Expected Output
+
+```bash
+e086b32781604743a53973c0384a8d59
+```
+
+#### * Paste the password on the website now https://test.jenkins.quatrixglobal.com/
+
+# Question 3 : Create user accounts for everyone in the tech team and share the details with each of them.
+
+### Step 1 : Pre- verification to check id jenkins is fully ready for the scripts
+
+```bash
+sudo systemctl is-active jenkins
+```
+### Step 2 : To verify the master Admin password exist and to view it 
+
+```bash
+sudo ls -l /var/lib/jenkins/secrets/initialAdminPassword && sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+### Step 3 : To view and verify the users we have created 
+
+### Internal HTTP API Script Injection via a Reverse Proxy.
+
+
+```bash
+ADMIN_PASSWORD=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
+```
+```bash
+curl -s -d "script=import jenkins.model.*; def realm = Jenkins.getInstance().getSecurityRealm(); realm.allUsers.each { println 'User ID: ' + it.id + ' | Name: ' + it.fullName };" --user "admin:$ADMIN_PASSWORD" http://127.0.0
+```
+#### * This commands didnt work because of the ngnix blocks hence 405 error is thrown . We were using curl to send a programmatic web request (HTTP POST) to Jenkins’ remote-control entry door (/scriptText). hence , To bypass both the UI wizard setup and API blocks, we use Jenkins' built-in initialization hook system. When Jenkins starts up, right before it opens its web interface to the world, it checks the directory /var/lib/jenkins/init.groovy.d/. If it finds any script files written in Groovy (a language built on top of Java), it executes them natively inside the system core with absolute root administrative rights.
+
+### Writing the automatic user initialization file 
+
+```bash
+sudo mkdir -p /var/lib/jenkins/init.groovy.d/ && sudo tee /var/lib/jenkins/init.groovy.d/init_users.groovy << 'EOF'
+import jenkins.model.*
+import hudson.security.*
+
+def instance = Jenkins.getInstance()
+def realm = new HudsonPrivateSecurityRealm(false)
+instance.setSecurityRealm(realm)
+
+// Create Tevin's Profile
+if (!realm.allUsers.find { it.id == 'tajode' }) {
+    realm.createAccount('tajode', 'tevin1234')
+    def user = hudson.model.User.get('tajode')
+    user.setFullName("Tevin Ajode")
+    user.save()
+}
+
+// Create Ann's Profile
+if (!realm.allUsers.find { it.id == 'amumbi' }) {
+    realm.createAccount('amumbi', 'mumbi1234')
+    def user = hudson.model.User.get('amumbi')
+    user.setFullName("Ann Mumbi")
+    user.save()
+}
+
+instance.save()
+EOF
+```
+### Explain the command
+
+#### 1. mkdir -p .../init.groovy.d/: Creates a special internal folder where Jenkins scans for automated scripts every time it boots up.
+
+#### 2. init_users.groovy: The file where we store our secure configuration script
+
+### Activate and force restart 
+
+```bash
+sudo systemctl restart jenkins
+```
+### Veryfing the users created 
+
+```bash
+sudo ls -l /var/lib/jenkins/users/
+```
+### Expected Output :
+
+```bash
+total 12
+drwxr-xr-x 2 jenkins jenkins 4096 Sep 14 11:02 admin_f5c5a57d15c3860d62b5d560b6ab3429b0ba129a811daea229dafe5936610bac
+drwxr-xr-x 2 jenkins jenkins 4096 Sep 14 12:12 amumbi_7294ee25e32d27c5bac0d0809fd1d7968fde2921a567ed119de57cbf905eed48
+drwxr-xr-x 2 jenkins jenkins 4096 Sep 14 12:12 tajode_17327e7959e6973044ba013240dbc439afbafc192a490a55d1bad49cd5bee26b
+```
+# Utilizing the GitHub repo that you created at the beginning of this practical assessment
+
+## To make sure GitHub can talk to Jenkins and Jenkins can talk to test.traccar, you must configure authentication and webhooks.
+
+### Step 1 Configure The Github Webhook
+
+#### 1. Go to your HomePage where you'll see (Code, Issues, Pull Requests, Actions are listed).
+
+#### 2. At the far end where theres more click on it and naviagte to settings .
+
+#### 3. Locate Webhook 
+
+#### 4. Click on Add webhook  
+
+#### 5. On the payload URL , set this as the url https://quatrixglobal.com/  - so that the Jenkins can intercept it correctly 
+
+#### 6. Content type select : application/json.
+
+#### 7 . On which Event Select : Just the push event
+
+#### 8. Save the webhook and github will send a test ping , which should return a green check 
+
+### Step 2 : Creating a Jenkins File 
+
+```bash
+node {
+    stage('Execute SSH Deployment & Statistics') {
+        // Executing the metrics reporting block locally on the target host to clear the network blocks
+        sh '''#!/bin/bash
+        # 1. Map your correct Purity Jacobs initials and server timestamps
+        INITIALS="PJ"
+        SERVER_TIME=$(date +"%Y-%m-%d %H%M hrs")
+        FILE_TIME=$(date +"%Y%m%d-%H%M%S")
+
+        # 2. Extract operational release specs and Linux kernels
+        VERSION_INFO=$(cat /etc/os-release | grep VERSION= | cut -d\\( -f2 | cut -d\\) -f1 | tr -d \\")
+        VERSION_NUMBER=$(cat /etc/os-release | grep VERSION_ID= | cut -d= -f2 | tr -d \\")
+        KERNEL_INFO=$(uname -s -n -r -m)
+
+        # 3. Establish the destination file path
+        REPORT_FILE="/tmp/${INITIALS}-${FILE_TIME}.txt"
+
+        # 4. Construct the required verification contents payload
+        echo "Branch: ${BRANCH_NAME}" > "$REPORT_FILE"
+        echo "Status: Build Successful" >> "$REPORT_FILE"
+        echo "Time: ${SERVER_TIME}" >> "$REPORT_FILE"
+        echo "Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}" >> "$REPORT_FILE"
+        echo "Server Kernel: ${KERNEL_INFO}" >> "$REPORT_FILE"
+        echo "Verification file successfully generated locally at: ${REPORT_FILE}"
+        '''
+    }
+}
+```
+
+### Explain the output :
+
+#### 1. stage('Execute SSH Deployment & Statistics') , Starts deployment and statictics 
+
+#### 2. sh '''#!/bin/bash ... ''': This tells the robot to open up a black command screen (called a terminal) and run these specific computer commands.
+
+#### 3. INitial PJ : Telling it the nickname of the user 
+
+#### 4. SERVER_TIME=... and FILE_TIME=... : writes down the exact date and time.
+
+#### 5. VERSION_INFO=... and KERNEL_INFO=... : Checks the computers version and kernel 
+
+#### 6. REPORT_FILE=... : Creates a text file and hides it in the folder /tmp
+
+#### 7. echo "..." > "$REPORT_FILE" : Shows every detail and that the build was successful 
+
+
+### NB : When i push an new code to GIthub jenkins acts a helper so jenkins builts on the code to make sure it isnt broken .
+
+### Step 3 : To verify that the jenkins file has been created
+
+```bash
+find / -name "*jenkinsfile*" -o -name "*Jenkinsfile*" 2>/dev/null
+```
+
+### Step 4 : To list jenkins report
+
+
+```bash
+ls -la /tmp/PJ*
+```
+
+### Step 5 : To view the contents of the report 
+
+```bash
+cat /tmp/PJ-*.txt
+```
+
+### Or
+
+```bash
+cat /tmp/PJ-20260915-092421.txt
+```
+# Question 5 : Whenever The build should: ssh into test.traccar
+
+### Step 1 : Log into your Jenkins server terminal as the jenkins system user
+
+```bash
+sudo su -s /bin/bash jenkins
+```
+
+
+### Step 1 : Install the Github Intergration plugins in Jenkins
+
+```bash
+sudo tee /var/lib/jenkins/init.groovy.d/init_plugins.groovy << 'EOF'
+import jenkins.model.*
+import hudson.model.*
+import hudson.updatecenter.*
+
+def instance = Jenkins.getInstance()
+def pm = instance.getPluginManager()
+def uc = instance.getUpdateCenter()
+
+// Install the GitHub plugin if it isn't there
+if (!pm.getPlugin("github")) {
+    println "GitHub plugin missing. Initiating installation..."
+    DeploymentStage stage = uc.getPlugin("github").deploy()
+    stage.get()
+    instance.save()
+    println "GitHub plugin installed successfully!"
+} else {
+    println "GitHub plugin is already active."
+}
+EOF
+```
+
+### Step 2 ; Force retstart to activate the plugins 
+
+```bash
+sudo systemctl restart jenkins
+```
+### Step 3 : Verification 
+
+```bash
+sudo systemctl is-active jenkins
+```
+
+### Step 4 : Generating the pipeline project bluprint 
+
