@@ -1,28 +1,55 @@
-node {
-    stage('Execute SSH Deployment & Statistics') {
-        // Executing the metrics reporting block locally on the target host to clear the network blocks
-        sh '''#!/bin/bash
-        # 1. Map your correct Purity Jacobs initials and server timestamps
-        INITIALS="PJ"
-        SERVER_TIME=$(date +"%Y-%m-%d %H%M hrs")
-        FILE_TIME=$(date +"%Y%m%d-%H%M%S")
+pipeline {
+    agent any
 
-        # 2. Extract operational release specs and Linux kernels
-        VERSION_INFO=$(cat /etc/os-release | grep VERSION= | cut -d\\( -f2 | cut -d\\) -f1 | tr -d \\")
-        VERSION_NUMBER=$(cat /etc/os-release | grep VERSION_ID= | cut -d= -f2 | tr -d \\")
-        KERNEL_INFO=$(uname -s -n -r -m)
+    environment {
+        // Change these initials to your own name initials
+        INITIALS = "KK" 
+        SSH_CRED_ID = "traccar-ssh-key"
+        // Update this to the actual domain or IP of your test.traccar server
+        TARGET_SERVER = "test.traccar" 
+    }
 
-        # 3. Establish the destination file path
-        REPORT_FILE="/tmp/${INITIALS}-${FILE_TIME}.txt"
+    stages {
+        define_env {
+            stage('Checkout') {
+                steps {
+                    checkout scm
+                }
+            }
+        }
+    }
 
-        # 4. Construct the required verification contents payload
-        echo "Branch: ${BRANCH_NAME}" > "$REPORT_FILE"
-        echo "Status: Build Successful" >> "$REPORT_FILE"
-        echo "Time: ${SERVER_TIME}" >> "$REPORT_FILE"
-        echo "Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}" >> "$REPORT_FILE"
-        echo "Server Kernel: ${KERNEL_INFO}" >> "$REPORT_FILE"
-        echo "Verification file successfully generated locally at: ${REPORT_FILE}"
-        '''
+    post {
+        always {
+            // This block executes regardless of build success or failure
+            sshagent(credentials: [env.SSH_CRED_ID]) {
+                script {
+                    // Determine status text based on current build result
+                    def buildStatus = currentBuild.currentResult == 'SUCCESS' ? 'Build Passed' : 'Build Failed'
+                    
+                    // Construct the SSH commands to extract target server info and write the file
+                    def remoteCommand = """
+                        # Get remote server date-time
+                        TIMESTAMP=\$(date +'%Y-%m-%d-%H%M%S')
+                        FILE_TIME=\$(date +'%Y-%m-%d %H%M hrs')
+                        FILENAME="/tmp/${env.INITIALS}-\${TIMESTAMP}.txt"
+                        
+                        # Fetch Debian system information
+                        SERVER_VER=\$(cat /etc/os-release | grep -E '^PRETTY_NAME=' | sed 's/PRETTY_NAME=//' | tr -d '"')
+                        SERVER_KERNEL=\$(uname -snr)
+                        
+                        # Generate file content
+                        echo "Branch: ${env.BRANCH_NAME}" > \$FILENAME
+                        echo "Status: ${buildStatus}" >> \$FILENAME
+                        echo "Time: \${FILE_TIME}" >> \$FILENAME
+                        echo "Server Version: \${SERVER_VER}" >> \$FILENAME
+                        echo "Server Kernel: \${SERVER_KERNEL}" >> \$FILENAME
+                    """
+                    
+                    // Execute commands safely over SSH disable strict host checking for automation convenience
+                    sh "ssh -o StrictHostKeyChecking=no ${env.SSH_CRED_ID} @${env.TARGET_SERVER} \"${remoteCommand}\""
+                }
+            }
+        }
     }
 }
-
