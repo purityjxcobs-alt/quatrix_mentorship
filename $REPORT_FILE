@@ -1,0 +1,16 @@
+Status: Build Failed
+Time: ${SERVER_TIME}
+Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}
+Server Kernel: ${KERNEL_INFO}
+Status: Build Failed
+Time: ${SERVER_TIME}
+Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}
+Server Kernel: ${KERNEL_INFO}
+Status: Build Failed
+Time: ${SERVER_TIME}
+Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}
+Server Kernel: ${KERNEL_INFO}
+Status: Build Failed
+Time: ${SERVER_TIME}
+Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}
+Server Kernel: ${KERNEL_INFO}

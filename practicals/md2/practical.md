@@ -774,5 +774,228 @@ sudo systemctl restart jenkins
 sudo systemctl is-active jenkins
 ```
 
-### Step 4 : Generating the pipeline project bluprint 
+# Declaratve pipeline foundation 
 
+### * the pipeline block defines all the work done throughout your entire Pipeline.
+
+## Format it uses :
+
+```bash
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                //
+            }
+        }
+        stage('Test') {
+            steps {
+                //
+            }
+        }
+        stage('Deploy') {
+            steps {
+                //
+            }
+        }
+    }
+}
+```
+
+### Explain the steps
+
+#### 1. Execute this Pipeline or any of its stages, on any available agent.
+
+#### 2. Defines the "Build" stage.
+
+#### 3. Perform some steps related to the "Build" stage.
+
+#### 4. Defines the "Test" stage.
+
+#### 5. Perform some steps related to the "Test" stage.
+
+#### 6. Defines the "Deploy" stage
+
+#### 7. Perform some steps related to the "Deploy" stage.
+
+
+# Practical example of the Declarative Pipeline
+
+```bash
+pipeline {
+    agent any 
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Preparing the Python script...'
+                // Creating a simple script directly in the pipeline for this example
+                sh "echo 'print(\"Hello, World!\")' > app.py"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing the script to make sure it works...'
+                // Running the script to see if it executes without errors
+                sh 'python3 app.py'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the script...'
+                echo 'Your simple application is now successfully deployed!'
+            }
+        }
+    }
+}
+
+```
+
+### Explain the output
+
+### Pipline {
+
+#### * This is the opening statement. It tells Jenkins, "Everything inside these outer brackets is part of a Declarative Pipeline script."
+
+### agent any
+
+#### * This tells Jenkins to find any available computer or server (called an agent) linked to your Jenkins system to execute the commands. It means you don't care which machine does the work, as long as one of them starts running it.
+
+### stages {
+
+#### * This acts as a container or folder. It tells Jenkins that a sequence of individual phases (stages) is about to begin.
+
+
+## Phase 1 : The Build Stage 
+
+### 1. stage('Build') {
+
+#### * This creates a visible section in the Jenkins dashboard named "Build". It helps you visually track where the pipeline is currently working.
+
+### 2. steps {
+
+#### * Every stage must have a steps block. It tells Jenkins, "Here is the exact list of actions to perform for this specific stage."
+
+### 3. echo 'Preparing the Python script...'
+
+#### * This is a basic print command. It prints the text inside the quotes to the Jenkins console log so anyone watching can see what the pipeline is doing.
+
+### 4. sh "echo 'print(\"Hello, World!\")' > app.py"
+
+#### * The sh command opens the computer's terminal (Shell). It runs a command that automatically creates a brand-new file named app.py and writes a tiny line of Python code (print("Hello, World!")) inside it.
+
+### 5 . } (Closing steps) and } (Closing Build stage
+
+#### *  These two brackets close out the actions and wrap up the entire Build phase.
+
+## Phase 2 : The Test Stage 
+
+### 1.stage('Test') {
+
+#### * This starts the second visual block on your Jenkins dashboard named "Test".
+
+### 2. steps {
+
+#### * Once again, this opens up the list of actions for this specific phase.
+
+### 3. echo 'Testing the script to make sure it works...'
+
+#### * It prints another progress message to the console log.
+
+### 4. sh 'python3 app.py'
+
+#### It opens the terminal again and actually runs the script we just made by typing python3 app.py. Jenkins watches closely here: if the script runs perfectly and prints "Hello, World!", Jenkins marks the test as a success. If the script had a typo and crashed, Jenkins would stop the whole pipeline right here.
+
+### 5. } and }
+
+#### * These brackets officially close the Test phase.
+    
+
+## Phase 3 : The Deploy Stage
+
+### 1. stage('Deploy') {
+
+#### * This starts the final visual block on the dashboard named "Deploy".
+
+### 2. steps {
+
+#### * It opens the action list for the final phase.
+
+### 3. echo 'Deploying the script...'
+
+#### * It prints a log message indicating that deployment is starting.
+
+### 4. echo 'Your simple application is now successfully deployed!'
+
+### * In a complex app, this is where you would move files to a real server. For this simple example, it uses an echo statement to simulate a successful deployment and print a confirmation message.
+
+### 5. } and }
+
+#### *  These close the Deploy phase.
+
+## Closing the Pipeline
+
+### 1. } (Closing stages)
+
+### 2. } (Closing pipeline)
+
+# Scripted Pipepline 
+
+## It uses Nodes 
+
+### Format it follows :
+
+```bash
+node {
+    stage('Build') {
+        //
+    }
+    stage('Test') {
+        //
+    }
+    stage('Deploy') {
+        //
+    }
+}
+```
+
+# Practical example on a Scripted Pipeline 
+
+```bash
+node {
+    stage('Build') {
+        echo 'Preparing the Python script...'
+        sh "echo 'print(\"Hello, World!\")' > app.py"
+    }
+    
+    stage('Test') {
+        echo 'Testing the script to make sure it works...'
+        sh 'python3 app.py'
+    }
+    
+    stage('Deploy') {
+        echo 'Deploying the script...'
+        echo 'Your simple application is now successfully deployed!'
+    }
+}
+
+```
+
+# Diffrences between the  two ways a pipline can be written 
+
+| Feature | Declarative (`pipeline`) | Scripted (`node`) |
+| :--- | :--- | :--- |
+| **Structure** | Strict, structured, and easy to read. | Flexible, free-form, like writing code. |
+| **Learning Curve** | **Easy**. Great for beginners. | **Advanced**. Requires knowing Groovy programming. |
+| **Error Handling** | Built-in using simple blocks like `post {}`. | Manual using standard coding `try-catch` blocks. |
+| **Control** | Standardized logic (pre-defined rules). | Infinite control (you can write complex algorithms). |
+
+
+# HOw a Pipline is Created 
+
+### 1. Through the Classic UI 
+
+### 2. In SCM : Where we use git projects repository 
