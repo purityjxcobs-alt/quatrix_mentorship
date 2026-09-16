@@ -1028,8 +1028,35 @@ node {
 | **Control** | Standardized logic (pre-defined rules). | Infinite control (you can write complex algorithms). |
 
 
-# HOw a Pipline is Created 
+# How a Pipline is Created 
 
-### 1. Through the Classic UI 
+## 1. Through the Classic UI 
+
+#### * A Jenkinsfile created using the classic UI is stored by Jenkins itself (within the Jenkins home directory).
+
+### Step to follow 
+
+#### 1. On home page click New Item 
+
+#### 2. Choose Pipeline in the options
+
+#### 3. Click the Pipeline tab in the side panel of the page to scroll down to the Pipeline section.
+
+#### 4. In the Pipeline section, ensure that the Definition field indicates the Pipeline script option.
+
+## Using a Practical Example code for Classic-UI
+
+```bash
+pipeline {
+    agent any
+    stages {
+        stage('Stage 1') {
+            steps {
+                echo 'Hello world!'
+            }
+        }
+    }
+}
+``` 
 
 ### 2. In SCM : Where we use git projects repository 
