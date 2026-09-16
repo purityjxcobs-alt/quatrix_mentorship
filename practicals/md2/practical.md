@@ -688,22 +688,56 @@ node {
 
 ### Explain the output :
 
-#### 1. stage('Execute SSH Deployment & Statistics') , Starts deployment and statictics 
+### * This specific script is running a Bash shell script inside a Jenkins stage to gather system metrics 
 
-#### 2. sh '''#!/bin/bash ... ''': This tells the robot to open up a black command screen (called a terminal) and run these specific computer commands.
+### 1. node {
 
-#### 3. INitial PJ : Telling it the nickname of the user 
+#### * This opens the Scripted Pipeline workflow. It immediately requests and assigns an available Jenkins execution machine (a build worker or "node") to run all the code inside these outer brackets.
 
-#### 4. SERVER_TIME=... and FILE_TIME=... : writes down the exact date and time.
+### 2. stage('Execute SSH Deployment & Statistics') {
 
-#### 5. VERSION_INFO=... and KERNEL_INFO=... : Checks the computers version and kernel 
+#### * This creates a visual progress block on your Jenkins UI labeled "Execute SSH Deployment & Statistics" so anyone watching the build knows exactly what task is running.
 
-#### 6. REPORT_FILE=... : Creates a text file and hides it in the folder /tmp
+### 3. sh '''#!/bin/bash
 
-#### 7. echo "..." > "$REPORT_FILE" : Shows every detail and that the build was successful 
+#### * The sh step launches a Linux terminal shell. The triple quotes (''') allow you to write a multi-line script. The #!/bin/bash line (called a shebang) forces the terminal to execute the following lines using the Bash interpreter specifically.
+
+### 4. Map your correct Purity Jacobs initials and server timestamps
+
+#### 1 . INITIALS="PJ": Creates a local script variable holding the initials "PJ"
+
+#### 2. SERVER_TIME=$(date +"%Y-%m-%d %H%M hrs"): Captures the current system clock time and formats it to look like 2026-09-16 1251 hrs.
+
+#### 3. FILE_TIME=$(date +"%Y%m%d-%H%M%S"): Captures a safe timestamp specifically formatted to be used inside a file name (e.g., 20260916-125130).
+
+### 5 . Extract operational release specs and Linux kernels
+
+#### * VERSION_INFO=$(cat /etc/os-release | grep VERSION= | ...): Inspects the operating system configuration files to extract the friendly name of the current Linux distribution 
+
+#### * VERSION_NUMBER=$(cat /etc/os-release | grep VERSION_ID= | ...): Pulls the exact release version number of the OS
+
+#### * KERNEL_INFO=$(uname -s -n -r -m): Runs the uname system utility to fetch structural hardware/core information including the Kernel Name, Network Hostname, Kernel Release version, and Machine Architecture type.
+
+### 6 . Establish the destination file path
+
+#### * REPORT_FILE="/tmp/${INITIALS}-${FILE_TIME}.txt": Dynamically defines where the file will be saved. It utilizes the variables created in Step 1 to map out a clear text path inside the Linux temporary folder (e.g., /tmp/PJ-20260916-125130.txt).
+
+### 7 . Construct the required verification contents payload
+
+### echo "Branch: ${BRANCH_NAME}" > "$REPORT_FILE"
+
+#### * The double arrows (>>) append lines of text to the bottom of the file without overwriting the lines above it. This writes the Success Status, Formatted Server Time, customized OS naming pattern eg debian trixie 
+
+### 8. echo "Verification file successfully generated locally at: ${REPORT_FILE}"
+
+#### * This final print command does not write to the file. Instead, it outputs a clean, readable confirmation line directly to the Jenkins build log console so administrators know the job succeeded.
+
+### 9 . ''', }, and }
+
+#### * These trailing brackets sequentially close the Bash execution block, complete the logic block for the visual stage, and safely release the allocated node executor back to the Jenkins server cluster.
 
 
-### NB : When i push an new code to GIthub jenkins acts a helper so jenkins builts on the code to make sure it isnt broken .
+### NB : When i push an new code to Github jenkins acts a helper so jenkins builts on the code to make sure it isnt broken .
 
 ### Step 3 : To verify that the jenkins file has been created
 
