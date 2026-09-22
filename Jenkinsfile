@@ -6,7 +6,7 @@
                     sshagent(credentials: ['traccar-ssh-key']) {
                         sh """#!/bin/bash
                         # --- FIXED: Changed from 127.0.0.1 to your private Traccar IP ---
-                        ssh -o StrictHostKeyChecking=no pkinoti@10.15.0.23 << 'EOF'
+                        ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'
                         INITIALS="PJ"
                         SERVER_TIME=\$(date "+%Y-%m-%d %H%M hrs")
                         FILE_TIME=\$(date "+%Y%m%d-%H%M%S")
