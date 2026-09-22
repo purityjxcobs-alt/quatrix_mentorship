@@ -1,3 +1,20 @@
+pipeline {
+    agent any
+
+    environment {
+        // Missing Piece 1: Automatically sets up the branch string container
+        RAW_BRANCH = "${env.GIT_BRANCH ?: 'old'}"
+    }
+
+    stages {
+        // Missing Piece 2: Standard download stage required before executing deployment
+        stage('Checkout Source') {
+            steps {
+                checkout scm
+            }
+        }
+
+        // --- HERE IS YOUR EXACT SNIPPET EDITED AND GROUNDED SAFELY ---
         stage('Execute SSH Deployment & Statistics') {
             steps {
                 script {
@@ -33,3 +50,6 @@ EOF
                 }
             }
         }
+    }
+}
+
