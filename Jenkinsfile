@@ -1,24 +1,3 @@
-node {
-    stage('Checkout Source') {
-        checkout scm
-    }
-    
-    // Clean up the branch name (removes 'origin/' or 'refs/heads/' if present)
-    def rawBranch = env.GIT_BRANCH ?: 'old'
-    def branchName = rawBranch.contains('/') ? rawBranch.substring(rawBranch.lastIndexOf('/') + 1) : rawBranch
-
-    try {
-        stage('Execute SSH Deployment & Statistics') {
-            runRemoteReport(branchName, "Passed")
-        }
-    } catch (Exception e) {
-        stage('Handle Failure Log') {
-            runRemoteReport(branchName, "Failed")
-        }
-        throw e
-    }
-}
-
 def runRemoteReport(String branch, String status) {
     sshagent(credentials: ['traccar-ssh-key']) {
         sh """#!/bin/bash
@@ -38,9 +17,14 @@ def runRemoteReport(String branch, String status) {
         echo "Time: \${SERVER_TIME}" >> \$REPORT_FILE
         echo "Server Version: Debian \${VERSION_NUMBER} - \${VERSION_INFO}" >> \$REPORT_FILE
         echo "Server Kernel: \${KERNEL_INFO}" >> \$REPORT_FILE
+        
+        # --- NEW CODE: This prints the file contents directly into your Jenkins log screen ---
+        echo "=== VERIFICATION FILE LOGS ==="
+        cat \$REPORT_FILE
+        echo "=============================="
+        
         exit
 EOF
         """
     }
 }
-
