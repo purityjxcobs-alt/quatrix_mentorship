@@ -1,3 +1,584 @@
+# Module: Bash/Zsh 101 – Learning the Basics
+
+## 1. Core Shell Concepts & Relevance
+
+### Why the Command-Line Interface (CLI) is Crucial
+*   **Server Administration:** Production environments typically run **"headless"** (without a monitor or graphical interface) to save system CPU and RAM. All upgrades, patches, and configurations must be handled via text.
+*   **File Manipulations:** Running massive batch actions (like mass renaming, sorting, or structural sweeping) takes seconds with a single line of text.
+*   **Automation Using Scripting:** CLI actions can easily be written into script files (`.sh` or `.zsh`) to execute repetitive maintenance or data pipelines automatically without human intervention.
+
+### Concept Questions & Answers
+
+#### **What is Bash? What alternatives are there to Bash?**
+**Bash** (Bourne Again SHell) is an interactive command language interpreter and text wrapper interface for Unix and Linux operating systems. It parses the commands you type and instructs the computer's kernel to act on them.
+*   *Alternatives:* `sh` (Bourne Shell), `zsh` (Z Shell), `fish` (Friendly Interactive Shell), `ksh` (Korn Shell), and `dash`.
+
+#### **What is Zsh?**
+**Zsh** is a powerful, highly customizable evolution of Bash. It incorporates the core features of Bash while natively adding advanced quality-of-life upgrades such as context-aware tab auto-completion, contextual spelling correction, shared command histories across active windows, and extensive themes (via frameworks like Oh My Zsh). It is the default shell on modern macOS installations.
+
+#### **Why use an "archaic dark screen" instead of modern Graphical User Interfaces (UIs)?**
+While graphical UIs excel at basic visual inspections and mouse navigation, they fall short for professional engineering and system workflows because:
+1.  **UIs Cannot Be Easily Automated:** You cannot reliably record mouse-clicks or drag-and-drop operations into an automated backend script to run safely at midnight.
+2.  **Scale and Speed Constraints:** Dragging 5,000 specific files out of a directory containing 100,000 items will freeze or crash a visual file explorer window. A single targeted command filters and moves them instantly.
+
+---
+
+## 2. File System Architecture & Navigation Paths
+
+###  Navigation Questions & Answers
+
+#### **What is a user's home directory? How does one navigate to it quickly?**
+The **home directory** is a user’s isolated personal sandbox storage layout. Regular users lack permission to modify root operating system configurations but retain full administrative rights within their home folder.
+*   **Linux Path:** `/home/yourusername`
+*   **macOS Path:** `/Users/yourusername`
+*   **Quick Navigation Shortcuts:** Type `cd` with no parameters and hit Enter, or execute `cd ~` (the tilde character `~` is the universal shorthand symbol for your home folder).
+
+### Understanding Paths
+
+All elements in a Linux file system live underneath a single base folder called the **Root Directory**, denoted simply by a single forward slash (`/`).
+
+*   **Absolute Path:** Specifies the complete, uncompromising route mapped all the way from the base root directory (`/`). It always begins with a forward slash.
+    *   *Example:* `/home/jdoe/Documents/git/mentor`
+*   **Relative Path:** Specifies a location **relative to your current terminal position**. It does *not* begin with a forward slash.
+    *   *Example:* If your terminal is sitting inside `/home/jdoe`, the relative path is simply `Documents/git/mentor`.
+*   **Directory Shorthand Notation:**
+    *   `.` (Single period): Represents the directory you are currently standing in.
+    *   `..` (Double period): Represents the parent directory (moves your path one folder step backward).
+
+---
+
+##  3. Command Reference & Explanations
+
+###  Standard Navigation and Inspection
+
+#### **`ls` (List)**
+Displays the names of files and directories within a target path.
+*   `ls` *(No arguments)*: Lists visible items in the current workspace.
+*   `ls -l`: Activates the **long listing format**, displaying detailed file attributes.
+*   `ls -a`: Forces the display of **all files**, including hidden system/configuration files (any item beginning with a dot, like `.git` or `.bashrc`).
+*   `ls -la` (or `ls -al`): Combines flags to cleanly display long-list details for every file, including hidden items.
+*   `ls Documents/git/mentor`: Explores the contents of a targeted path parameter instead of the current working directory.
+
+>  **Decoding the Long Listing Format (`ls -l` columns output):**
+> Target example: `drwxr-xr-x 2 jdoe jdoe 4096 Apr 9 19:53 bash`
+> 
+> 1. **Column 1 (`drwxr-xr-x`): Type & Permissions.** 
+>    * First slot indicates file type: `d` = Directory/Folder; `-` = Standard File.
+>    * Next 9 slots map out security rights split into 3 groups of 3 characters (`r`=read, `w`=write, `x`=execute): Owner rights (`rwx`), Group rights (`r-x`), and Public/World rights (`r-x`).
+> 2. **Column 2 (`2`): Hard Link Count.** The number of hard links pointing down to this file asset.
+> 3. **Column 3 (`jdoe`): File Owner.** The username of the account that controls the resource.
+> 4. **Column 4 (`jdoe`): Group Owner.** The user-group assigned to the file.
+> 5. **Column 5 (`4096`): File Size.** The size footprint recorded strictly in bytes.
+> 6. **Column 6 (`Apr 9 19:53`): Timestamp.** The exact date and time this resource was last altered.
+> 7. **Column 7 (`bash`): Name.** The physical name of the file or directory.
+
+#### **Test Question Solutions (Using flags from `man ls`):**
+*   *List only folders in the current folder using the long listing format:*
+    ```bash
+    ls -ld */
+    ```
+*   *List all files/folders (including hidden) sorted by newest first (oldest at the bottom):*
+    ```bash
+    ls -lat
+    ```
+
+#### **`cd` (Change Directory)**
+Alters your active terminal location to a new folder path parameter.
+*   `cd` *(No arguments)*: Instantly brings you back to your profile's home directory (`~`).
+*   `cd Documents/git/mentor/`: Moves you deep down into the specified subfolder path.
+*   `cd ..`: Steps you back out into the parent container directory.
+
+#### **`pwd` (Print Working Directory)**
+Outputs the absolute structural path of the folder you are currently standing inside.
+
+#### **`man` (Manual)**
+The built-in documentation reader interface.
+*   *Example:* Running `man ls` opens the explicit manual user guide detailing all functional features for the `ls` engine.
+
+---
+
+###  Data Filtering & Extraction
+
+#### **`grep` (Global Regular Expression Print)**
+Scans text documents line-by-line, instantly outputting rows containing a precise match string pattern.
+*   *Example:* `grep Nate ~/Documents/git/mentor/.test.student.csv` isolates and outputs only the rows containing the name "Nate" within that specific hidden spreadsheet.
+
+---
+
+### ⚖️ The Output Matrix: Reading Content Differently
+It is vital to use the correct tool based on the scale of the document you are reading:
+
+| Command | Operational Mechanism | Best Use Case |
+| :--- | :--- | :--- |
+| **`cat`** | Dumps the entire contents of a file directly onto the terminal screen sequentially. | Small files (e.g., viewing a short configuration). *Avoid using on massive logs.* |
+| **`less`** | Opens an interactive reader screen allowing you to scroll, page, or search text dynamically. | Large files and massive databases. Press `/` to search text and `q` to close. |
+| **`head`** | Extracts and prints strictly the **first 10 lines** from the very top of a target document. | Quickly checking header columns or metadata setups at the start of logs. |
+| **`tail`** | Extracts and prints strictly the **last 10 lines** from the basement floor of a target document. | Checking recent server activity or error crashes at the end of log outputs. |
+
+*   *Wildcard Output Example (`cat data/*`):* Tells the engine to dynamically merge and stream every file nested inside the data directory onto your screen simultaneously.
+
+---
+
+### File Manipulation & Searching
+
+#### **`cp` (Copy)**
+Creates an identical duplicate of a source document or directory array and outputs it to a defined target path.
+*   *Example with Wildcard characters:* `cp ~/Documents/git/mentor/.sampledata/31??_* ~/Documents/bash-sandbox/test_folder`
+    *   The `?` token represents exactly *one* wildcard character, and `*` matches *any* string of characters.
+*   **The `-r` Recursive Option:** `cp -r source/ destination/`
+    *   Mandatory flag when copying folders. It forces the system to dive down into the directory and duplicate all files, folders, and inner structures nested inside it.
+
+#### **`find` (Locate Files)**
+Actively crawls down structural system directories to track down resources matching distinct attribute requirements.
+*   *Example 1:* `find ~/Documents/ -type f -name '*Zippy*'` ➡️ Searches your Documents space exclusively for standard files (`-type f`) carrying the phrase "Zippy" anywhere in their name string.
+*   *Example 2:* `find ~/Documents/git/ -type d -name '*-*'` ➡️ Restricts the search layout to directory blocks (`-type d`) that contain a hyphen symbol in their name.
+
+---
+
+### Glossary of Essential Commands
+
+*   **`history` \***: Pulls up a numbered log of every terminal command executed in your user session.
+*   **`echo` \***: Evaluates arguments and prints strings of text directly onto the standard terminal window stream.
+*   **`mkdir` \***: Creates a fresh, empty directory workspace container at a chosen location (e.g., `mkdir project_folder`).
+*   **`mv` \***: Moves a file or folder to a new location. Also serves as the standard tool to **rename** files.
+*   **`rm`**: Destroys files completely. Using `rm -r` deletes entire directory configurations. *(Caution: Terminal deletions skip the Trash bin and are permanent).
+
+##  4. Advanced Commands, Pipes & Wildcards
+
+###  Deep-Dive Command Reference
+
+#### **`sed` (Stream Editor)**
+Parses, filters, and transforms streams of text dynamically. It alters text within files line-by-line without opening a visual text application window.
+
+#### **`vi` / `vim`**
+Terminal-native, keyboard-driven text editors. `vim` (Vi Improved) provides upgrades like syntax highlighting.
+*   *Troubleshooting:* If `vi` fails to execute, install the updated variant by running:
+    ```bash
+    sudo apt install vim
+    ```
+
+#### **`ssh-keygen`**
+Generates high-level cryptographic secure authentication parameter tokens (the Private/Public SSH key matrices) used for passwordless login security.
+
+#### **`tree`**
+Outputs a visual structural tree schematic displaying all subdirectories and file hierarchies nested inside your current folder path.
+
+#### **`scp` (Secure Copy)**
+Transfers files securely back and forth between distinct network computers using standard SSH connections.
+
+#### **`rsync` (Remote Sync)**
+A powerful file sync tool that analyzes the destination folder and copies **only the differences** (modified file bytes) between source and target, maximizing transmission efficiency.
+
+#### **`awk`**
+A robust pattern scanning and data extraction language used frequently to isolate and edit individual structural data columns from standard output files.
+
+#### **`unzip`**
+Decompresses standard `.zip` archive files, restoring them back to standard operational directory formats.
+
+#### **`tar` (Tape Archive)**
+Combines multiple files and full structural directory trees into a single archive file block (`.tar`), or compiles heavily compressed archives (`.tar.gz`).
+
+#### **`wget`**
+A non-interactive network downloader utility used to pull files, applications, and assets down directly from web URLs.
+
+#### **`curl` (Client URL)**
+Transfers data to or from a network server using various protocols (HTTP, HTTPS, FTP). It is highly versatile and used to interact with data APIs or post server information.
+
+#### **`printf`**
+Formats and prints string text to the console window layout with advanced alignment controls compared to standard `echo`.
+
+---
+
+###  5. Advanced Mechanics: Pipes & Wildcards
+
+### The Pipe Operator (`|`)
+The pipe takes the screen output from the command running on its left and passes it directly as the input text data stream for the command on its right. You can stitch several pipes together sequentially to build deep analytical data filters.
+
+*   *Example Workflow:*
+    ```bash
+    history | grep find
+    ```
+    *Explanation:* The shell first gathers your total command history list. Instead of dumping thousands of rows onto your view, the pipe catches that text and hands it to `grep find`, which filters and displays only the historical lines containing the word "find".
+
+---
+
+### Wildcard Matching Mechanisms
+Wildcards are structural shortcuts used to select groups of files or directories based on character patterns.
+
+#### **1. The Asterisk Wildcard (`*`)**
+Matches **any string of characters** of any length, including zero characters.
+
+*   `ls *`: Lists every file and folder in the current active directory.
+*   `ls s*`: Filters for items starting strictly with the character `s`.
+*   `ls *l`: Filters for items that end with the letter `l`.
+*   `ls *pp*`: Isolates items that contain the dual characters `pp` anywhere within their name.
+*   `ls -lda ~/Documents/git/mentor/*l*`: Deep searches the specific path target folder for files or subdirectories containing the letter `l` anywhere in their titles.
+
+#### **2. The Question Mark Wildcard (`?`)**
+Matches exactly **one individual character slot**.
+*   `ls -lda ~/Documents/git/mentor/????`: Selects folders inside the mentor directory whose names are composed of **exactly four characters**.
+*   `ls -la ~/Documents/git/mentor/.sampledata/31??_*`: Targets items starting with `31`, followed by exactly *any two characters*, followed by an underscore (`_`), and ending with *any text configuration* whatsoever (`*`).
+
+>  **Usage Flexibility:** Wildcards are universal shell attributes. They work inside almost any execution tool, including `ls`, `cp`, `mv`, and `rm`.
+> 
+> *Example Workflow:*
+> ```bash
+> mv ~/Documents/git/mentor/.sampledata/31??_* ~/Documents/bash-sandbox/test_folder
+> ```
+> *Explanation:* The engine evaluates the pattern match criteria, harvests all matching files starting with "31" and a trailing underscore, and moves them out into the `test_folder` path target.
+
+
+---
+
+## 6. Files, Folders, Permissions & Home Directory
+
+###  Concept Questions & Answers
+
+#### **How do you differentiate and list only files or only directories?**
+When inspecting layout attributes with `ls -l`, look at the very first character of the line string:
+*   `d` = Directory/Folder
+*   `-` = Standard File
+
+*   **Command to list only directories in the current folder:**
+    ```bash
+    ls -ld */
+    ```
+*   **Command to list only files in the current folder:**
+    ```bash
+    find . -maxdepth 1 -type f
+    ```
+
+#### **What are user groups and file/folder permissions?**
+Linux security segments permission controls into three structural groupings:
+1.  **User (`u`):** The individual account that owns the file node.
+2.  **Group (`g`):** A cluster of accounts sharing identical access rights to the asset.
+3.  **Others (`o`):** The public world (anyone who is not the owner and not in the group).
+
+Each group possesses three authorization toggles: **Read (`r`)**, **Write (`w`)**, and **Execute (`x`)**.
+
+#### **How do you set file permissions?**
+Use the **`chmod`** (Change Mode) command.
+*   *Symbolic approach:* `chmod g+w assignment.txt` (Adds Write access to the Group layer).
+*   *Numeric/Octal approach:* `chmod 755 script.sh` (Owner gets full `rwx`=7, Group and Others get read/execute `r-x`=5).
+
+#### **How do you set ownership of files or folders?**
+Use the **`chown`** (Change Owner) command, preceded by `sudo`:
+```bash
+sudo chown username:groupname filename
+```
+
+#### **What are hidden files?**
+Any file or directory folder whose filename begins with a period (`.`). They store application preferences and repository tracking maps. To reveal them, you must append the `-a` option flag to `ls`.
+
+#### **Home Directory Breakdown**
+*   **Definition:** A user's secure personal playground space within the OS file architecture.
+*   **Absolute Paths:** `/home/username` on Linux systems; `/Users/username` on macOS devices.
+*   **Shorthand Alias:** The tilde character (`~`).
+
+---
+
+##  7. Comprehensive Practical Task & Question Solutions
+
+>  **Prerequisite Action:** Run `./util/generate_exam_data.sh` inside the workspace to deploy the hidden tracking data arrays (`.sampledata/` directory and `.test.student.csv` index files).
+
+###  Section 1: Using ONLY `ls` with Wildcards (`*`, `?`)
+*No pipes (`|`) or `grep` operations allowed. All commands act directly on target paths.*
+
+#### 1. List all student data files (`.txt` files) in the `.sampledata` directory.
+```bash
+ls .sampledata/*.txt
+```
+*   *Explanation:* Matches any filename inside the `.sampledata` directory that terminates with the extension string `.txt`.
+
+#### 2. List all student data files where the student ID starts with 10 and ends with any two digits.
+```bash
+ls .sampledata/10??_*.txt
+```
+*   *Explanation:* The two `?` characters mandate exactly two arbitrary numerical slots following "10", followed by an underscore separator and wildcard name trailing pattern.
+
+#### 3. List all student data files where the student ID starts with 10 and ends with either 2 or 7.
+*Note: Standard wildcards cannot do logical OR operations within a single `?` selector. You must run two separate explicit arguments inside the query line.*
+```bash
+ls .sampledata/10?2_*.txt .sampledata/10?7_*.txt
+```
+*   *Explanation:* Evaluates the pattern pool twice—once matching IDs ending in 2, and once matching IDs ending in 7.
+
+#### 4. List all student data files where the student ID is between 1100 and 1199.
+```bash
+ls .sampledata/11??_*.txt
+```
+*   *Explanation:* Restricts the leading digits to "11" and uses two single-character wildcard placeholders to map out numbers from 00 to 99.
+
+#### 5. List all student data files where the student's first name starts with 'A' or 'B'.
+```bash
+ls .sampledata/*_A*_.txt .sampledata/*_B*_.txt
+```
+*   *Explanation:* Given the filename format `Id_FirstName_MiddleInitial_LastName.txt`, this queries for an arbitrary ID sequence, followed by an underscore, catching first names leading with "A" or "B".
+
+#### 6. List all student data files where the student's middle initial is 'Z'.
+```bash
+ls .sampledata/*_*_Z_*.txt
+```
+*   *Explanation:* Uses positional separators (underscores) to skip the ID and First Name, isolating files containing "Z" exactly inside the middle initial field.
+
+#### 7. List all student data files where the student ID is between 1200 and 1299.
+```bash
+ls .sampledata/12??_*.txt
+```
+
+#### 8. List all student data files where the student ID is between 1300 and 1399.
+```bash
+ls .sampledata/13??_*.txt
+```
+
+#### 9. List all student data files where the student ID is between 1400 and 1499.
+```bash
+ls .sampledata/14??_*.txt
+```
+
+#### 10. List all student data files where the student ID ends with a 0.
+```bash
+ls .sampledata/*0_*.txt
+```
+*   *Explanation:* Finds files where the character immediately preceding the first underscore separator is a zero (`0`).
+
+#### 11. List all student data files where the student ID ends with a 5.
+```bash
+ls .sampledata/*5_*.txt
+```
+
+#### 12. List all student data files where the third digit of the student ID is 2.
+```bash
+ls .sampledata/??2?_*.txt
+```
+*   *Explanation:* Skips the first two digits using `??`, forces the third slot to be a `2`, and allows any single character in the fourth slot.
+
+#### 13. List all student data files where the third digit of the student ID is 2 AND their middle initial is L.
+```bash
+ls .sampledata/??2?_*_L_*.txt
+```
+*   *Explanation:* Combines the third-digit ID positional matching filter with the third-column middle initial indicator structure.
+
+#### 14. List all student data files where the fourth digit of the student ID is 5.
+```bash
+ls .sampledata/???5_*.txt
+```
+
+#### 15. List all student data files where the second digit of the student ID is 0.
+```bash
+ls .sampledata/?0??_*.txt
+```
+
+#### 16. List all student data files where the last digit of the student ID is 9.
+```bash
+ls .sampledata/*9_*.txt
+```
+
+#### 17. List all student data files where the student ID is between 1000 and 1009.
+```bash
+ls .sampledata/100?_*.txt
+```
+
+#### 18. List all student data files where the first name starts with 'N'.
+```bash
+ls .sampledata/*_N*
+```
+
+#### 19. List all student data files where the first name starts with 'O'.
+```bash
+ls .sampledata/*_O*
+```
+
+#### 20. List all student data files where the first name starts with 'P'.
+```bash
+ls .sampledata/*_P*
+```
+
+#### 21. List all student data files where the first name starts with 'Z'.
+```bash
+ls .sampledata/*_Z*
+```
+
+#### 22. List all student data files where the middle initial is 'C'.
+```bash
+ls .sampledata/*_*_C_*.txt
+```
+
+#### 23. List all student data files where the middle initial is 'K'.
+```bash
+ls .sampledata/*_*_K_*.txt
+```
+
+#### 24. List all student data files where the middle initial is 'L'.
+```bash
+ls .sampledata/*_*_L_*.txt
+```
+
+#### 25. List all student data files where the middle initial is 'P'.
+```bash
+ls .sampledata/*_*_P_*.txt
+```
+
+#### 26. List all student data files where the last name starts with 'R'.
+```bash
+ls .sampledata/*_*_*_R*.txt
+```
+*   *Explanation:* Uses three leading wildcard fields and underscores to jump past ID, First Name, and Middle Initial segments, targeting last names starting with "R".
+
+#### 27. List all student data files where the last name starts with 'M'.
+```bash
+ls .sampledata/*_*_*_M*.txt
+```
+
+#### 28. List all student data files where the last name starts with 'Y'.
+```bash
+ls .sampledata/*_*_*_Y*.txt
+```
+
+#### 29. List all student data files where the last name ends with 'u'.
+```bash
+ls .sampledata/*_*_*_*u.txt
+```
+*   *Explanation:* Ensures that the character immediately preceding the file extension dot is a lowercase `u`.
+
+#### 30. List all student data files where the last name contains 'on'.
+```bash
+ls .sampledata/*_*_*_*on*.txt
+```
+*   *Explanation:* Targets files where the sequence `on` falls anywhere inside the final last name segment block.
+
+#### 31. List all student data files where the student ID is between 1050 and 1059 AND the first name starts with 'A'.
+```bash
+ls .sampledata/105?_A*_.txt
+```
+
+#### 32. List all student data files where the student ID is between 1110 and 1119 AND the middle initial is 'K'.
+```bash
+ls .sampledata/111?_*_K_*.txt
+```
+
+#### 33. List the student data file for 'Alice Smith' (exact first and last name, any middle initial).
+```bash
+ls .sampledata/*_Alice_?_Smith.txt
+```
+
+#### 34. List all student data files where the first name starts with 'C' AND the middle initial is 'D'.
+```bash
+ls .sampledata/*_C*_D_*.txt
+```
+*   **Explanation:** Leverages positional underscores (`_`) mapping the `Id_FirstName_MiddleInitial_LastName.txt` format. It filters for any ID prefix, handles first names starting with "C" using `C*`, isolates "D" as the full middle initial field, and allows any last name.
+
+#### 35. List all student data files where the student ID is 10?? (any two digits after 10) AND the last name ends with 's'.
+```bash
+ls .sampledata/10??_*_*_*s.txt
+```
+*   **Explanation:** Restricts the ID block prefix to "10" followed by exactly two arbitrary digit positions (`??`). The trailing structural wildcards step past the first and middle name fields, matching files where the last character before the `.txt` extension is a lowercase "s".
+
+---
+
+##  Section 2: Use grep, find for Advanced Search
+
+#### 36. Find all student data files (.txt) that contain the word "Mathematics" (case-sensitive).
+```bash
+grep -l "Mathematics" .sampledata/*.txt
+```
+*   **Command Explanation:** `grep` scans for text matches inside files. The `-l` flag overrides standard line dumping, instructing the engine to cleanly print only the **filenames** of documents that contain the phrase.
+
+#### 37. Find all student data files (.txt) where the student's email address ends with @hotmail.com.
+```bash
+grep -l "@hotmail.com" .sampledata/*.txt
+```
+*   **Command Explanation:** Traverses all student profile logs inside `.sampledata/`, isolating and printing the paths of files containing hotmail entries.
+
+#### 38. Count how many student data files contain the phrase "CountyNum: 1".
+```bash
+grep -l "CountyNum: 1" .sampledata/*.txt | wc -l
+```
+*   **Command Explanation:** `grep -l` lists out unique filenames that hold a match. This text stream of file names is then passed via a pipe (`|`) to `wc -l` (Word Count - Lines), which counts the total lines to return the exact number of matching files.
+
+#### 39. List the names (full path) of all student data files (.txt) that have a score of 99 for any subject.
+```bash
+grep -l "score: 99" .sampledata/*.txt
+```
+*   **Command Explanation:** Scans inside the nested documentation profiles and filters out paths for any records displaying a maximum score value of 99.
+
+#### 40. Find all student data files (.txt) that contain the name "Alice" (case-insensitive).
+```bash
+grep -il "Alice" .sampledata/*.txt
+```
+*   **Command Explanation:** Appends the `-i` flag option to instruct `grep` to ignore uppercase/lowercase boundaries entirely, matching string variants like "alice", "Alice", or "ALICE".
+
+#### 41. Find all student data files (.txt) that were created within the last 24 hours (assuming you just ran generate_data.sh).
+```bash
+find .sampledata/ -type f -name "*.txt" -mmin -1440
+```
+*   **Command Explanation:** `find` searches directory hierarchies. `-type f` restricts it to actual files (ignoring subfolders), `-name "*.txt"` isolates text profiles, and `-mmin -1440` uses minute calculations (24 hours × 60 minutes = 1440) to filter for files modified *less than* 24 hours ago.
+
+#### 42. Find all student data files (.txt) that are larger than 200 bytes.
+```bash
+find .sampledata/ -type f -name "*.txt" -size +200c
+```
+*   **Command Explanation:** The specialized flag `-size +200c` targets files whose data footprint strictly exceeds 200 bytes (the suffix character `c` explicitly designates bytes in find system calculations).
+
+#### 43. Find all .csv files in the current directory that contain the word "Nairobi".
+```bash
+grep -l "Nairobi" *.csv
+```
+*   **Command Explanation:** Isolates regional index data maps (`.test.student.csv`, etc.) sitting directly within your primary working folder path.
+
+#### 44. List all student IDs (the 4-digit number) from student data files that have "Physics" listed as a subject.
+```bash
+grep -l "Physics" .sampledata/*.txt | awk -F'/' '{print $NF}' | cut -d'_' -f1
+```
+*   **Command Explanation:** This command pipeline maps out three structural phases:
+    1.  `grep -l "Physics"` isolates matching path names (e.g., `.sampledata/1024_Jane_M_Doe.txt`).
+    2.  `awk -F'/' '{print $NF}'` breaks the path apart at the forward slashes and extracts just the final element (the raw filename: `1024_Jane_M_Doe.txt`).
+    3.  `cut -d'_' -f1` isolates field 1 relative to the first underscore separator, pulling the exact 4-digit student ID.
+
+#### 45. Find all student data files (.txt) that contain the word "Email:" AND "CountyNum: 5".
+```bash
+grep -l "Email:" .sampledata/*.txt | xargs grep -l "CountyNum: 5"
+```
+*   **Command Explanation:** Direct sequential piping fails here because `grep` requires file parameters, not raw text. `xargs` bridges this gap: it gathers the file list produced by the first `grep` command and passes it forward as direct arguments for the second `grep` verification.
+
+---
+
+##  Section 3: Use sed or perl only for Advanced Text Manipulation
+
+>  **Reference Check:** Complete the *Supplemental RegEx & vi* module prior to editing. Avoid appending the `-i` (in-place) operational flag unless you intend to alter underlying data stores permanently.
+
+### Core Example Breakdowns
+*   **Example A:** `sed -n -E "s/(^11.*)/\1/gp" .test.student.csv`
+    *   `-n`: Suppresses standard console text echoes. Only processes explicit print requests.
+    *   `-E`: Directs the parser engine to use Extended Regular Expression operations.
+    *   `s/pattern/replacement/gp`: Triggers substitutions. The `g` flag applies it globally across the row, and `p` prints the resulting line structure.
+*   **Example B:** `sed -n -E "s/(^22[0-9][^;]*;)([^;]*;)(.*;)(.*@.*)$/\1\2\4/gp" .test.student.csv`
+    *   `[^;]*;`: Dynamically matches all text fields up to the next structural semicolon delimiter column.
+    *   `\1\2\4`: Extracts specific capture groupings, throwing away unnecessary index text.
+
+---
+
+###  Exercise Solutions
+
+#### 46. Print out all students with ID starting with 33...
+```bash
+sed -n -E "/^33[0-9]+/p" .test.student.csv
+```
+*   **Command Explanation:** Leverages pattern matching blocks. The format `/^33[0-9]+/` checks for rows starting explicitly with "33" followed immediately by valid numeric ID strings. If matched, the trailing `p` command outputs the targeted text line to the console.
+
+#### 47. Find all students from county #44 (Ensure that students from school #44 are not accidentally included unless they are from county #44) and display their phone numbers without the hyphen.
+```bash
+sed -n -E "s/(^[0-9]+;[^;]+;)([0-9]{3})-([0-9]{3})-([0-9]{4});(44;.*)$/\1\2\3\4;\5/p" .test.student.csv
+```
+
+*   **Deep-Dive Structural Breakdown:**
+    To accurately isolate the columns from the raw data pattern (`ID;Name;Phone;SchoolID;CountyID;Email`), we map out **5 individual capture groups**:
+    1.  `([0-9]+;[^;]+;)`  **Group 1:** Captures the starting Student ID and Full Name string columns alongside their separating semicolons.
+    2.  `([0-9]{3})-([0-9]{3})-([0-9]{4})` **Groups 2, 3, and 4:** Splits up the target phone number. Group 2 captures the 3-digit area code, Group 3 captures the 3-digit prefix, and Group 4 captures the final 4 digits. The literal hyphens (`-`) sitting between the groups are left outside the parentheses, targeting them for removal.
+    3.  `;(44;.*)$` **Group 5:** Confirms the next column array contains exactly County code `44`, followed by any trailing data characters (the student email field) up to the end of the line (`$`). This safety anchor prevents matching a school code of 44 if the county code is different.
+    4.  `\1\2\3\4;\5` **The Replacement Array:** Re-assembles the line structure by calling the groups back in sequence. By printing groups 2, 3, and 4 back-to-back without placing characters between them, the original raw hyphens are stripped out completely.
+
+
 # Section 4: File Organization and Navigation
 
 #### 1. Create four new directories inside .sampledata: A-F, G-L, M-R, and S-Z.

@@ -1,3 +1,4 @@
+
 node {
     stage('Checkout Source') {
         checkout scm
@@ -59,4 +60,3 @@ EOF
         throw e
     }
 }
-
