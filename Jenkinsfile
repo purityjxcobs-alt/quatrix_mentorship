@@ -38,7 +38,8 @@ pipeline {
                         echo "Server Version: Debian \${VERSION_NUMBER} - \${VERSION_INFO}" >> \$REPORT_FILE
                         echo "Server Kernel: \${KERNEL_INFO}" >> \$REPORT_FILE
                         
-                        echo "=== VERIFICATION FILE LOGS ==="
+                        echo "=== TEST RUN: LOGGING WORKED ==="
+
                         cat \$REPORT_FILE
                         echo "=============================="
                         exit
