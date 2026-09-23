@@ -1461,5 +1461,246 @@ sudo grep "WARN" /opt/traccar/logs/tracker-server.log
 ```
 ```bash
 curl -I https://quatrixglobal.com && curl -I https://quatrixglobal.com
-
 ```
+
+# Short notes 
+
+## Short Notes: Practical Assessment #1
+
+* **System Upgrades & Configuration:** Upgrading a Debian system between major versions (e.g., to Debian 13 Trixie) requires updating the source repositories in `/etc/apt/sources.list`, running `apt update`, and performing a full upgrade (`apt full-upgrade`). The system hostname is managed via `hostnamectl` and `/etc/hostname`.
+* **SSH & User Access Control:** To disable password logins while retaining key-based access, modify `/etc/ssh/sshd_config` (`PasswordAuthentication no`, `PubkeyAuthentication yes`). Public keys placed in `~/.ssh/authorized_keys` can be safely commented/labeled by appending a text string to the end of the key line (e.g., `ssh-rsa AAA... user@laptop`). Sudo privileges are handled via the `sudo` group or `/etc/sudoers`.
+* **Fail2ban & Nginx Security:** Fail2ban uses **jails** (rules) and **filters** (regex patterns matching logs like Nginx's `access.log`). IPs can be whitelisted using the `ignoreip` directive inside `/etc/fail2ban/jail.local` to protect corporate offices.
+* **Traccar Maintenance & Upgrades:** Modern Traccar versions (6.x+) drop the Legacy UI. Upgrading requires stopping the service, backing up configuration XML files (`traccar.xml`) and the legacy web app folder (`legacy`), running the new installer, and surgically restoring custom XML tags rather than overwriting the whole file.
+
+
+# Practical Assessment 1: Traccar Server Deployment & Administration
+
+This document outlines the systematic steps taken to upgrade, secure, and maintain the test Traccar environment on `test.traccar.quatrixglobal.com`.
+
+
+## 1. Access & Basic Linux Administration
+
+### Check OS Versions
+Before performing updates, verify the current Linux kernel and Debian distribution versions.
+
+```bash
+# Check Linux kernel and architecture details
+uname -a
+
+# Check Debian version details
+cat /etc/debian_version
+cat /etc/os-release
+```
+* **Explanation:** `uname -a` prints system kernel details. `cat` displays the exact release tracking files for Debian.
+
+### System Upgrade to Debian 13.0 (Trixie)
+To upgrade the system distribution, we must update the Advanced Package Tool (APT) repository sources.
+
+```bash
+# Open the sources configuration file using vi
+vi /etc/apt/sources.list
+```
+*Inside `vi`, replace occurrences of the previous release codename (e.g., `bookworm`) with `trixie`. Save and exit (`:wq`).*
+
+```bash
+# Update repository lists and perform a full distribution upgrade
+apt update && apt full-upgrade -y
+```
+* **Explanation:** `apt update` syncs new package indexes. `apt full-upgrade` handles changing dependencies, removing obsolete packages, and installing new packages for the major OS upgrade.
+
+### Update Hostname
+```bash
+# Change system hostname to test-traccar
+hostnamectl set-hostname test-traccar
+
+# Update the hosts configuration file to reflect the change
+sed -i 's/old-hostname/test-traccar/g' /etc/hosts
+```
+* **Explanation:** `hostnamectl` permanently alters the system hostname. `sed -i` performs an in-place string replacement in `/etc/hosts` to prevent local DNS resolution issues.
+
+---
+
+## 2. Fail2ban & Security Hardening
+
+### Analyze Nginx Logs for Intrusion Detection
+Scan for malicious actors generating `404 Not Found` errors.
+
+```bash
+# View recent 404 HTTP requests from the Nginx access log
+tail -n 500 /var/log/nginx/access.log | grep "HTTP/1.1\" 404"
+```
+* **Explanation:** `tail -n 500` outputs the last 500 lines of the log file. `grep` filters lines containing an HTTP 404 response payload.
+
+### Configure Nginx Brute-Force Filter
+If `/etc/fail2ban/filter.d/nginx-brute.conf` does not exist, create it to catch malicious scanner behavior.
+
+```bash
+cat << 'EOF' > /etc/fail2ban/filter.d/nginx-brute.conf
+[Definition]
+failregex = ^<HOST> - - \[.*\] ".*" 404 \d+ ".*" ".*"$
+ignoreregex =
+EOF
+```
+
+Next, initialize the jail inside your local configuration:
+```bash
+vi /etc/fail2ban/jail.local
+```
+Add the jail structure and include the whitelisted IP ranges for corporate offices (Applewood, Trio, and the Yard):
+```ini
+[nginx-brute]
+enabled = true
+port    = http,https
+logpath = /var/log/nginx/access.log
+maxretry = 5
+findtime = 600
+bantime  = 3600
+
+[DEFAULT]
+# Exempt corporate offices from both sshd and nginx jails
+ignoreip = 127.0.0.1/8 ::1 <APPLEWOOD_IP> <TRIO_IP> <THE_YARD_IP>
+```
+```bash
+# Restart Fail2ban to load the configuration changes
+systemctl restart fail2ban
+```
+
+---
+
+## 3. User Management & SSH Access
+
+### Creating Intern Accounts (Key-Only Auth)
+Follow this process for each intern (example shows Jane Doe -> `jdoe`).
+
+```bash
+# Create the user account with a home directory
+useradd -m -s /bin/bash jdoe
+
+# Set a password for the user (invoked ONLY for sudo confirmation)
+passwd jdoe
+
+# Add user to the sudo group
+usermod -aG sudo jdoe
+```
+
+### Configuring SSH Key Labels & Rules
+Public keys can be safely labeled by appending a trailing identifier text space directly after the cryptographic string.
+
+```bash
+# Switch to the user directory and create standard SSH directories
+mkdir -p /home/jdoe/.ssh
+vi /home/jdoe/.ssh/authorized_keys
+```
+*Inside the `authorized_keys` file, append the label at the tail end of each key:*
+```text
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... jdoe@work-pc
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... jdoe@phone-juice-ssh
+```
+
+```bash
+# Fix ownership and permissions to prevent SSH rejection
+chown -R jdoe:jdoe /home/jdoe/.ssh
+chmod 700 /home/jdoe/.ssh
+chmod 600 /home/jdoe/.ssh/authorized_keys
+```
+
+### Enforce SSH Key Authentication System-Wide
+To ensure passwords can never bypass an SSH key entry point:
+
+```bash
+vi /etc/ssh/sshd_config
+```
+Modify or add the following lines inside the file:
+```text
+PubkeyAuthentication yes
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+```
+```bash
+# Validate configurations and reload the SSH service
+sshd -t && systemctl reload ssh
+```
+* **Explanation:** `sshd -t` tests configuration sanity before committing changes to prevent accidental locks. `systemctl reload` updates configuration runtime parameters without dropping active user sessions.
+
+---
+
+## 4. Traccar Upgrade & Legacy UI Restoration
+
+### Analyze Existing Nginx Proxies & Configs
+```bash
+# Inspect running traccar paths inside Nginx sites
+cat /etc/nginx/sites-enabled/traccar.conf
+```
+
+### Safe Backup Script
+This automated script captures system configuration files securely before running system state updates.
+
+```bash
+cat << 'EOF' > /usr/local/bin/backup_traccar.sh
+#!/bin/bash
+BACKUP_DIR="/opt/traccar_backups/$(date +%F_%T)"
+mkdir -p "$BACKUP_DIR"
+
+# Backup application configurations
+cp /opt/traccar/conf/traccar.xml "$BACKUP_DIR/"
+cp /opt/traccar/conf/default.xml "$BACKUP_DIR/"
+
+# Backup Legacy UI assets directory
+if [ -d "/opt/traccar/legacy" ]; then
+    cp -r /opt/traccar/legacy "$BACKUP_DIR/"
+elif [ -d "/opt/traccar/web" ]; then
+    cp -r /opt/traccar/web "$BACKUP_DIR/web_legacy"
+fi
+
+echo "Traccar configurations and legacy views successfully stored in $BACKUP_DIR"
+EOF
+
+# Make the backup tool executable
+chmod +x /usr/local/bin/backup_traccar.sh
+# Execute backup tool
+/usr/local/bin/backup_traccar.sh
+```
+
+### Upgrading Traccar to 6.9.1
+```bash
+# Stop the running application instance
+systemctl stop traccar
+
+# Download and execute the installer bundle
+wget https://github.com
+unzip traccar-linux-64-6.9.1.zip
+./traccar.run
+```
+
+### XML Configuration Diff & Restoration
+Do not copy the old `traccar.xml` directly over the new one. Check files for schema updates using `diff`.
+
+```bash
+# Identify custom parameters set in your backup copy vs the clean file
+diff /opt/traccar_backups/<LATEST_BACKUP>/traccar.xml /opt/traccar/conf/traccar.xml
+```
+* **Explanation:** Use `vi /opt/traccar/conf/traccar.xml` to manually insert only specific structural custom XML parameters (like database credentials or custom ports) derived from the `diff` output.
+
+### Restore Legacy UI Web Directory
+```bash
+# Move legacy directory back into the new working root directory
+cp -r /opt/traccar_backups/<LATEST_BACKUP>/legacy /opt/traccar/
+```
+
+Start the application after restoring permissions:
+```bash
+systemctl start traccar
+```
+
+
+
+## 5. Log Analysis & Maintenance
+
+### Isolate Warning (WARN) Logs
+To verify system health and identify problems instantly:
+
+```bash
+# Tail log lines and isolate Warnings entries
+tail -f /opt/traccar/logs/tracker-server.log | grep --line-buffered "WARN"
+```
+* **Explanation:** `tail -f` outputs data as the log grows dynamically. The `--line-buffered` flag inside `grep` guarantees immediate text outputs to the terminal window whenever a line matching "WARN" is triggered.

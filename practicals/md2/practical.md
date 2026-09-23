@@ -1119,3 +1119,154 @@ EOF
 }
 ``` 
 
+# Multibranch Jenkinsfile 
+
+
+```bash
+node {
+    stage('Checkout Source') {
+        checkout scm
+    }
+
+    try {
+        stage('Execute SSH Deployment & Statistics') {
+            sshagent(credentials: ['traccar-ssh-key']) {
+                sh """#!/bin/bash
+                # Connects to the remote test Traccar instance via public/private key pairing
+                ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'
+                    INITIALS="PJ"
+                    SERVER_TIME=\$(date +"%Y-%m-%d %H%M hrs")
+                    FILE_TIME=\$(date +"%Y%m%d-%H%M%S")
+
+                    VERSION_INFO=\$(cat /etc/os-release | grep VERSION= | cut -d\\( -f2 | cut -d\\) -f1 | tr -d \\")
+                    VERSION_NUMBER=\$(cat /etc/os-release | grep VERSION_ID= | cut -d= -f2 | tr -d \\")
+                    KERNEL_INFO=\$(uname -s -n -r -m)
+
+                    REPORT_FILE="/tmp/\${INITIALS}-\${FILE_TIME}.txt"
+
+                    # Dynamic environment evaluation handles multi-branch names seamlessly
+                    echo "Branch: \${BRANCH_NAME:-main}" > "\$REPORT_FILE"
+                    echo "Status: Build Passed" >> "\$REPORT_FILE"
+                    echo "Time: \${SERVER_TIME}" >> "\$REPORT_FILE"
+                    echo "Server Version: Debian \${VERSION_NUMBER} - \${VERSION_INFO^}" >> "\$REPORT_FILE"
+                    echo "Server Kernel: \${KERNEL_INFO}" >> "\$REPORT_FILE"
+                    
+                    echo "Verification file written successfully."
+                    exit
+EOF
+                """
+            }
+        }
+    } 
+    catch (Exception e) {
+        stage('Handle Failure Log') {
+            sshagent(credentials: ['traccar-ssh-key']) {
+                sh """#!/bin/bash
+                # Fallback logging path tracking failed builds on the target test node
+                ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'
+                    INITIALS="PJ"
+                    SERVER_TIME=\$(date +"%Y-%m-%d %H%M hrs")
+                    FILE_TIME=\$(date +"%Y%m%d-%H%M%S")
+
+                    VERSION_INFO=\$(cat /etc/os-release | grep VERSION= | cut -d\\( -f2 | cut -d\\) -f1 | tr -d \\")
+                    VERSION_NUMBER=\$(cat /etc/os-release | grep VERSION_ID= | cut -d= -f2 | tr -d \\")
+                    KERNEL_INFO=\$(uname -s -n -r -m)
+
+                    REPORT_FILE="/tmp/\${INITIALS}-\${FILE_TIME}.txt"
+
+                    echo "Branch: \${BRANCH_NAME:-main}" > "\$REPORT_FILE"
+                    echo "Status: Build Failed" >> "\$REPORT_FILE"
+                    echo "Time: \鍵{SERVER_TIME}" >> "\$REPORT_FILE"
+                    echo "Server Version: Debian \${VERSION_NUMBER} - \${VERSION_INFO^}" >> "\$REPORT_FILE"
+                    echo "Server Kernel: \${KERNEL_INFO}" >> "\$REPORT_FILE"
+                    exit
+EOF
+                """
+            }
+        }
+        throw e
+    }
+}
+
+```
+### Explaining the script
+
+# Jenkins Pipeline Script Explanation
+
+### 1. Pipeline Initialization & Source Control
+*   `node {`
+    *   Allocates a Jenkins executor (worker node) to run the entire pipeline block.
+*   `stage('Checkout Source') {`
+    *   Defines a logical step named "Checkout Source" visible in the Jenkins UI.
+*   `checkout scm`
+    *   Clones or updates the source code repository configured for this Jenkins job.
+
+### 2. Main Execution Block & Error Handling
+*   `try {`
+    *   Begins a wrapper block to catch any runtime errors or exceptions that occur during deployment.
+*   `stage('Execute SSH Deployment & Statistics') {`
+    *   Defines the success path stage for running deployment actions and generating statistics.
+*   `sshagent(credentials: ['traccar-ssh-key']) {`
+    *   Injects the SSH private key stored in Jenkins credentials under the ID `traccar-ssh-key` into the environment authentication agent.
+
+### 3. Remote Shell Execution (Success Path)
+*   `sh '''#!/bin/bash`
+    *   Launches a multi-line Bash shell step inside Jenkins.
+*   `ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'`
+    *   Connects to the remote server `128.199.159.79` as user `pkinoti`. 
+    *   Disables host key prompts (`StrictHostKeyChecking=no`) and uses a Heredoc (`<< 'EOF'`) to execute subsequent lines directly on the remote server.
+
+### 4. Remote Variable Evaluation
+*   `INITIALS='PJ'`
+    *   Sets a hardcoded string identifier for the author/operator.
+*   `SERVER_TIME=$(date +'%Y-%m-%d %H%M hrs')`
+    *   Captures the current date and time on the remote server (e.g., `2026-09-23 1054 hrs`).
+*   `FILE_TIME=$(date +'%Y%m%d-%H%M%S')`
+    *   Generates a clean, alphanumeric timestamp for filenames (e.g., `20260923-105430`).
+*   `VERSION_INFO=$(cat /etc/os-release | grep 'VERSION=' | cut -d'(' -f2 | cut -d')' -f1 | tr -d ' ')`
+    *   Extracts the operating system's codename (like `bookworm`) from system files and strips whitespaces.
+*   `VERSION_NUMBER=$(cat /etc/os-release | grep 'VERSION_ID=' | cut -d= -f2 | tr -d '"')`
+    *   Extracts the exact numeric OS version (like `12`) from system configs.
+*   `KERNEL_INFO=$(uname -s -n -r -m)`
+    *   Gathers hardware and kernel-level specifications (OS Name, Hostname, Kernel Release, Machine Architecture).
+*   `REPORT_FILE="/tmp/${INITIALS}-${FILE_TIME}.txt"`
+    *   Defines the path for the output log file inside the remote server's temporary directory.
+
+### 5. Writing the Success Report
+*   `echo "Branch: ${BRANCH_NAME:-main}" > $REPORT_FILE`
+    *   Writes the active Git branch to the report file. Defaults to `main` if the environment variable is empty.
+*   `echo "Status: Build Passed" >> $REPORT_FILE`
+    *   Appends a successful status message to the report.
+*   `echo "Time: ${SERVER_TIME}" >> $REPORT_FILE`
+    *   Appends the captured server timestamp.
+*   `echo "Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}" >> $REPORT_FILE`
+    *   Appends the formatted OS version. `${VERSION_INFO^}` capitalizes the first letter of the codename.
+*   `echo "Server Kernel: ${KERNEL_INFO}" >> $REPORT_FILE`
+    *   Appends the detailed system architecture data.
+*   `echo "Verification file written successfully."`
+    *   Prints a confirmation line to the Jenkins console log.
+*   `exit`
+    *   Closes the active shell session on the remote server.
+*   `EOF`
+    *   Signals the end of the remote Heredoc execution command block.
+*   `}` (Closing braces for `sshagent`, `stage`, and `try`)
+    *   Gracefully closes the authentication block and deployment stage wrapper.
+
+### 6. Fallback & Failure Logging
+*   `} catch (Exception e) {`
+    *   Intercepts any system failures, timeouts, or network disconnects that happened during the `try` block.
+*   `stage('Handle Failure Log') {`
+    *   Creates a visible error logging stage in the pipeline timeline.
+*   `sshagent(credentials: ['traccar-ssh-key']) {`
+    *   Re-authenticates with the remote server using the same private key credentials.
+*   `sh '''#!/bin/bash`
+    *   Initiates an emergency failure reporting shell script.
+*   `ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'`
+    *   Opens a recovery SSH window to the target environment.
+*   *(The block re-evaluates the system timestamps, OS versions, and kernel properties identically to the success block)*
+*   `echo "Status: Build Failed" >> $REPORT_FILE`
+    *   Appends a distinct **Build Failed** state to the output log on the server for tracking purposes.
+*   `exit` / `EOF`
+    *   Safely closes out the remote error-reporting pipeline context.
+*   `throw e`
+    *   Reraises the caught exception back to Jenkins so that the overall automation dashboard reflects a red, failed build instead of hiding the issue.

@@ -1,7 +1,7 @@
 # Supplemental Module
 ## Regular Expressions - RegEx
 ### Cleaning up the phone number no to +254 format
-CTrl + H to open the find panel
+Ctr+ H to open the find panel
 
     \((.*)\)
 
@@ -227,8 +227,25 @@ e. /\2/: Replaces the entire matched pattern with only the contents of Capture G
 
 
 
+# RegEx Metacharacters & Literals
+## Short Notes 
 
+# Module: RegEx Metacharacters & Literals
 
-
-
+*   **Literals (e.g., `buzz123`)**: Matches the exact sequence of alphanumeric characters as they are.
+*   **`.` (Dot)**: Matches any single character (letters, numbers, or special characters).
+*   **`^` (Caret)**: Matches the **beginning** of a line. *(Note: Negates characters if used inside square brackets).*
+*   **`$` (Dollar)**: Matches the **end** of a line.
+*   **`?` (Question Mark)**: Indicates a **non-greedy** match for the preceding pattern.
+*   **`*` (Asterisk)**: Matches **0 or more** occurrences of the preceding element (e.g., `.*` matches any character 0+ times; `f*` matches "f" 0+ times).
+*   **`+` (Plus)**: Matches **1 or more** occurrences of the preceding element (e.g., `.+` matches any character 1+ times; `f+` matches "f" 1+ times).
+*   **`|` (Vertical Bar)**: Acts as an **OR** condition (e.g., `a|b` matches "a" or "b"). Do not confuse this with a command-line pipe.
+*   **`[]` (Square Brackets)**: Matches any single character within the set (e.g., `[abc]` matches "a", "b", or "c"). Using a caret inside negates it (e.g., `[^abc]` matches any character *except* "a", "b", or "c").
+*   **`{}` (Curly Brackets)**: Specifies exact **quantities** to match:
+    *   `z{1}`: Exactly 1 occurrence of "z".
+    *   `z{1,}`: 1 or more occurrences of "z".
+    *   `z{2,}`: 2 or more occurrences of "z".
+    *   `z{2,4}`: Between 2 and 4 occurrences of "z".
+*   **`()` (Parentheses)**: Defines **capture groups** used to save matched patterns for search-and-replace actions (e.g., `(Ken)ya` captures "Ken"). 
+*   **`\` (Backslash)**: The **escape character**. It turns a metacharacter into a literal character (e.g., `\.` matches a literal period; `\?` matches a literal question mark).
 

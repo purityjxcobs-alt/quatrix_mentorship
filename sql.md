@@ -34,6 +34,23 @@
 * A vertical entities that conatins the fields of which the records are 
   placed 
 
+### 6. How do you comment out an SQL line so that it is ignored by the SQL engine?
+
+#### * Single-Line Comments: Type -- (two dashes). Everything after these dashes on that specific line will be ignored.
+
+
+```bash
+-- This entire line is ignored
+SELECT * FROM users; -- This comment is at the end of a line
+```
+#### * Multi-Line Comments: Enclose the text between /* and */. This is useful for ignoring blocks of text across multiple lines.
+
+```bash
+/* This is a 
+   multi-line comment */
+SELECT * FROM orders;
+```
+
 
 # SQL Keywords (Specific to PostgreSQL)
 
@@ -3056,3 +3073,19 @@ ALTER ROLE purity NOSUPERUSER NOCREATEROLE NOCREATEDB;
 ```bash
 \du purity
 ```
+# Skipped Questions 
+
+## What is the difference between BEGIN and START TRANSACTION?
+
+#### do the exact same thing: they initiate a new transaction block.
+
+### Key diffrences though ;
+
+#### • SQL Standard Compliance: START TRANSACTION is the official SQL standard syntax. BEGIN (or BEGIN TRANSACTION) is an alias adopted by many databases for convenience.
+
+#### • Database Quirks: In some environments, like MySQL, BEGIN can conflict with the BEGIN...END blocks used inside stored procedures. In those cases, using START TRANSACTION is required to avoid syntax errors.
+
+
+## What is Normalization?
+
+#### is the process of organizing data in a relational database to reduce data redundancy and improve data integrity.
