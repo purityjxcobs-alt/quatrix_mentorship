@@ -1452,3 +1452,4595 @@ A **cronjob** is an automated task scheduled to run in the background at fixed i
 *   **`*`**: Month field (Every month of the year)
 *   **`*`**: Day of Week field (Every day from Sunday through Saturday)
 *   **`>>`**: The **append operator** ensures that new morning messages are written to the bottom of the log file without destroying historical tracking entries.
+
+
+# Notes 
+
+# Linux Module — Complete Study Guide
+
+> A full walkthrough of the Linux module as a subject: concepts, architecture, filesystem, commands, and administration.
+> Copy into VS Code or GitHub as your notes.
+
+---
+
+## Table of Contents
+
+1. [What is Linux?](#1-what-is-linux)
+2. [Linux Architecture](#2-linux-architecture)
+3. [Linux Distributions](#3-linux-distributions)
+4. [The Shell](#4-the-shell)
+5. [Filesystem Hierarchy Standard (FHS)](#5-filesystem-hierarchy-standard-fhs)
+6. [File Types in Linux](#6-file-types-in-linux)
+7. [File & Directory Commands](#7-file--directory-commands)
+8. [File Permissions](#8-file-permissions)
+9. [Users and Groups](#9-users-and-groups)
+10. [Process Management](#10-process-management)
+11. [Package Management](#11-package-management)
+12. [Disk & Filesystem Management](#12-disk--filesystem-management)
+13. [Networking Basics](#13-networking-basics)
+14. [System Information Commands](#14-system-information-commands)
+15. [Text Editors](#15-text-editors)
+16. [Environment Variables & Shell Configuration](#16-environment-variables--shell-configuration)
+17. [Archiving & Compression](#17-archiving--compression)
+18. [Boot Process](#18-boot-process)
+19. [Systemd & Services](#19-systemd--services)
+20. [Scheduling (cron/at)](#20-scheduling-cronat)
+21. [Logging & Monitoring](#21-logging--monitoring)
+22. [Links: Hard vs Symbolic](#22-links-hard-vs-symbolic)
+23. [Security Basics](#23-security-basics)
+24. [Scenario-Based Questions](#24-scenario-based-questions)
+25. [Quick Reference Cheat Sheet](#25-quick-reference-cheat-sheet)
+
+---
+
+## 1. What is Linux?
+
+**Linux** is a free, open-source, Unix-like operating system kernel created by **Linus Torvalds** in 1991.
+
+**Key points:**
+
+- Linux is **not** a full OS by itself — it's a **kernel**.
+- A full OS using Linux = **GNU/Linux** (kernel + GNU tools + utilities + package manager + shell).
+- It is **multi-user**, **multitasking**, **portable**, and **secure**.
+- Source code is freely available under the **GPL** license.
+- Runs on servers, desktops, mobile (Android), embedded devices, supercomputers.
+
+**Q: Who created Linux and when?**
+Linus Torvalds, 1991.
+
+**Q: What does "open source" mean?**
+The source code is freely available to view, modify, and redistribute.
+
+**Q: What does "multi-user" mean?**
+Multiple users can log in and use the system at the same time.
+
+**Q: What does "multitasking" mean?**
+Multiple processes can run simultaneously.
+
+---
+
+## 2. Linux Architecture
+
+Linux is layered:
+
+```
++-------------------------------------+
+|          User Applications          |   ← browsers, editors, etc.
++-------------------------------------+
+|       Shell (bash, zsh, sh)         |   ← interprets user commands
++-------------------------------------+
+|    System Libraries (glibc, etc.)   |   ← APIs for programs
++-------------------------------------+
+|        System Call Interface        |   ← bridge user ↔ kernel
++-------------------------------------+
+|             Kernel                  |   ← core: memory, CPU, devices
++-------------------------------------+
+|             Hardware                |   ← CPU, RAM, disks, NIC
++-------------------------------------+
+```
+
+**Layers explained:**
+
+| Layer | Role |
+|-------|------|
+| Hardware | Physical components (CPU, RAM, disk, network) |
+| Kernel | Manages hardware, memory, processes, filesystems, devices |
+| System calls | Interface programs use to ask the kernel to do something |
+| Libraries | Ready-made functions (glibc, libc) |
+| Shell | Command interpreter (bash, sh, zsh) |
+| Applications | Programs the user runs (vim, firefox, python) |
+
+**Kernel responsibilities:**
+
+- Process management (scheduling, creation, termination)
+- Memory management (RAM, virtual memory, swap)
+- Device management (drivers)
+- File system management
+- Networking
+- Security (users, permissions)
+
+**Q: What are the main components of Linux?**
+Kernel, shell, filesystem, utilities, applications.
+
+**Q: What is the difference between kernel and shell?**
+
+| Kernel | Shell |
+|--------|-------|
+| Core of the OS | User interface to the OS |
+| Runs in kernel space | Runs in user space |
+| Manages hardware | Interprets user commands |
+| Invisible to user | Visible (terminal prompt) |
+
+---
+
+## 3. Linux Distributions
+
+A **distribution (distro)** = Linux kernel + GNU tools + package manager + desktop environment + applications.
+
+**Common families:**
+
+| Family | Base | Package Manager | Examples |
+|--------|------|-----------------|----------|
+| Debian | Debian | `apt`, `dpkg` | Ubuntu, Mint, Kali |
+| Red Hat | RHEL | `yum`, `dnf`, `rpm` | Fedora, CentOS, Alma |
+| Arch | Arch | `pacman` | Manjaro, EndeavourOS |
+| SUSE | SUSE | `zypper` | openSUSE |
+| Gentoo | Gentoo | `portage` | Gentoo |
+
+**Q: What is the difference between a distro and the kernel?**
+The kernel is the core; a distro bundles the kernel with tools, package managers, and apps.
+
+**Q: Which distro is most common on servers?**
+Ubuntu Server, Debian, RHEL/CentOS.
+
+**Q: Which distro is common for penetration testing?**
+Kali Linux, Parrot OS.
+
+---
+
+## 4. The Shell
+
+The **shell** is a program that reads commands from the user and passes them to the kernel.
+
+**Common shells:**
+
+| Shell | Path | Description |
+|-------|------|-------------|
+| `sh` | `/bin/sh` | Original Bourne shell |
+| `bash` | `/bin/bash` | Bourne Again Shell (default on most Linux) |
+| `zsh` | `/bin/zsh` | Extended, popular with developers |
+| `ksh` | `/bin/ksh` | Korn shell |
+| `csh`/`tcsh` | `/bin/csh` | C shell |
+
+**Check your shell:**
+
+```bash
+echo $SHELL
+```
+
+**Change shell:**
+
+```bash
+chsh -s /bin/zsh
+```
+
+**Shell prompt** usually shows: `username@hostname:current_directory$`
+
+- `$` = normal user
+- `#` = root user
+
+**Shell types:**
+
+- **Login shell** — opened when you log in
+- **Interactive shell** — accepts typed commands
+- **Non-interactive shell** — runs scripts
+
+**Q: What is a shell?**
+A command interpreter that reads commands and executes them via the kernel.
+
+**Q: Which shell is default on most Linux?**
+Bash.
+
+---
+
+## 5. Filesystem Hierarchy Standard (FHS)
+
+Linux organizes files in a single tree starting from **`/`** (root).
+
+| Directory | Purpose |
+|-----------|---------|
+| `/` | Root of the filesystem |
+| `/bin` | Essential user binaries (`ls`, `cp`, `mv`) |
+| `/sbin` | System binaries (`fdisk`, `mkfs`) |
+| `/etc` | Configuration files |
+| `/home` | User home directories (`/home/alice`) |
+| `/root` | Root user's home directory |
+| `/tmp` | Temporary files (cleared on reboot) |
+| `/var` | Variable data (logs, spool, cache) |
+| `/usr` | User programs, libraries, docs |
+| `/lib` | Shared libraries |
+| `/opt` | Optional add-on software |
+| `/mnt` | Temporary mount points |
+| `/media` | Removable media (USB, DVD) |
+| `/dev` | Device files (`/dev/sda`, `/dev/null`) |
+| `/proc` | Process & kernel info (virtual) |
+| `/sys` | Kernel & hardware info (virtual) |
+| `/boot` | Bootloader files (kernel, initrd) |
+| `/srv` | Data served by system (web, ftp) |
+
+**Q: What is `/etc` for?**
+System-wide configuration files.
+
+**Q: Where are user home directories stored?**
+`/home/<username>` (except root, which is `/root`).
+
+**Q: Difference between `/bin` and `/usr/bin`?**
+Traditionally `/bin` had essential boot binaries; `/usr/bin` had user programs. On modern systems they're often merged.
+
+**Q: What is `/proc`?**
+A virtual filesystem exposing kernel and process info.
+
+```bash
+cat /proc/cpuinfo
+cat /proc/meminfo
+```
+
+**Q: What is `/dev/null`?**
+A special file that discards everything written to it ("bit bucket").
+
+---
+
+## 6. File Types in Linux
+
+Everything in Linux is a file. There are **7 types**:
+
+| Type | Symbol (in `ls -l`) | Example |
+|------|---------------------|---------|
+| Regular file | `-` | `notes.txt`, `script.sh` |
+| Directory | `d` | `/home`, `/etc` |
+| Symbolic link | `l` | `mylink -> /etc/passwd` |
+| Character device | `c` | `/dev/tty`, `/dev/null` |
+| Block device | `b` | `/dev/sda`, `/dev/sdb1` |
+| Named pipe (FIFO) | `p` | created with `mkfifo` |
+| Socket | `s` | created by processes |
+
+**Check file type:**
+
+```bash
+ls -l
+file myfile
+stat myfile
+```
+
+**Q: How do you know a file is a directory from `ls -l`?**
+The first character is `d`.
+
+**Q: What is a device file?**
+A file that represents a hardware device.
+
+---
+
+## 7. File & Directory Commands
+
+### 7.1 Navigation
+
+| Command | Purpose |
+|---------|---------|
+| `pwd` | Print working directory |
+| `cd /path` | Change directory |
+| `cd ~` | Go home |
+| `cd -` | Previous directory |
+| `cd ..` | Parent directory |
+| `ls` | List files |
+| `ls -la` | Long format, all files |
+
+### 7.2 Creating
+
+| Command | Purpose |
+|---------|---------|
+| `touch file.txt` | Create empty file / update timestamp |
+| `mkdir folder` | Create directory |
+| `mkdir -p a/b/c` | Create parent directories |
+
+### 7.3 Copying, moving, deleting
+
+| Command | Purpose |
+|---------|---------|
+| `cp src dst` | Copy file |
+| `cp -r src dst` | Copy directory |
+| `cp -v` | Verbose |
+| `cp -i` | Interactive |
+| `cp -p` | Preserve permissions |
+| `mv src dst` | Move or rename |
+| `rm file` | Delete file |
+| `rm -r folder` | Delete directory |
+| `rm -rf folder` | Force delete (no prompt) |
+| `rmdir folder` | Delete **empty** directory |
+
+### 7.4 Viewing files
+
+| Command | Purpose |
+|---------|---------|
+| `cat file` | Print entire file |
+| `less file` | Scrollable view |
+| `more file` | Older pager |
+| `head file` | First 10 lines |
+| `head -n 5 file` | First 5 lines |
+| `tail file` | Last 10 lines |
+| `tail -f log` | Follow a growing file |
+| `wc file` | Count lines, words, chars |
+| `file name` | Show file type |
+| `stat file` | Detailed file info |
+
+### 7.5 Searching inside files
+
+| Command | Purpose |
+|---------|---------|
+| `grep "pattern" file` | Search text |
+| `grep -i` | Case-insensitive |
+| `grep -r` | Recursive |
+| `grep -v` | Invert |
+| `grep -n` | Line numbers |
+| `grep -c` | Count |
+
+### 7.6 Locating files
+
+| Command | Purpose |
+|---------|---------|
+| `find / -name "file"` | Search by name |
+| `find . -iname "*.txt"` | Case-insensitive |
+| `find . -type f -size +1M` | By size |
+| `which ls` | Path of a command |
+| `whereis ls` | Binary + man + source |
+| `locate file` | Fast DB-based search |
+| `updatedb` | Update locate DB |
+
+**Q: Difference between `find` and `locate`?**
+`find` searches in real time; `locate` uses a prebuilt database (faster but can be stale).
+
+---
+
+## 8. File Permissions
+
+Every file has **three permission groups** and **three permission types**.
+
+### Groups
+
+| Group | Who |
+|-------|-----|
+| `u` | Owner |
+| `g` | Group |
+| `o` | Others |
+| `a` | All |
+
+### Types
+
+| Symbol | Meaning | Value |
+|--------|---------|-------|
+| `r` | Read | 4 |
+| `w` | Write | 2 |
+| `x` | Execute | 1 |
+| `-` | None | 0 |
+
+### Example
+
+```
+-rwxr-xr--
+ │└┬┘└┬┘└┬┘
+ │ │  │  └── others: r--  (4)
+ │ │  └───── group:  r-x  (5)
+ │ └──────── owner:  rwx  (7)
+ └────────── type:   regular file
+```
+
+Octal: `754`.
+
+### Changing permissions
+
+```bash
+chmod 755 file.sh         # rwxr-xr-x
+chmod 644 file.txt        # rw-r--r--
+chmod +x script.sh        # add execute
+chmod -w file.txt         # remove write
+chmod u+x,g+r file.txt    # symbolic
+```
+
+### Changing ownership
+
+```bash
+chown user file.txt
+chown user:group file.txt
+chown -R user:group folder/
+```
+
+### `umask`
+
+Default permissions are calculated by removing `umask` bits.
+
+- Default umask: `022`
+- Files: `666 - 022 = 644`
+- Directories: `777 - 022 = 755`
+
+```bash
+umask
+umask 027
+```
+
+**Q: What does `chmod 777` do?**
+Gives read, write, execute to everyone (rarely safe).
+
+**Q: Difference between `chmod` and `chown`?**
+`chmod` changes permissions; `chown` changes ownership.
+
+**Q: Why can't a normal user write to `/etc`?**
+Because `/etc` is owned by root and permissions deny write access to others.
+
+---
+
+## 9. Users and Groups
+
+Linux is **multi-user**: each user has an account with a UID, home directory, and shell.
+
+### User files
+
+| File | Purpose |
+|------|---------|
+| `/etc/passwd` | Usernames, UIDs, homes, shells |
+| `/etc/shadow` | Encrypted passwords (root only) |
+| `/etc/group` | Group definitions |
+| `/etc/sudoers` | Who can use `sudo` |
+
+### User management
+
+| Command | Purpose |
+|---------|---------|
+| `useradd john` | Create user |
+| `useradd -m -s /bin/bash john` | Create with home + shell |
+| `passwd john` | Set password |
+| `usermod -aG sudo john` | Add to group |
+| `userdel john` | Delete user |
+| `userdel -r john` | Delete user + home |
+| `id john` | Show UID, GID, groups |
+| `groups john` | Show groups |
+| `whoami` | Current user |
+| `who` | Logged-in users |
+| `w` | Logged-in users + activity |
+| `last` | Login history |
+| `su - john` | Switch user |
+| `sudo command` | Run as root |
+
+### Group management
+
+| Command | Purpose |
+|---------|---------|
+| `groupadd devs` | Create group |
+| `groupdel devs` | Delete group |
+| `gpasswd -a john devs` | Add user to group |
+| `gpasswd -d john devs` | Remove user |
+| `newgrp devs` | Switch primary group |
+
+### Types of users
+
+| Type | UID range | Description |
+|------|-----------|-------------|
+| Root | 0 | Superuser |
+| System users | 1–999 | Services (www-data, mysql) |
+| Regular users | 1000+ | Human accounts |
+
+**Q: What is the UID of root?**
+0.
+
+**Q: What's the difference between `su` and `sudo`?**
+
+| `su` | `sudo` |
+|------|--------|
+| Switch to root shell | Run one command as root |
+| Needs root's password | Uses your password |
+| Full session | Per-command |
+
+**Q: Why is `/etc/shadow` more secure than `/etc/passwd`?**
+It's readable only by root, so password hashes are protected.
+
+---
+
+## 10. Process Management
+
+A **process** is a running instance of a program. Each has a **PID**.
+
+### Viewing processes
+
+| Command | Purpose |
+|---------|---------|
+| `ps` | Current shell processes |
+| `ps aux` | All processes, detailed |
+| `ps -ef` | All processes, full format |
+| `top` | Live process viewer |
+| `htop` | Improved interactive viewer |
+| `pstree` | Tree of processes |
+| `pgrep firefox` | PID by name |
+
+### Signals and killing
+
+| Signal | Number | Meaning |
+|--------|--------|---------|
+| SIGHUP | 1 | Hangup |
+| SIGINT | 2 | Interrupt (Ctrl+C) |
+| SIGKILL | 9 | Force kill (cannot be ignored) |
+| SIGTERM | 15 | Terminate (default, graceful) |
+| SIGSTOP | 19 | Pause |
+| SIGCONT | 18 | Resume |
+
+```bash
+kill PID
+kill -9 PID
+kill -15 PID
+pkill firefox
+killall firefox
+```
+
+### Foreground vs background
+
+```bash
+sleep 100 &        # run in background
+jobs               # list jobs
+fg %1              # bring job 1 to foreground
+bg %1              # resume job 1 in background
+Ctrl+Z             # suspend current process
+Ctrl+C             # terminate
+```
+
+### Process priority
+
+```bash
+nice -n 10 command
+renice -n 5 -p PID
+```
+
+Nice values: **-20 (highest priority) to 19 (lowest)**.
+
+### Long-running detached processes
+
+```bash
+nohup ./script.sh &
+disown
+```
+
+**Q: What is a PID?**
+Process ID — a unique number assigned to each running process.
+
+**Q: What is PID 1?**
+`init` or `systemd` — the first process started by the kernel.
+
+**Q: Difference between SIGTERM and SIGKILL?**
+SIGTERM asks the process to stop gracefully; SIGKILL forces immediate termination.
+
+**Q: What is a zombie process?**
+A process that has finished but whose parent hasn't read its exit status.
+
+**Q: What is a daemon?**
+A background process not attached to a terminal (e.g., `sshd`, `cron`).
+
+---
+
+## 11. Package Management
+
+A **package** bundles software with metadata. A **package manager** installs, updates, and removes packages.
+
+### Debian/Ubuntu — `apt` / `dpkg`
+
+```bash
+sudo apt update                # refresh package list
+sudo apt upgrade               # upgrade installed
+sudo apt full-upgrade          # upgrade + dependencies
+sudo apt install nginx
+sudo apt remove nginx
+sudo apt purge nginx           # remove + config
+sudo apt autoremove            # remove unneeded deps
+apt search nginx
+apt show nginx
+apt list --installed
+
+sudo dpkg -i package.deb       # install local .deb
+dpkg -l                        # list installed
+```
+
+### Red Hat/CentOS — `yum` / `dnf` / `rpm`
+
+```bash
+sudo dnf install nginx
+sudo dnf remove nginx
+sudo dnf update
+sudo rpm -ivh package.rpm
+rpm -qa
+```
+
+### Arch — `pacman`
+
+```bash
+sudo pacman -S nginx
+sudo pacman -R nginx
+sudo pacman -Syu
+```
+
+**Q: Difference between `apt` and `apt-get`?**
+`apt` is user-friendly; `apt-get` is stable for scripts.
+
+**Q: What is a repository?**
+A server hosting packages that the package manager downloads from.
+
+**Q: Difference between `.deb` and `.rpm`?**
+`.deb` for Debian-based; `.rpm` for Red Hat-based.
+
+---
+
+## 12. Disk & Filesystem Management
+
+### Viewing disk usage
+
+| Command | Purpose |
+|---------|---------|
+| `df -h` | Disk space by filesystem |
+| `du -sh folder/` | Size of folder |
+| `du -h --max-depth=1` | Sizes at depth 1 |
+| `lsblk` | Block devices tree |
+| `blkid` | UUIDs of devices |
+| `fdisk -l` | Partition table |
+| `free -h` | RAM usage |
+
+### Mounting filesystems
+
+```bash
+mount
+sudo mount /dev/sdb1 /mnt
+sudo umount /mnt
+```
+
+Mount point must exist (`mkdir /mnt/usb`).
+
+### Filesystem types
+
+| FS | Description |
+|----|-------------|
+| ext4 | Default Linux filesystem |
+| xfs | High performance, RHEL default |
+| btrfs | Modern, snapshots, CoW |
+| vfat/FAT32 | USB drives |
+| ntfs | Windows |
+| tmpfs | RAM-backed |
+
+### Formatting and creating filesystems
+
+```bash
+sudo mkfs.ext4 /dev/sdb1
+sudo mkfs.xfs /dev/sdb1
+```
+
+### Checking & repairing
+
+```bash
+sudo fsck /dev/sdb1
+```
+
+### Partitioning
+
+```bash
+sudo fdisk /dev/sdb
+sudo parted /dev/sdb
+```
+
+**Q: What is a filesystem?**
+The method an OS uses to store and retrieve files on disk.
+
+**Q: What is mounting?**
+Attaching a filesystem to a directory in the tree.
+
+**Q: What is swap?**
+Disk space used as virtual memory when RAM is full.
+
+```bash
+swapon --show
+free -h
+```
+
+---
+
+## 13. Networking Basics
+
+### Viewing network info
+
+| Command | Purpose |
+|---------|---------|
+| `ip a` / `ip addr` | Show interfaces |
+| `ip route` | Routing table |
+| `ifconfig` | Older interface info |
+| `hostname -I` | Local IP |
+| `ping host` | Test reachability |
+| `traceroute host` | Path to host |
+| `ss -tuln` | Listening ports |
+| `netstat -tuln` | Older equivalent |
+| `dig domain` | DNS lookup |
+| `nslookup domain` | DNS lookup |
+| `curl URL` | HTTP request |
+| `wget URL` | Download file |
+| `ssh user@host` | Remote login |
+| `scp file user@host:/path` | Copy over SSH |
+| `rsync -av src/ dst/` | Sync files |
+
+### Common network files
+
+| File | Purpose |
+|------|---------|
+| `/etc/hosts` | Local hostname → IP map |
+| `/etc/resolv.conf` | DNS servers |
+| `/etc/network/interfaces` | Interface config (Debian) |
+| `/etc/hostname` | Local hostname |
+
+**Q: Difference between TCP and UDP?**
+TCP is connection-oriented (reliable); UDP is connectionless (fast, no guarantee).
+
+**Q: What is a port?**
+A number identifying a service on a machine (0–65535).
+
+**Q: Common ports?**
+
+| Port | Service |
+|------|---------|
+| 22 | SSH |
+| 80 | HTTP |
+| 443 | HTTPS |
+| 21 | FTP |
+| 25 | SMTP |
+| 53 | DNS |
+| 3306 | MySQL |
+| 5432 | PostgreSQL |
+
+**Q: What does `ping` do?**
+Sends ICMP echo requests to test if a host is reachable.
+
+---
+
+## 14. System Information Commands
+
+| Command | Purpose |
+|---------|---------|
+| `uname -a` | Kernel, hostname, architecture |
+| `uname -r` | Kernel version |
+| `hostname` | System hostname |
+| `hostnamectl` | Detailed hostname info |
+| `uptime` | How long system has been up |
+| `date` | Current date/time |
+| `cal` | Calendar |
+| `whoami` | Current user |
+| `who` | Logged-in users |
+| `w` | Who + what they're doing |
+| `last` | Last logins |
+| `top` | Processes + load |
+| `free -h` | RAM + swap |
+| `df -h` | Disk usage |
+| `du -sh` | Folder size |
+| `lscpu` | CPU info |
+| `lsmem` | Memory info |
+| `lsblk` | Block devices |
+| `lspci` | PCI devices |
+| `lsusb` | USB devices |
+| `dmidecode` | Hardware info (root) |
+| `cat /proc/cpuinfo` | CPU details |
+| `cat /proc/meminfo` | Memory details |
+| `cat /etc/os-release` | Distro info |
+
+**Q: How do you find the kernel version?**
+
+```bash
+uname -r
+cat /proc/version
+```
+
+**Q: How do you check memory usage?**
+
+```bash
+free -h
+cat /proc/meminfo
+```
+
+---
+
+## 15. Text Editors
+
+### nano (beginner-friendly)
+
+```bash
+nano file.txt
+```
+
+| Key | Action |
+|-----|--------|
+| `Ctrl+O` | Save |
+| `Ctrl+X` | Exit |
+| `Ctrl+W` | Search |
+| `Ctrl+K` | Cut line |
+| `Ctrl+U` | Paste |
+
+### vim (powerful)
+
+```bash
+vim file.txt
+```
+
+**Modes:**
+
+| Mode | Enter with | Purpose |
+|------|------------|---------|
+| Normal | `Esc` | Navigate, delete, copy |
+| Insert | `i`, `a`, `o` | Type text |
+| Command | `:` | Save, quit, search |
+
+**Common commands:**
+
+| Command | Action |
+|---------|--------|
+| `:w` | Save |
+| `:q` | Quit |
+| `:wq` | Save and quit |
+| `:q!` | Quit without saving |
+| `dd` | Delete line |
+| `yy` | Copy line |
+| `p` | Paste |
+| `/word` | Search |
+
+### emacs
+
+```bash
+emacs file.txt
+```
+
+**Q: How do you save and exit in vim?**
+`Esc` then `:wq`.
+
+**Q: How do you exit vim without saving?**
+`Esc` then `:q!`.
+
+---
+
+## 16. Environment Variables & Shell Configuration
+
+**Environment variables** store values used by shells and programs.
+
+```bash
+echo $HOME
+echo $PATH
+echo $USER
+echo $SHELL
+```
+
+### Setting variables
+
+```bash
+MYVAR="hello"          # shell variable (current session)
+export MYVAR="hello"   # environment variable (inherited by children)
+```
+
+### Viewing all
+
+```bash
+env
+printenv
+set
+```
+
+### Important variables
+
+| Variable | Meaning |
+|----------|---------|
+| `$HOME` | User home |
+| `$PATH` | Command search path |
+| `$USER` | Username |
+| `$SHELL` | Current shell |
+| `$PWD` | Current directory |
+| `$OLDPWD` | Previous directory |
+| `$PS1` | Primary prompt |
+| `$EDITOR` | Default editor |
+
+### Making variables permanent
+
+Add to `~/.bashrc` or `~/.profile`:
+
+```bash
+echo 'export MYVAR="hello"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### Startup files
+
+| File | When run |
+|------|----------|
+| `/etc/profile` | Login, system-wide |
+| `/etc/bash.bashrc` | Interactive, system-wide |
+| `~/.bash_profile` | Login, user |
+| `~/.bashrc` | Interactive non-login, user |
+| `~/.profile` | Login (fallback) |
+
+**Q: Difference between `~/.bashrc` and `~/.bash_profile`?**
+`.bashrc` for interactive shells; `.bash_profile` for login shells.
+
+**Q: What is `$PATH`?**
+A colon-separated list of directories the shell searches for commands.
+
+---
+
+## 17. Archiving & Compression
+
+### tar
+
+```bash
+tar -cvf archive.tar folder/              # create
+tar -xvf archive.tar                      # extract
+tar -tvf archive.tar                      # list
+tar -czvf archive.tar.gz folder/          # create gzip
+tar -xzvf archive.tar.gz -C /target/      # extract gzip into folder
+tar -cjvf archive.tar.bz2 folder/         # bzip2
+tar -xJvf archive.tar.xz                  # xz
+tar -xzf archive.tar.gz --strip-components=1
+```
+
+| Flag | Meaning |
+|------|---------|
+| `-c` | Create |
+| `-x` | Extract |
+| `-t` | List |
+| `-v` | Verbose |
+| `-f` | File (must be last) |
+| `-z` | gzip |
+| `-j` | bzip2 |
+| `-J` | xz |
+| `-C` | Change directory |
+
+### gzip / gunzip
+
+```bash
+gzip file.txt
+gunzip file.txt.gz
+```
+
+### zip / unzip
+
+```bash
+zip archive.zip file1 file2
+zip -r archive.zip folder/
+unzip archive.zip
+unzip archive.zip -d target/
+```
+
+### Other tools
+
+```bash
+bzip2 file.txt
+xz file.txt
+zstd file.txt
+```
+
+**Q: Difference between `tar` and `gzip`?**
+`tar` bundles many files; `gzip` compresses one file.
+
+**Q: What is `.tar.gz`?**
+A tar archive compressed with gzip.
+
+---
+
+## 18. Boot Process
+
+When you press power, Linux boots in this order:
+
+1. **BIOS/UEFI** — hardware check, finds boot device
+2. **Bootloader (GRUB)** — loads kernel
+3. **Kernel** — initializes hardware, mounts initrd/initramfs
+4. **init / systemd** — first process (PID 1)
+5. **Services** — started by systemd in parallel
+6. **Login prompt / GUI**
+
+### GRUB
+
+- Configuration: `/boot/grub/grub.cfg`
+- Editable at boot with `e`
+- Regenerate:
+
+```bash
+sudo update-grub
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+### Init systems
+
+| Init | Description |
+|------|-------------|
+| SysVinit | Older, sequential |
+| Upstart | Transitional |
+| systemd | Modern, parallel, default on most distros |
+
+**Q: What is the first process started on Linux?**
+`systemd` (or `init`), PID 1.
+
+**Q: What is GRUB?**
+GRand Unified Bootloader — loads the kernel.
+
+**Q: What is the kernel ring buffer?**
+
+```bash
+dmesg
+```
+
+---
+
+## 19. Systemd & Services
+
+**systemd** manages services, mounts, timers, sockets, and more.
+
+### Managing services
+
+```bash
+systemctl status nginx
+sudo systemctl start nginx
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+sudo systemctl reload nginx
+sudo systemctl enable nginx     # start at boot
+sudo systemctl disable nginx
+systemctl is-active nginx
+systemctl is-enabled nginx
+```
+
+### Listing
+
+```bash
+systemctl list-units --type=service
+systemctl --failed
+```
+
+### Targets (like runlevels)
+
+```bash
+systemctl get-default
+sudo systemctl set-default multi-user.target
+sudo systemctl isolate rescue.target
+```
+
+| Target | Runlevel | Meaning |
+|--------|----------|---------|
+| poweroff | 0 | Shut down |
+| rescue | 1 | Single-user |
+| multi-user | 3 | Multi-user, no GUI |
+| graphical | 5 | Multi-user + GUI |
+| reboot | 6 | Reboot |
+
+### Unit files
+
+Located at:
+
+- `/etc/systemd/system/` — custom
+- `/lib/systemd/system/` — package-installed
+
+Reload after changes:
+
+```bash
+sudo systemctl daemon-reload
+```
+
+**Q: What is `systemd`?**
+The init system and service manager used by most modern Linux distros.
+
+**Q: Difference between `start` and `enable`?**
+`start` runs now; `enable` makes it start at boot.
+
+---
+
+## 20. Scheduling (cron/at)
+
+### cron — recurring jobs
+
+```bash
+crontab -e          # edit
+crontab -l          # list
+crontab -r          # remove all
+```
+
+**Cron syntax:**
+
+```
+* * * * * command
+│ │ │ │ │
+│ │ │ │ └── day of week (0–7, 0=Sun)
+│ │ │ └──── month (1–12)
+│ │ └────── day of month (1–31)
+│ └──────── hour (0–23)
+└────────── minute (0–59)
+```
+
+**Examples:**
+
+```
+0 2 * * *        # daily at 2:00 AM
+*/5 * * * *      # every 5 minutes
+0 0 * * 0        # Sundays at midnight
+0 9 1 * *        # 1st of every month at 9 AM
+```
+
+**Cron directories:**
+
+- `/etc/crontab` — system crontab
+- `/etc/cron.d/` — individual jobs
+- `/etc/cron.daily/`, `/etc/cron.hourly/`, etc.
+
+### at — one-time jobs
+
+```bash
+at 10:00 PM
+at now + 1 hour
+atq
+atrm 3
+```
+
+**Q: Difference between `cron` and `at`?**
+`cron` repeats; `at` runs once.
+
+**Q: What user can schedule cron jobs?**
+Any user (for their own crontab); root can schedule system-wide.
+
+---
+
+## 21. Logging & Monitoring
+
+### Log locations
+
+| Path | Purpose |
+|------|---------|
+| `/var/log/` | All logs |
+| `/var/log/syslog` | General (Debian) |
+| `/var/log/messages` | General (RHEL) |
+| `/var/log/auth.log` | Auth attempts |
+| `/var/log/kern.log` | Kernel |
+| `/var/log/dmesg` | Boot messages |
+| `/var/log/apache2/` | Web logs |
+
+### journalctl (systemd logs)
+
+```bash
+journalctl
+journalctl -u nginx
+journalctl -f
+journalctl --since "1 hour ago"
+journalctl -b
+journalctl -p err
+```
+
+### dmesg
+
+```bash
+dmesg
+dmesg | tail
+```
+
+### Monitoring tools
+
+| Command | Purpose |
+|---------|---------|
+| `top` | Real-time process view |
+| `htop` | Improved top |
+| `iotop` | Disk I/O |
+| `iftop` | Network |
+| `vmstat` | VM stats |
+| `iostat` | I/O stats |
+| `sar` | Historical stats |
+| `netstat` / `ss` | Network connections |
+
+**Q: Where are Linux logs stored?**
+`/var/log/`.
+
+**Q: What replaces `tail -f /var/log/syslog` in systemd?**
+`journalctl -f`.
+
+---
+
+## 22. Links: Hard vs Symbolic
+
+### Hard link
+
+```bash
+ln target link
+```
+
+- Points to the **same inode** as the target.
+- Cannot cross filesystems.
+- Cannot link to a directory.
+- Deleting the original does **not** delete the data — it's still reachable via other hard links.
+- The file is only removed when **all** hard links are deleted.
+
+### Symbolic (soft) link
+
+```bash
+ln -s target link
+```
+
+- Points to a **path**.
+- Can cross filesystems.
+- Can point to directories.
+- If target is deleted, the symlink becomes **broken**.
+- `ls -l` shows `l` as the first character.
+
+**Comparison:**
+
+| Feature | Hard link | Symlink |
+|---------|-----------|---------|
+| Same inode | Yes | No |
+| Cross filesystem | No | Yes |
+| Link directories | No | Yes |
+| Survives target deletion | Yes | No |
+| Shows as | Regular file | `l` type |
+
+**Q: What happens if you delete the original file when a hard link exists?**
+The data stays reachable via the hard link.
+
+**Q: What happens if you delete the original file when a symlink exists?**
+The symlink becomes broken.
+
+---
+
+## 23. Security Basics
+
+### Permissions recap
+
+- File permissions: `rwx` for user/group/others.
+- Root can do anything.
+- `sudo` allows temporary privilege escalation.
+
+### Common practices
+
+- Use strong passwords.
+- Use SSH keys instead of passwords.
+- Keep system updated.
+- Limit `sudo` to trusted users.
+- Disable root SSH login.
+- Use a firewall (`ufw`, `firewalld`, `iptables`).
+
+### Firewall tools
+
+```bash
+sudo ufw enable
+sudo ufw allow 22
+sudo ufw status
+
+sudo firewall-cmd --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+```
+
+### SSH keys
+
+```bash
+ssh-keygen -t ed25519
+ssh-copy-id user@host
+```
+
+### File access control
+
+```bash
+getfacl file
+setfacl -m u:john:rw file
+```
+
+### File integrity / hashing
+
+```bash
+md5sum file
+sha256sum file
+```
+
+### Sensitive files
+
+| File | Why |
+|------|-----|
+| `/etc/shadow` | Password hashes |
+| `/etc/sudoers` | sudo rules |
+| `/root/` | Root home |
+| `~/.ssh/` | SSH keys |
+
+**Q: Why is `/etc/shadow` restricted?**
+It contains password hashes; only root should read it.
+
+**Q: What is the principle of least privilege?**
+Users should only have the minimum access they need.
+
+---
+
+## 24. Scenario-Based Questions
+
+**Q1.** Your disk is full. How do you find the largest files?
+
+```bash
+df -h
+du -sh /* 2>/dev/null | sort -h
+du -ah / 2>/dev/null | sort -h | tail -20
+find / -type f -size +100M 2>/dev/null
+```
+
+**Q2.** You deleted a file but the disk space hasn't freed. Why?
+
+The file is still open by a running process. Check with:
+
+```bash
+lsof | grep deleted
+```
+
+**Q3.** A process is using 100% CPU. How do you find and kill it?
+
+```bash
+top
+ps aux --sort=-%cpu | head
+kill -9 PID
+```
+
+**Q4.** You want to monitor a log file in real time.
+
+```bash
+tail -f /var/log/syslog
+journalctl -f
+```
+
+**Q5.** You need to copy a directory to a remote server.
+
+```bash
+scp -r folder/ user@host:/path/
+rsync -avz folder/ user@host:/path/
+```
+
+**Q6.** A script must run every day at 3 AM.
+
+```bash
+crontab -e
+0 3 * * * /home/user/backup.sh
+```
+
+**Q7.** A user can't `sudo`. How do you fix it?
+
+```bash
+sudo usermod -aG sudo username
+```
+
+**Q8.** You need to find which process uses port 80.
+
+```bash
+sudo lsof -i :80
+sudo ss -tulpn | grep :80
+```
+
+**Q9.** Your service isn't starting at boot.
+
+```bash
+sudo systemctl enable myservice
+systemctl is-enabled myservice
+```
+
+**Q10.** You need to change the owner of a directory tree.
+
+```bash
+sudo chown -R user:group folder/
+```
+
+**Q11.** A file is "Permission denied" when you try to run it.
+
+```bash
+chmod +x file
+./file
+```
+
+**Q12.** You need to find all `.log` files older than 30 days and delete them.
+
+```bash
+find /var/log -name "*.log" -mtime +30 -delete
+```
+
+**Q13.** Compare two files to see differences.
+
+```bash
+diff file1.txt file2.txt
+```
+
+**Q14.** You want to test a destructive command safely.
+
+```bash
+mkdir -p ~/Documents/sandbox
+cd ~/Documents/sandbox
+# test here
+```
+
+**Q15.** You need to change the hostname.
+
+```bash
+sudo hostnamectl set-hostname newname
+```
+
+**Q16.** You want to know which kernel version is running.
+
+```bash
+uname -r
+```
+
+**Q17.** A file is not visible in `ls`. What could be wrong?
+
+It starts with `.` (hidden). Use `ls -a`.
+
+**Q18.** You want to know how much space a folder uses.
+
+```bash
+du -sh folder/
+```
+
+**Q19.** You want to shut down / reboot the system.
+
+```bash
+sudo shutdown -h now       # power off
+sudo shutdown -r now       # reboot
+sudo reboot
+sudo poweroff
+```
+
+**Q20.** You want to see all users on the system.
+
+```bash
+cut -d: -f1 /etc/passwd
+```
+
+**Q21.** You want to add a user and give them sudo.
+
+```bash
+sudo useradd -m -s /bin/bash john
+sudo passwd john
+sudo usermod -aG sudo john
+```
+
+**Q22.** You want to disable SSH root login.
+
+Edit `/etc/ssh/sshd_config`:
+
+```
+PermitRootLogin no
+```
+
+Then:
+
+```bash
+sudo systemctl restart sshd
+```
+
+**Q23.** Check if a service is running.
+
+```bash
+systemctl status nginx
+```
+
+**Q24.** Find the PID of a process by name.
+
+```bash
+pgrep firefox
+pidof firefox
+```
+
+**Q25.** See disk usage sorted by size.
+
+```bash
+du -sh * | sort -h
+```
+
+---
+
+## 25. Quick Reference Cheat Sheet
+
+| Task | Command |
+|------|---------|
+| Show kernel version | `uname -r` |
+| System info | `uname -a` |
+| Current user | `whoami` |
+| Hostname | `hostname` / `hostnamectl` |
+| Date | `date` |
+| Uptime | `uptime` |
+| Show PATH | `echo $PATH` |
+| List files | `ls -la` |
+| Change directory | `cd /path` |
+| Current directory | `pwd` |
+| Create file | `touch file` |
+| Create folder | `mkdir -p a/b/c` |
+| Copy | `cp src dst` |
+| Copy folder | `cp -r src dst` |
+| Move/rename | `mv src dst` |
+| Delete file | `rm file` |
+| Delete folder | `rm -rf folder` |
+| View file | `cat` / `less` / `head` / `tail` |
+| Follow log | `tail -f log` |
+| Search text | `grep "x" file` |
+| Case-insensitive grep | `grep -i "x" file` |
+| Find file | `find / -name "file"` |
+| Locate | `locate file` |
+| Permissions | `chmod 755 file` |
+| Owner | `chown user:group file` |
+| umask | `umask` |
+| Create user | `useradd -m user` |
+| Set password | `passwd user` |
+| Add to group | `usermod -aG group user` |
+| Switch user | `su - user` |
+| Run as root | `sudo cmd` |
+| Processes | `ps aux` / `top` / `htop` |
+| Kill process | `kill -9 PID` |
+| Kill by name | `pkill name` |
+| Background job | `cmd &` |
+| List jobs | `jobs` |
+| Bring to foreground | `fg %1` |
+| Nice | `nice -n 10 cmd` |
+| Package update | `sudo apt update` |
+| Package upgrade | `sudo apt upgrade` |
+| Install | `sudo apt install pkg` |
+| Remove | `sudo apt remove pkg` |
+| Disk usage | `df -h` |
+| Folder size | `du -sh folder` |
+| RAM | `free -h` |
+| Block devices | `lsblk` |
+| Mount | `sudo mount /dev/sdb1 /mnt` |
+| IP addresses | `ip a` |
+| Routes | `ip route` |
+| Ping | `ping host` |
+| Open ports | `ss -tuln` |
+| SSH | `ssh user@host` |
+| Copy over SSH | `scp file user@host:/path` |
+| Sync | `rsync -av src/ dst/` |
+| Download | `wget URL` |
+| HTTP request | `curl URL` |
+| Archive | `tar -czf a.tar.gz folder/` |
+| Extract | `tar -xzf a.tar.gz -C dir` |
+| Zip | `zip -r a.zip folder/` |
+| Unzip | `unzip a.zip -d dir` |
+| Service status | `systemctl status svc` |
+| Start service | `sudo systemctl start svc` |
+| Enable at boot | `sudo systemctl enable svc` |
+| View logs | `journalctl -u svc` |
+| Boot messages | `dmesg` |
+| Cron edit | `crontab -e` |
+| Cron list | `crontab -l` |
+| One-time job | `at 10:00 PM` |
+| Symlink | `ln -s target link` |
+| Hard link | `ln target link` |
+| Shutdown | `sudo shutdown -h now` |
+| Reboot | `sudo reboot` |
+| Firewall (ufw) | `sudo ufw allow 22` |
+| Firewall (firewalld) | `firewall-cmd --add-port=80/tcp` |
+| SSH key | `ssh-keygen -t ed25519` |
+| Hash | `sha256sum file` |
+| Manual | `man cmd` |
+| Quick help | `cmd --help` |
+
+---
+
+# ```markdown
+# Linux Module — Practice Question Set (Same Style as Bash)
+
+> Questions and answers structured the same way as the Bash re-take guide.
+> Each section explains the concept, gives practice questions, and shows step-by-step answers.
+> Copy this into VS Code or GitHub.
+
+---
+
+## Table of Contents
+
+1. [Test Commands in the Terminal First](#1-test-commands-in-the-terminal-first)
+2. [Leverage the Man Pages](#2-leverage-the-man-pages)
+3. [Create Test Files for Verification](#3-create-test-files-for-verification)
+4. [Understand sudo Before Using It](#4-understand-sudo-before-using-it)
+5. [Stop Using Your Home Directory for Testing](#5-stop-using-your-home-directory-for-testing)
+6. [Watch Your Spacing and Formatting](#6-watch-your-spacing-and-formatting)
+7. [Practice wget Scenarios & Shell History](#7-practice-wget-scenarios--shell-history)
+8. [Filesystem & File Management Questions](#8-filesystem--file-management-questions)
+9. [Permissions & Ownership Questions](#9-permissions--ownership-questions)
+10. [Users & Groups Questions](#10-users--groups-questions)
+11. [Process Management Questions](#11-process-management-questions)
+12. [Package Management Questions](#12-package-management-questions)
+13. [Disk & Filesystem Questions](#13-disk--filesystem-questions)
+14. [Networking Questions](#14-networking-questions)
+15. [Systemd & Services Questions](#15-systemd--services-questions)
+16. [Cron & Scheduling Questions](#16-cron--scheduling-questions)
+17. [Logging & Monitoring Questions](#17-logging--monitoring-questions)
+18. [Links — Hard vs Symbolic Questions](#18-links--hard-vs-symbolic-questions)
+19. [Boot Process Questions](#19-boot-process-questions)
+20. [Security Basics Questions](#20-security-basics-questions)
+21. [Mixed Test-Style Questions](#21-mixed-test-style-questions)
+22. [Quick Reference Sheet](#22-quick-reference-sheet)
+
+---
+
+## 1. Test Commands in the Terminal First
+
+**Concept:** Always verify your command in a safe directory before writing the final answer. If a question uses a restricted folder like `/etc` or `/usr/bin`, replicate the structure in a folder you own.
+
+**Q1.** You need to find all `.conf` files in `/etc` and copy them to `/etc/backup`. Why can't you test this directly in `/etc`?
+
+<details>
+<summary>Answer</summary>
+
+Because `/etc` is owned by `root`. A normal user does not have write permission there. Test in a folder you own first.
+
+```bash
+mkdir -p ~/Documents/practice/etc
+cd ~/Documents/practice/etc
+touch a.conf b.conf c.txt
+mkdir backup
+find . -name "*.conf" -exec cp {} backup/ \;
+ls backup/
+```
+
+Final answer:
+
+```bash
+sudo mkdir -p /etc/backup
+sudo find /etc -maxdepth 1 -name "*.conf" -exec cp {} /etc/backup/ \;
+```
+</details>
+
+**Q2.** Test this in `~/Documents/practice` before submitting: *Find all files ending in `.log` in `/var/log` and move them to `/var/log/old`.*
+
+<details>
+<summary>Answer</summary>
+
+```bash
+mkdir -p ~/Documents/practice/var_log/old
+cd ~/Documents/practice/var_log
+touch a.log b.log c.txt d.log
+find . -name "*.log" -exec mv {} old/ \;
+ls old/
+```
+
+Final answer:
+
+```bash
+sudo mkdir -p /var/log/old
+sudo find /var/log -maxdepth 1 -name "*.log" -exec mv {} /var/log/old/ \;
+```
+</details>
+
+---
+
+## 2. Leverage the Man Pages
+
+**Concept:** `man <command>` opens the manual. Use `/word` to search, `n` for next match, `q` to quit.
+
+**Q3.** What command opens the manual page for `chmod`?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+man chmod
+```
+</details>
+
+**Q4.** Inside a man page, how do you search for the word "recursive"?
+
+<details>
+<summary>Answer</summary>
+
+Type `/recursive` and press Enter. Press `n` for the next match, `N` for the previous match.
+</details>
+
+**Q5.** How do you open section 5 of the `passwd` man page?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+man 5 passwd
+```
+
+Section 5 is for file formats. Section 1 is user commands, section 8 is admin commands.
+</details>
+
+**Q6.** What command gives a one-line description of `systemctl` without opening the full manual?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+whatis systemctl
+# or
+man -f systemctl
+```
+</details>
+
+**Q7.** How do you search all man pages for the keyword "permission"?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+man -k permission
+# or
+apropos permission
+```
+</details>
+
+**Q8.** What are the 8 man page sections?
+
+<details>
+<summary>Answer</summary>
+
+| Section | Meaning |
+|---------|---------|
+| 1 | User commands |
+| 2 | System calls |
+| 3 | Library functions |
+| 4 | Devices |
+| 5 | File formats |
+| 6 | Games |
+| 7 | Miscellaneous |
+| 8 | System administration |
+</details>
+
+---
+
+## 3. Create Test Files for Verification
+
+**Concept:** When a question asks you to find or list files matching a pattern, create dummy files and test your glob.
+
+**Q9.** You need to list all files ending in `.conf`. Create test files and verify.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+mkdir -p ~/Documents/practice/globtest
+cd ~/Documents/practice/globtest
+touch app.conf db.conf readme.txt notes.md
+ls *.conf
+```
+
+Output:
+
+```
+app.conf  db.conf
+```
+
+Final answer:
+
+```bash
+ls *.conf
+```
+</details>
+
+**Q10.** List all files whose names are exactly 5 characters long.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+cd ~/Documents/practice/globtest
+touch 12345 abcde short longername
+ls -d ????? 2>/dev/null
+```
+
+Output:
+
+```
+12345  abcde
+```
+
+Final answer:
+
+```bash
+ls -d ????? 2>/dev/null
+```
+
+Remember: `?` = exactly one character. Five `?` = five characters.
+</details>
+
+**Q11.** List files that start with `log` and end with `.txt`.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+touch log1.txt log2.txt log3.log other.txt
+ls log*.txt
+```
+
+Final answer:
+
+```bash
+ls log*.txt
+```
+</details>
+
+**Q12.** Create test files to verify a permission change.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+cd ~/Documents/practice
+touch test.sh
+ls -l test.sh         # -rw-r--r--
+chmod +x test.sh
+ls -l test.sh         # -rwxr-xr-x
+```
+</details>
+
+---
+
+## 4. Understand sudo Before Using It
+
+**Concept:** `sudo` gives root privileges. Only use it when the task actually requires writing to system folders or managing system resources.
+
+**Q13.** Which of these needs `sudo`?
+
+a) `ls /etc`  
+b) `cp file.txt /etc/`  
+c) `cat /etc/hostname`  
+d) `mkdir /etc/newfolder`
+
+<details>
+<summary>Answer</summary>
+
+- a) **No** — reading is allowed for everyone.
+- b) **Yes** — writing to `/etc` requires root.
+- c) **No** — `/etc/hostname` is world-readable.
+- d) **Yes** — creating a folder in `/etc` requires root.
+
+```bash
+sudo cp file.txt /etc/
+sudo mkdir /etc/newfolder
+```
+</details>
+
+**Q14.** You want to copy a file from your home directory to `~/Documents`. Do you need `sudo`?
+
+<details>
+<summary>Answer</summary>
+
+No. You own your home directory, so standard permissions are enough:
+
+```bash
+cp file.txt ~/Documents/
+```
+</details>
+
+**Q15.** Why does `sudo cat /etc/shadow` work but `cat /etc/shadow` fails?
+
+<details>
+<summary>Answer</summary>
+
+`/etc/shadow` has permissions like `-rw-r-----` — only root and the shadow group can read it. `sudo` temporarily gives you root privileges, so `sudo cat /etc/shadow` works.
+</details>
+
+**Q16.** What is the difference between `sudo` and `su`?
+
+<details>
+<summary>Answer</summary>
+
+| `sudo` | `su` |
+|--------|------|
+| Runs one command as root | Switches to root shell |
+| Uses your own password | Uses root's password |
+| Logged by default | Not always logged |
+| Configurable per user in `/etc/sudoers` | Root password required |
+
+```bash
+sudo apt update          # one command
+su -                     # full root shell
+```
+</details>
+
+**Q17.** What file controls who can use `sudo`?
+
+<details>
+<summary>Answer</summary>
+
+`/etc/sudoers`. Always edit with `visudo`:
+
+```bash
+sudo visudo
+```
+</details>
+
+---
+
+## 5. Stop Using Your Home Directory for Testing
+
+**Concept:** Always create a dedicated sandbox folder. Don't clutter `~` or risk deleting important files.
+
+**Q18.** What's wrong with running this in your home directory?
+
+```bash
+rm -rf *
+```
+
+<details>
+<summary>Answer</summary>
+
+It deletes **everything** in your current directory. If you're in `~`, it wipes your entire home folder. Always `mkdir` a sandbox first:
+
+```bash
+mkdir -p ~/Documents/sandbox
+cd ~/Documents/sandbox
+touch test1 test2
+rm -rf *
+```
+</details>
+
+**Q19.** Write the commands to create a safe sandbox, add test files, and clean up afterward.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+mkdir -p ~/Documents/sandbox
+cd ~/Documents/sandbox
+touch a.txt b.txt c.log
+ls
+cd ~
+rm -rf ~/Documents/sandbox
+```
+</details>
+
+**Q20.** How do you keep your current directory clean while testing?
+
+<details>
+<summary>Answer</summary>
+
+- Subshell: `(cd /tmp && command)`
+- `pushd` / `popd`
+- `cd -`
+- `mktemp -d` + `trap 'rm -rf $tmp' EXIT`
+- Dedicated sandbox: `mkdir -p ~/Documents/sandbox`
+</details>
+
+---
+
+## 6. Watch Your Spacing and Formatting
+
+**Concept:** Automated grading is strict. Extra spaces, missing spaces, or repeating parts of the command will fail.
+
+**Q21.** The question asks: *Make a script executable: `chmod ___ script.sh`* — what goes in the blank?
+
+<details>
+<summary>Answer</summary>
+
+```
++x
+```
+
+Just `+x`. Not `chmod +x`.
+</details>
+
+**Q22.** Is `ls-la` valid?
+
+<details>
+<summary>Answer</summary>
+
+No. Missing space. Correct:
+
+```bash
+ls -la
+```
+</details>
+
+**Q23.** Is `ls ` (with a trailing space) the same as `ls`?
+
+<details>
+<summary>Answer</summary>
+
+Functionally yes in a terminal, but automated grading may mark `ls ` wrong because of the trailing space. Always write it clean:
+
+```bash
+ls
+```
+</details>
+
+**Q24.** Fill in the blank: *Move all `.log` files to `/tmp`: `mv ___ /tmp`*
+
+<details>
+<summary>Answer</summary>
+
+```
+*.log
+```
+
+Just `*.log`. Not `mv *.log`.
+</details>
+
+**Q25.** Fill in the blank: *Find all `.txt` files: `find . -name ___`*
+
+<details>
+<summary>Answer</summary>
+
+```
+"*.txt"
+```
+
+Just `"*.txt"`. Not `find . -name "*.txt"`.
+</details>
+
+**Q26.** Which is correct?
+
+a) `tar -xzf file.tar.gz -C myfolder`  
+b) `tar-xzf file.tar.gz -C myfolder`  
+c) `tar -xzf file.tar.gz -C  myfolder`  
+d) `tar -xzf file.tar.gz -C myfolder `/b (trailing space)
+
+<details>
+<summary>Answer</summary>
+
+Only **a)** is correct.
+
+- b) missing space after `tar`
+- c) double space after `-C`
+- d) trailing space
+</details>
+
+**Q27.** Fill in the blank: *Create a folder and its parents: `mkdir ___ a/c`*
+
+<details>
+<summary>Answer</summary>
+
+```
+-p
+```
+
+Just `-p`. Not `mkdir -p`.
+</details>
+
+---
+
+## 7. Practice wget Scenarios & Shell History
+
+**Concept:** Practice real `wget` downloads. Use `history` or `Ctrl+R` to recall verified commands.
+
+**Q28.** Download `https://example.com/file.zip` and save it as `myfile.zip`.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+wget -O myfile.zip "https://example.com/file.zip"
+```
+
+`-O` = capital letter O = output filename.
+</details>
+
+**Q29.** Download and extract a `.tar.gz` file into a folder called `myfolder`.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+mkdir -p myfolder
+wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && tar -xzf myfile.tar.gz -C myfolder
+```
+
+`&&` means run `tar` only if `wget` succeeds.
+</details>
+
+**Q30.** What's the difference between `wget -O` and `wget -o`?
+
+<details>
+<summary>Answer</summary>
+
+- `wget -O` (capital O) = save the downloaded file with this name.
+- `wget -o` (lowercase o) = write the log output to this file.
+
+```bash
+wget -O myfile.zip "https://example.com/file.zip"    # saves the file as myfile.zip
+wget -o log.txt "https://example.com/file.zip"       # saves download log to log.txt
+```
+</details>
+
+**Q31.** You downloaded a file earlier and want to rerun the exact command. How do you find it quickly?
+
+<details>
+<summary>Answer</summary>
+
+Use `history`:
+
+```bash
+history | grep wget
+```
+
+Then rerun by number:
+
+```bash
+!123
+```
+
+Or just press **Ctrl+R** and type `wget`.
+</details>
+
+**Q32.** Download a file, then extract it into a folder, and show the files inside — all in one line.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+mkdir -p myfolder && wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && tar -xzf myfile.tar.gz -C myfolder && ls myfolder
+```
+</details>
+
+**Q33.** Alternatives to `history` for recalling commands.
+
+<details>
+<summary>Answer</summary>
+
+| Method | How to use |
+|--------|-----------|
+| **Up arrow** | Press `↑` repeatedly |
+| **Ctrl + R** | Reverse search — fastest |
+| **`!!`** | Run last command |
+| **`!n`** | Run command number n |
+| **`!wget`** | Last command starting with wget |
+| **`!?tar?`** | Last command containing tar |
+| **`fc -l`** | List recent |
+| **`alias`** | Create shortcuts |
+</details>
+
+---
+
+## 8. Filesystem & File Management Questions
+
+**Q34.** What does `pwd` do?
+
+<details>
+<summary>Answer</summary>
+
+Prints the current working directory.
+
+```bash
+pwd
+```
+</details>
+
+**Q35.** What does `cd` do? Give 4 examples.
+
+<details>
+<summary>Answer</summary>
+
+Changes the current directory.
+
+```bash
+cd /home/user          # absolute path
+cd Documents           # relative path
+cd ~                   # home directory
+cd -                   # previous directory
+cd ..                  # parent directory
+```
+</details>
+
+**Q36.** What is the difference between `cd` and `cd -`?
+
+<details>
+<summary>Answer</summary>
+
+- `cd` — changes to a directory
+- `cd -` — toggles between the current and previous directory
+</details>
+
+**Q37.** How do you create a file with no content?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+touch file.txt
+```
+</details>
+
+**Q38.** How do you create a directory and its parents in one command?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+mkdir -p a/b/c
+```
+</details>
+
+**Q39.** Difference between `cp` and `mv`?
+
+<details>
+<summary>Answer</summary>
+
+| `cp` | `mv` |
+|------|------|
+| Copies | Moves or renames |
+| Original stays | Original is removed |
+| `cp -r` for directories | Works on directories without `-r` |
+</details>
+
+**Q40.** Difference between `rm` and `rmdir`?
+
+<details>
+<summary>Answer</summary>
+
+- `rm` — removes files (and directories with `-r`)
+- `rmdir` — removes only **empty** directories
+
+```bash
+rm file.txt
+rmdir emptydir/
+rm -r fulldir/
+```
+</details>
+
+**Q41.** What is the difference between `rm -r` and `rm -rf`?
+
+<details>
+<summary>Answer</summary>
+
+- `rm -r` — recursive, may prompt for protected files
+- `rm -rf` — recursive + force, no prompts, ignores missing files
+</details>
+
+**Q42.** How do you view a large file one screen at a time?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+less bigfile.log
+```
+
+- `Space` — next page
+- `b` — previous page
+- `/word` — search
+- `q` — quit
+</details>
+
+**Q43.** What does `head` do? What does `tail -f` do?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+head file.txt             # first 10 lines
+head -n 5 file.txt        # first 5 lines
+tail file.txt             # last 10 lines
+tail -f /var/log/syslog   # follow growing file
+```
+</details>
+
+**Q44.** Difference between `cat` and `less`?
+
+<details>
+<summary>Answer</summary>
+
+| `cat` | `less` |
+|-------|--------|
+| Prints whole file | Page-by-page |
+| No navigation | Navigate and search |
+| Good for small files | Good for large files |
+</details>
+
+**Q45.** What does `file` command do?
+
+<details>
+<summary>Answer</summary>
+
+Identifies the file type:
+
+```bash
+file document.pdf     # PDF document
+file image.png        # PNG image
+file script.sh        # ASCII text, executable
+```
+</details>
+
+**Q46.** What does `stat` show that `ls -l` doesn't?
+
+<details>
+<summary>Answer</summary>
+
+Detailed file info: inode number, access/modify/change times, block count, and full permissions.
+
+```bash
+stat file.txt
+```
+</details>
+
+**Q47.** How do you find all `.conf` files in the current directory?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+find . -maxdepth 1 -name "*.conf"
+```
+</details>
+
+**Q48.** Difference between `find` and `locate`?
+
+<details>
+<summary>Answer</summary>
+
+| `find` | `locate` |
+|--------|----------|
+| Real-time search | Database-based |
+| Slower | Faster |
+| More options | Fewer options |
+| Always current | May be stale |
+
+```bash
+sudo updatedb
+locate file.conf
+```
+</details>
+
+**Q49.** Difference between `which`, `whereis`, and `type`?
+
+<details>
+<summary>Answer</summary>
+
+| Command | What it shows |
+|---------|---------------|
+| `which ls` | Path of executable |
+| `whereis ls` | Binary, source, man page |
+| `type ls` | Builtin, alias, function, or executable |
+</details>
+
+**Q50.** What is the Filesystem Hierarchy Standard? List 5 important directories.
+
+<details>
+<summary>Answer</summary>
+
+The standard that defines Linux directory structure.
+
+| Directory | Purpose |
+|-----------|---------|
+| `/` | Root |
+| `/etc` | Config files |
+| `/home` | User homes |
+| `/var` | Variable data (logs) |
+| `/usr` | User programs |
+| `/bin` | Essential binaries |
+| `/tmp` | Temporary files |
+
+```bash
+ls /
+```
+</details>
+
+**Q51.** Where are system logs stored?
+
+<details>
+<summary>Answer</summary>
+
+`/var/log/`.
+
+```bash
+ls /var/log/
+```
+</details>
+
+**Q52.** Where are user home directories stored?
+
+<details>
+<summary>Answer</summary>
+
+`/home/<username>` (except root, which is `/root`).
+
+```bash
+ls /home/
+```
+</details>
+
+---
+
+## 9. Permissions & Ownership Questions
+
+**Q53.** What do the `rwx` letters mean?
+
+<details>
+<summary>Answer</summary>
+
+| Letter | Meaning | Value |
+|--------|---------|-------|
+| `r` | Read | 4 |
+| `w` | Write | 2 |
+| `x` | Execute | 1 |
+| `-` | None | 0 |
+</details>
+
+**Q54.** What does `-rwxr-xr--` mean in octal?
+
+<details>
+<summary>Answer</summary>
+
+- Owner: `rwx` = 7
+- Group: `r-x` = 5
+- Others: `r--` = 4
+- Octal: **754**
+</details>
+
+**Q55.** How do you make a file executable?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+chmod +x script.sh
+# or
+chmod 755 script.sh
+```
+</details>
+
+**Q56.** How do you give read and write to owner, read to group, none to others?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+chmod 640 file.txt
+```
+</details>
+
+**Q57.** Difference between `chmod` and `chown`?
+
+<details>
+<summary>Answer</summary>
+
+| `chmod` | `chown` |
+|---------|---------|
+| Changes permissions | Changes owner |
+| `chmod 755 file` | `chown user:group file` |
+| Works with rwx values | Works with user/group names |
+
+```bash
+chmod 755 file.txt
+chown john:devs file.txt
+chown -R john:devs folder/
+```
+</details>
+
+**Q58.** What is `umask`?
+
+<details>
+<summary>Answer</summary>
+
+Default permission mask. New files/dirs have permissions reduced by the umask value.
+
+- Default umask: `022`
+- File: `666 - 022 = 644`
+- Directory: `777 - 022 = 755`
+
+```bash
+umask
+umask 027
+```
+</details>
+
+**Q59.** Why can a normal user not write to `/etc`?
+
+<details>
+<summary>Answer</summary>
+
+Because `/etc` is owned by `root` with permissions `drwxr-xr-x` — others can only read and execute, not write.
+
+```bash
+ls -ld /etc
+```
+</details>
+
+**Q60.** How do you make a directory writable only by the owner?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+chmod 700 myfolder
+```
+</details>
+
+**Q61.** What does `chmod 777` do?
+
+<details>
+<summary>Answer</summary>
+
+Gives read, write, execute to everyone. Usually unsafe for anything but temporary testing.
+</details>
+
+**Q62.** How do you change ownership of a directory tree?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo chown -R user:group folder/
+```
+</details>
+
+---
+
+## 10. Users & Groups Questions
+
+**Q63.** How do you create a new user?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo useradd -m -s /bin/bash john
+sudo passwd.
+
+ john
+```
+</details>
+
+**Q64.** How do you``` delete a user and their home directory?
+
+<details>
+<bashsummary>Answer</
+summary>
+
+```bash
+sudo userdel -nr john
+```
+oh</details>
+
+**Q65.** How do you add a user to the `sudo` group?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo usermod -aG sudo john
+```
+
+The `-aG` means append to supplementary groups.
+</details>
+
+**Q66.** What is the UID of root?
+
+<details>
+<summary>Answer</summary>
+
+`0`.
+</details>
+
+**Q67.** Where are user accounts stored?
+
+<details>
+<summary>Answer</summary>
+
+| File | Contents |
+|------|----------|
+| `/etc/passwd` | Usernames, UIDs, GIDs, homes, shells |
+| `/etc/shadow` | Encrypted passwords (root only) |
+| `/etc/group` | Groups |
+
+```bash
+cat /etc/passwd
+sudo cat /etc/shadow
+cat /etc/group
+```
+</details>
+
+**Q68.** What is the difference between `sudo` and `su`?
+
+<details>
+<summary>Answer</summary>
+
+| `sudo` | `su` |
+|--------|------|
+| Runs one command as root | Opens a root shell |
+| Uses your password | Uses root's password |
+| Logged | Not always |
+| Configurable in `/etc/sudoers` | Requires root password |
+
+```bash
+sudo apt update
+su - 
+```
+</details>
+
+**Q69.** How do you list all users on the system?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+cut -d: -f1 /etc/passwd
+```
+</details>
+
+**Q70.** How do you see which groups a user belongs to?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+groups john
+id john
+```
+</details>
+
+**Q71.** How do you switch to another user?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+su - john
+sudo -i          # root shell
+```
+</details>
+
+---
+
+## 11. Process Management Questions
+
+**Q72.** What is a process? What is a PID?
+
+<details>
+<summary>Answer</summary>
+
+- Process: a running instance of a program.
+- PID: unique Process ID assigned by the kernel.
+
+```bash
+ps aux
+```
+</details>
+
+**Q73.** What is PID 1?
+
+<details>
+<summary>Answer</summary>
+
+The first process started by the kernel — usually `systemd` (or `init`). It manages all other processes.
+
+```bash
+ps -p 1
+```
+</details>
+
+**Q74.** How do you list all running processes?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+ps aux
+ps -ef
+top
+htop
+```
+</details>
+
+**Q75.** How do you kill a process by PID?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+kill PID
+kill -9 PID        # force
+kill -15 PID       # graceful (SIGTERM)
+```
+</details>
+
+**Q76.** What is the difference between SIGTERM and SIGKILL?
+
+<details>
+<summary>Answer</summary>
+
+| SIGTERM (15) | SIGKILL (9) |
+|--------------|-------------|
+| Graceful termination | Forces termination |
+| Process can clean up | Cannot be caught/ignored |
+| Default `kill` | `kill -9` |
+</details>
+
+**Q77.** What does `Ctrl+C` do? What does `Ctrl+Z` do?
+
+<details>
+<summary>Answer</summary>
+
+- `Ctrl+C` → sends SIGINT, terminates process.
+- `Ctrl+Z` → sends SIGTSTP, suspends process.
+</details>
+
+**Q78.** What does `&` at the end of a command do?
+
+<details>
+<summary>Answer</summary>
+
+Runs the command in the background.
+
+```bash
+sleep 100 &
+```
+</details>
+
+**Q79.** What do `jobs`, `fg`, and `bg` do?
+
+<details>
+<summary>Answer</summary>
+
+- `jobs` — lists background jobs
+- `fg %1` — brings job 1 to foreground
+- `bg %1` — resumes job 1 in background
+
+```bash
+sleep 100 &
+jobs
+fg %1
+```
+</details>
+
+**Q80.** What does `nohup` do?
+
+<details>
+<summary>Answer</summary>
+
+Runs a command that ignores hangup signals — it keeps running after logoutup ./script.sh &
+```
+</details>
+
+**Q81.** How do you find a process by name?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+pgrep firefox
+pidof firefox
+```
+</details>
+
+**Q82.** How do you change a process's priority?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+nice -n 10 command
+renice -n 5 -p PID
+```
+
+Nice values range from -20 (highest) to 19 (lowest).
+</details>
+
+**Q83.** What is a zombie process?
+
+<details>
+<summary>Answer</summary>
+
+A process that has finished but whose parent hasn't read its exit status. It stays in the process table.
+
+```bash
+ps aux | grep Z
+```
+</details>
+
+**Q84.** What is a daemon?
+
+<details>
+<summary>Answer</summary>
+
+A background process not attached to a terminal (e.g., `sshd`, `cron`, `systemd`).
+</details>
+
+---
+
+## 12. Package Management Questions
+
+**Q85.** What is a package manager?
+
+<details>
+<summary>Answer</summary>
+
+A tool that installs, updates, and removes software, handling dependencies.
+
+| Distro Family | Package Manager |
+|---------------|-----------------|
+| Debian/Ubuntu | `apt`, `dpkg` |
+| RHEL/CentOS | `yum`, `dnf`, `rpm` |
+| Arch | `pacman` |
+| SUSE | `zypper` |
+</details>
+
+**Q86.** How do you update the package list and upgrade installed packages?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo apt update
+sudo apt upgrade
+```
+</details>
+
+**Q87.** How do you install and remove a package?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo apt install nginx
+sudo apt remove nginx
+sudo apt purge nginx       # also removes config
+sudo apt autoremove        # remove unneeded deps
+```
+</details>
+
+**Q88.** Difference between `apt` and `apt-get`?
+
+<details>
+<summary>Answer</summary>
+
+- `apt` — user-friendly output, progress bars.
+- `apt-get` — script-friendly, stable interface.
+
+Both work; scripts usually use `apt-get`.
+</details>
+
+**Q89.** Difference between `.deb` and `.rpm`?
+
+<details>
+<summary>Answer</summary>
+
+- `.deb` — Debian/Ubuntu packages, installed with `dpkg -i`.
+- `.rpm` — Red Hat/CentOS packages, installed with `rpm -ivh` or `dnf install`.
+
+```bash
+sudo dpkg -i package.deb
+sudo rpm -ivh package.rpm
+```
+</details>
+
+**Q90.** How do you list installed packages?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+apt list --installed
+dpkg -l
+rpm -qa
+```
+</details>
+
+**Q91.** What is a repository?
+
+<details>
+<summary>Answer</summary>
+
+A server hosting packages the package manager downloads from. Defined in `/etc/apt/sources.list` (Debian/Ubuntu).
+</details>
+
+---
+
+## 13. Disk & Filesystem Questions
+
+**Q92.** How do you check disk space usage?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+df -h
+```
+</details>
+
+**Q93.** How do you check how much space a folder uses?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+du -sh folder/
+du -h --max-depth=1
+```
+</details>
+
+**Q94.** How do you check RAM usage?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+free -h
+cat /proc/meminfo
+```
+</details>
+
+**Q95.** What does `lsblk` show?
+
+<details>
+<summary>Answer</summary>
+
+Block devices (disks, partitions) in a tree view.
+
+```bash
+lsblk
+```
+</details>
+
+**Q96.** What does `mount` do? What is a mount point?
+
+<details>
+<summary>Answer</summary>
+
+Attaches a filesystem to a directory in the tree.
+
+```bash
+sudo mount /dev/sdb1 /mnt
+sudo umount /mnt
+```
+
+The directory (`/mnt`) is the mount point.
+</details>
+
+**Q97.** What is a filesystem? Name 4 types.
+
+<details>
+<summary>Answer</summary>
+
+The method of storing/retrieving files on disk.
+
+| FS | Notes |
+|----|-------|
+| ext4 | Linux default |
+| xfs | High performance |
+| btrfs | Snapshots, CoW |
+| vfat | USB drives |
+| ntfs | Windows |
+</details>
+
+**Q98.** How do you format a partition with ext4?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo mkfs.ext4 /dev/sdb1
+```
+</details>
+
+**Q99.** What is swap?
+
+<details>
+<summary>Answer</summary>
+
+Disk space used as virtual memory when RAM fills up.
+
+```bash
+swapon --show
+free -h
+```
+</details>
+
+**Q100.** What does `fdisk -l` show?
+
+<details>
+<summary>Answer</summary>
+
+Partition tables of all disks.
+
+```bash
+sudo fdisk -l
+```
+</details>
+
+---
+
+## 14. Networking Questions
+
+**Q101.** How do you see your IP addresses?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+ip a
+ip addr
+hostname -I
+```
+</details>
+
+**Q102.** What does `ping` do?
+
+<details>
+<summary>Answer</summary>
+
+Sends ICMP echo requests to test if a host is reachable.
+
+```bash
+ping google.com
+ping -c 4 google.com
+```
+</details>
+
+**Q103.** How do you see listening ports?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+ss -tuln
+netstat -tuln
+sudo lsof -i :80
+```
+</details>
+
+**Q104.** What is the difference between TCP and UDP?
+
+<details>
+<summary>Answer</summary>
+
+| TCP | UDP |
+|-----|-----|
+| Connection-oriented | Connectionless |
+| Reliable | No guarantee |
+| Slower | Faster |
+| HTTP, SSH, FTP | DNS, video, games |
+</details>
+
+**Q105.** Name 5 common ports and their services.
+
+<details>
+<summary>Answer</summary>
+
+| Port | Service |
+|------|---------|
+| 22 | SSH |
+| 80 | HTTP |
+| 443 | HTTPS |
+| 53 | DNS |
+| 3306 | MySQL |
+</details>
+
+**Q106.** Difference between `ssh` and `scp`?
+
+<details>
+<summary>Answer</summary>
+
+| `ssh` | `scp` |
+|-------|-------|
+| Remote login | Copy files over SSH |
+| `ssh user@host` | `scp file user@host:/path` |
+</details>
+
+**Q107.** What does `rsync` do?
+
+<details>
+<summary>Answer</summary>
+
+Syncs files efficiently (only copies changes).
+
+```bash
+rsync -av source/ dest/
+rsync -av source/ user@host:/dest/
+```
+</details>
+
+**Q108.** What does `dig` do?
+
+<details>
+<summary>Answer</summary>
+
+DNS lookup tool.
+
+```bash
+dig google.com
+nslookup google.com
+```
+</details>
+
+**Q109.** What does `traceroute` do?
+
+<details>
+<summary>Answer</summary>
+
+Shows the path packets take to reach a host.
+
+```bash
+traceroute google.com
+```
+</details>
+
+**Q110.** Where do you define local hostname mappings?
+
+<details>
+<summary>Answer</summary>
+
+`/etc/hosts`.
+
+```bash
+cat /etc/hosts
+```
+</details>
+
+---
+
+## 15. Systemd & Services Questions
+
+**Q111.** What is systemd?
+
+<details>
+<summary>Answer</summary>
+
+The init system and service manager used by most modern Linux distributions. PID 1.
+</details>
+
+**Q112.** How do you check if a service is running?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+systemctl status nginx
+```
+</details>
+
+**Q113.** How do you start, stop, and restart a service?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo systemctl start nginx
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+sudo systemctl reload nginx
+```
+</details>
+
+**Q114.** Difference between `start` and `enable`?
+
+<details>
+<summary>Answer</summary>
+
+- `start` — runs now
+- `enable` — starts at boot
+
+```bash
+sudo systemctl start nginx
+sudo systemctl enable nginx
+```
+</details>
+
+**Q115.** How do you see failed services?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+systemctl --failed
+```
+</details>
+
+**Q116.** What are systemd targets? Name 3.
+
+<details>
+<summary>Answer</summary>
+
+Replacement for runlevels.
+
+| Target | Meaning |
+|--------|---------|
+| multi-user.target | Multi-user, no GUI |
+| graphical.target | Multi-user + GUI |
+| rescue.target | Single-user |
+| poweroff.target | Shutdown |
+
+```bash
+systemctl get-default
+sudo systemctl set-default multi-user.target
+```
+</details>
+
+**Q117.** How do you reload systemd after editing a unit file?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo systemctl daemon-reload
+```
+</details>
+
+**Q118.** Where are unit files stored?
+
+<details>
+<summary>Answer</summary>
+
+- `/etc/systemd/system/` — custom
+- `/lib/systemd/system/` — package-installed
+</details>
+
+---
+
+## 16. Cron & Scheduling Questions
+
+**Q119.** What is `cron`?
+
+<details>
+<summary>Answer</summary>
+
+A scheduler for recurring tasks.
+</details>
+
+**Q120.** How do you edit your crontab?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+crontab -e
+crontab -l      # list
+crontab -r      # remove
+```
+</details>
+
+**Q121.** What is the crontab syntax?
+
+<details>
+<summary>Answer</summary>
+
+```
+* * * * * command
+│ │ │ │ │
+│ │ │ │ └── day of week (0-7)
+│ │ │ └──── month (1-12)
+│ │ └────── day of month (1-31)
+│ └──────── hour (0-23)
+└────────── minute (0-59)
+```
+</details>
+
+**Q122.** Give an example of a daily cron job at 2 AM.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+0 2 * * * /home/user/backup.sh
+```
+</details>
+
+**Q123.** What is the difference between `cron` and `at`?
+
+<details>
+<summary>Answer</summary>
+
+| `cron` | `at` |
+|--------|------|
+| Recurring jobs | One-time job |
+| `crontab -e` | `at 10:00 PM` |
+| `crontab -l` | `atq` |
+</details>
+
+**Q124.** How do you schedule a one-time job at 10 PM?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+at 10:00 PM
+# type command, then Ctrl+D
+atq          # list
+atrm 3       # remove job 3
+```
+</details>
+
+**Q125.** Where are system cron jobs stored?
+
+<details>
+<summary>Answer</summary>
+
+- `/etc/crontab`
+- `/etc/cron.d/`
+- `/etc/cron.daily/`, `/etc/cron.hourly/`, `/etc/cron.weekly/`, `/etc/cron.monthly/`
+</details>
+
+---
+
+## 17. Logging & Monitoring Questions
+
+**Q126.** Where are Linux logs stored?
+
+<details>
+<summary>Answer</summary>
+
+`/var/log/`.
+</details>
+
+**Q127.** What is `journalctl`?
+
+<details>
+<summary>Answer</summary>
+
+The log viewer for systemd.
+
+```bash
+journalctl
+journalctl -u nginx
+journalctl -f
+journalctl --since "1 hour ago"
+journalctl -p err
+```
+</details>
+
+**Q128.** How do you monitor a log file in real time?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+tail -f /var/log/syslog
+journalctl -f
+```
+</details>
+
+**Q129.** What does `dmesg` show?
+
+<details>
+<summary>Answer</summary>
+
+Kernel ring buffer — boot messages, hardware events.
+
+```bash
+dmesg | tail
+```
+</details>
+
+**Q130.** Name 4 monitoring tools.
+
+<details>
+<summary>Answer</summary>
+
+| Tool | Purpose |
+|------|---------|
+| `top` | Real-time process view |
+| `htop` | Improved top |
+| `iotop` | Disk I/O |
+| `iftop` | Network |
+| `vmstat` | VM stats |
+| `iostat` | I/O stats |
+</details>
+
+**Q131.** Which log contains authentication attempts?
+
+<details>
+<summary>Answer</summary>
+
+`/var/log/auth.log` (Debian) or `/var/log/secure` (RHEL).
+
+```bash
+sudo cat /var/log/auth.log
+```
+</details>
+
+---
+
+## 18. Links — Hard vs Symbolic Questions
+
+**Q132.** Difference between a hard link and a symbolic link?
+
+<details>
+<summary>Answer</summary>
+
+| Hard link | Symlink |
+|-----------|---------|
+| Same inode | Points to path |
+| Cannot cross FS | Can cross FS |
+| Cannot link directories | Can link directories |
+| `ln file link` | `ln -s target link` |
+| Survives target deletion | Broken if target deleted |
+</details>
+
+**Q133.** How do you create a symlink?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+ln -s /path/to/target linkname
+```
+</details>
+
+**Q134.** How do you create a hard link?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+ln file.txt hardlink.txt
+```
+</details>
+
+**Q135.** What happens if you delete the original of a symlink?
+
+<details>
+<summary>Answer</summary>
+
+The symlink becomes **broken** (dangling). `ls -l` shows it pointing to a nonexistent path.
+</details>
+
+**Q136.** What happens if you delete the original of a hard link?
+
+<details>
+<summary>Answer</summary>
+
+The file still exists — the data is only removed when **all** hard links are deleted.
+</details>
+
+**Q137.** How do you identify a symlink from `ls -l`?
+
+<details>
+<summary>Answer</summary>
+
+First character is `l`:
+
+```
+lrwxrwxrwx 1 user user 10 Jan 1 12:00 mylink -> /etc/passwd
+```
+</details>
+
+---
+
+## 19. Boot Process Questions
+
+**Q138.** What is the Linux boot order?
+
+<details>
+<summary>Answer</summary>
+
+1. BIOS/UEFI
+2. Bootloader (GRUB)
+3. Kernel
+4. init / systemd (PID 1)
+5. Services
+6. Login prompt / GUI
+</details>
+
+**Q139.** What is GRUB?
+
+<details>
+<summary>Answer</summary>
+
+The GRand Unified Bootloader — loads the kernel.
+
+Config: `/boot/grub/grub.cfg`.
+
+```bash
+sudo update-grub
+```
+</details>
+
+**Q140.** What is PID 1?
+
+<details>
+<summary>Answer</summary>
+
+`systemd` (or `init`) — the first process started by the kernel.
+
+```bash
+ps -p 1
+```
+</details>
+
+**Q141.** Difference between BIOS and UEFI?
+
+<details>
+<summary>Answer</summary>
+
+| BIOS | UEFI |
+|------|------|
+| Legacy | Modern |
+| MBR partitions | GPT partitions |
+| 2 TB limit | Larger disks |
+| Slower | Faster boot |
+</details>
+
+**Q142.** What is the kernel ring buffer?
+
+<details>
+<summary>Answer</summary>
+
+Boot and kernel messages, viewable with `dmesg`.
+</details>
+
+---
+
+## 20. Security Basics Questions
+
+**Q143.** What is the principle of least privilege?
+
+<details>
+<summary>Answer</summary>
+
+Users should only have the minimum access needed to do their jobs. Applies to files, sudo, services.
+</details>
+
+**Q144.** Why is `/etc/shadow` more restricted than `/etc/passwd`?
+
+<details>
+<summary>Answer</summary>
+
+`/etc/passwd` is world-readable (usernames, UIDs). `/etc/shadow` stores password hashes and is readable only by root.
+</details>
+
+**Q145.** How do you enable a firewall with UFW?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo ufw enable
+sudo ufw allow 22
+sudo ufw allow 80
+sudo ufw status
+```
+</details>
+
+**Q146.** How do you create an SSH key?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+ssh-keygen -t ed25519
+ssh-copy-id user@host
+```
+</details>
+
+**Q147.** How do you hash a file?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sha256sum file.txt
+md5sum file.txt
+```
+</details>
+
+**Q148.** What is `setfacl` / `getfacl`?
+
+<details>
+<summary>Answer</summary>
+
+Tools for extended ACLs (Access Control Lists) — per-user permissions.
+
+```bash
+getfacl file.txt
+setfacl -m u:john:rw file.txt
+```
+</details>
+
+**Q149.** How do you disable root SSH login?
+
+<details>
+<summary>Answer</summary>
+
+Edit `/etc/ssh/sshd_config`:
+
+```
+PermitRootLogin no
+```
+
+Then:
+
+```bash
+sudo systemctl restart sshd
+```
+</details>
+
+**Q150.** What is a firewall and what does it do?
+
+<details>
+<summary>Answer</summary>
+
+A network filter controlling incoming/outgoing traffic. Common tools: `ufw`, `firewalld`, `iptables`, `nftables`.
+</details>
+
+---
+
+## 21. Mixed Test-Style Questions
+
+**Q151.** List all files in your home directory with exactly 14 characters, including hidden files.
+
+<details>
+<summary>Answer</summary>
+
+`ls` won't match hidden files with `?`. Use `find`:
+
+```bash
+find ~ -maxdepth 1 -type f -name '??????????????' -printf '%f\n'
+```
+
+14 question marks = 14 characters.
+</details>
+
+**Q152.** Copy all `.conf` files from `/etc` to a backup folder in your home directory. Do you need `sudo`?
+
+<details>
+<summary>Answer</summary>
+
+No, because you're **reading** from `/etc` (world-readable) and **writing** to your home directory.
+
+```bash
+mkdir -p ~/backup_conf
+cp /etc/*.conf ~/backup_conf/
+```
+
+You would need `sudo` only if you were writing **into** `/etc`.
+</details>
+
+**Q153.** What does this command do?
+
+```bash
+wget -O data.tar.gz "https://example.com/data.tar.gz" && tar -xzf data.tar.gz -C ~/Documents/sandbox
+```
+
+<details>
+<summary>Answer</summary>
+
+1. Downloads `data.tar.gz` and saves it as `data.tar.gz`.
+2. If the download succeeds, extracts it into `~/Documents/sandbox`.
+3. `-O` = output filename, `-xzf` = extract gzip tar, `-C` = change to directory.
+
+Note: `~/Documents/sandbox` must already exist, or `tar` will fail.
+</details>
+
+**Q154.** A user reports their disk is full. What commands do you use to investigate?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+df -h
+du -sh /* 2>/dev/null | sort -h
+du -ah / 2>/dev/null | sort -h | tail -20
+find / -type f -size +100M 2>/dev/null
+lsof | grep deleted
+```
+</details>
+
+**Q155.** A process is using 100% CPU. How do you find and kill it?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+top
+ps aux --sort=-%cpu | head
+kill -9 PID
+```
+</details>
+
+**Q156.** A user can't run `sudo`. How do you fix it?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo usermod -aG sudo username
+```
+
+Then log out and back in for the group change to apply.
+</details>
+
+**Q157.** A service won't start at boot. How do you check?
+
+<details>
+<summary>Answer</summary>
+
+```bash
+systemctl is-enabled myservice
+systemctl status myservice
+sudo systemctl enable myservice
+```
+</details>
+
+**Q158.** You need to find which process uses port 80.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo lsof -i :80
+sudo ss -tulpn | grep :80
+sudo netstat -tulpn | grep :80
+```
+</details>
+
+**Q159.** A file is "Permission denied" when you try to run it. Fix it.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+chmod +x file
+./file
+```
+</details>
+
+**Q160.** Compare two files to see differences.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+diff file1.txt file2.txt
+```
+</details>
+
+**Q161.** Find all `.log` files older than 30 days and delete them.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+find /var/log -name "*.log" -mtime +30 -delete
+```
+</details>
+
+**Q162.** You need to rename a folder tree safely. Test first.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+mkdir -p ~/Documents/sandbox
+cd ~/Documents/sandbox
+mkdir -p a/b/c
+mv a renamed_a
+ls renamed_a/b/c
+```
+</details>
+
+**Q163.** Change the system hostname.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo hostnamectl set-hostname newname
+hostnamectl
+```
+</details>
+
+**Q164.** Find the kernel version and full system info.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+uname -r
+uname -a
+cat /etc/os-release
+```
+</details>
+
+**Q165.** A file is not visible in `ls`. What could be wrong?
+
+<details>
+<summary>Answer</summary>
+
+It starts with `.` (hidden). Use `ls -a`.
+</details>
+
+**Q166.** Schedule a backup every day at 3 AM.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+crontab -e
+0 3 * * * /home/user/backup.sh
+```
+</details>
+
+**Q167.** Create a symbolic link to `/etc/passwd` called `mypasswd`.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+ln -s /etc/passwd mypasswd
+ls -l mypasswd
+```
+</details>
+
+**Q168.** Shut down and reboot the system.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo shutdown -h now
+sudo shutdown -r now
+sudo reboot
+sudo poweroff
+```
+</details>
+
+**Q169.** Add a new user with sudo privileges.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+sudo useradd -m -s /bin/bash john
+sudo passwd john
+sudo usermod -aG sudo john
+```
+</details>
+
+**Q170.** List all environment variables.
+
+<details>
+<summary>Answer</summary>
+
+```bash
+env
+printenv
+set
+```
+</details>
+
+**Q171.** What is the difference between `>` and `>>`?
+
+<details>
+<summary>Answer</summary>
+
+- `>` — overwrites the file
+- `>>` — appends to the file
+
+```bash
+ls > out.txt
+echo "new line" >> out.txt
+```
+</details>
+
+**Q172.** What does `2>/dev/null` do?
+
+<details>
+<summary>Answer</summary>
+
+Discards error output (stderr) so it doesn't show on screen.
+
+```bash
+find / -name "*.txt" 2>/dev/null
+```
+</details>
+
+**Q173.** What does `$( )` do?
+
+<details>
+<summary>Answer</summary>
+
+Command substitution — runs a command and inserts its output.
+
+```bash
+today=$(date +%Y-%m-%d)
+echo "Today is $today"
+```
+</details>
+
+**Q174.** What does `&&` do? What does `||` do?
+
+<details>
+<summary>Answer</summary>
+
+- `&&` — run next command only if the first succeeds
+- `||` — run next command only if the first fails
+
+```bash
+wget -O file.zip "URL" && unzip file.zip
+cp file.txt /backup/ || echo "Copy failed"
+```
+</details>
+
+**Q175.** What is the difference between `/etc/passwd` and `/etc/shadow`?
+
+<details>
+<summary>Answer</summary>
+
+| File | Contents | Access |
+|------|----------|--------|
+| `/etc/passwd` | User info | World-readable |
+| `/etc/shadow` | Password hashes | Root only |
+</details>
+
+---
+
+## 22. Quick Reference Sheet
+
+| Task | Command |
+|------|---------|
+| Show working directory | `pwd` |
+| Change directory | `cd /path` |
+| List files | `ls -la` |
+| Create file | `touch file` |
+| Create folder | `mkdir -p a/b/c` |
+| Copy | `cp src dst` |
+| Copy folder | `cp -r src dst` |
+| Move/rename | `mv src dst` |
+| Delete file | `rm file` |
+| Delete folder | `rm -rf folder` |
+| View file | `cat` / `less` / `head` / `tail` |
+| Follow log | `tail -f log` |
+| Search text | `grep "x" file` |
+| Case-insensitive grep | `grep -i "x" file` |
+| Find files | `find . -name "*.txt"` |
+| Case-insensitive find | `find . -iname "*.txt"` |
+| Permissions | `chmod 755 file` |
+| Owner | `chown user:group file` |
+| umask | `umask` |
+| Create user | `useradd -m user` |
+| Set password | `passwd user` |
+| Add to sudo | `usermod -aG sudo user` |
+| Switch user | `su - user` |
+| Run as root | `sudo cmd` |
+| Processes | `ps aux` / `top` / `htop` |
+| Kill process | `kill -9 PID` |
+| Kill by name | `pkill name` |
+| Background | `cmd &` |
+| List jobs | `jobs` |
+| Bring to foreground | `fg %1` |
+| Nice | `nice -n 10 cmd` |
+| Package update | `sudo apt update` |
+| Install | `sudo apt install pkg` |
+| Remove | `sudo apt remove pkg` |
+| Disk usage | `df -h` |
+| Folder size | `du -sh folder` |
+| RAM | `free -h` |
+| Block devices | `lsblk` |
+| Mount | `sudo mount /dev/sdb1 /mnt` |
+| IP addresses | `ip a` |
+| Routes | `ip route` |
+| Ping | `ping host` |
+| Open ports | `ss -tuln` |
+| SSH | `ssh user@host` |
+| Copy over SSH | `scp file user@host:/path` |
+| Sync | `rsync -av src/ dst/` |
+| Download | `wget -O name URL` |
+| Download + extract | `wget -O f.tar.gz URL && tar -xzf f.tar.gz -C dir` |
+| HTTP request | `curl URL` |
+| Archive | `tar -czf a.tar.gz folder/` |
+| Extract | `tar -xzf a.tar.gz -C dir` |
+| Zip | `zip -r a.zip folder/` |
+| Unzip | `unzip a.zip -d dir` |
+| Service status | `systemctl status svc` |
+| Start service | `sudo systemctl start svc` |
+| Enable at boot | `sudo systemctl enable svc` |
+| View logs | `journalctl -u svc` |
+| Boot messages | `dmesg` |
+| Cron edit | `crontab -e` |
+| Cron list | `crontab -l` |
+| One-time job | `at 10:00 PM` |
+| Symlink | `ln -s target link` |
+| Hard link | `ln target link` |
+| Shutdown | `sudo shutdown -h now` |
+| Reboot | `sudo reboot` |
+| Firewall (ufw) | `sudo ufw allow 22` |
+| Firewall (firewalld) | `firewall-cmd --add-port=80/tcp` |
+| SSH key | `ssh-keygen -t ed25519` |
+| Hash | `sha256sum file` |
+| Manual | `man cmd` |
+| Quick help | `cmd --help` |
+| Sandbox | `mkdir -p ~/Documents/sandbox` |
+| Subshell | `(cd /tmp && cmd)` |
+| Auto-cleanup | `tmp=$(mktemp -d); trap 'rm -rf $tmp' EXIT` |
+| Reverse search | `Ctrl+R` |
+| Rerun last | `!!` |
+
+# # Linux Module — Important Commands & Kernel Version
+
+> Complete reference guide based on the "Important Commands" screenshot and question 6.
+> Copy this into VS Code or GitHub as your notes.
+
+---
+
+## Table of Contents
+
+1. [Answer to Question 6: Linux Kernel Version](#1-answer-to-question-6-linux-kernel-version)
+2. [Important Commands (1-27)](#2-important-commands-1-27)
+3. [Quick Reference Cheat Sheet](#3-quick-reference-cheat-sheet)
+
+---
+
+## 1. Answer to Question 6: Linux Kernel Version
+
+**Q: How does one tell the Linux kernel version on a Linux PC/Server?**
+
+You can use the `uname` command. Specifically, `uname -r` shows the kernel release, and `uname -a` shows all system information. Alternatively, you can use `cat /proc/version`.
+
+**Examples:**
+
+```bash
+uname -r                  # Show kernel release (e.g., 6.8.0-31-generic)
+uname -a                  # Show all system info (kernel, hostname, arch)
+cat /proc/version         # Show kernel version and build info
+hostnamectl               # Shows kernel version among other system info
+```
+
+---
+
+## 2. Important Commands (1-27)
+
+### 1. `ps`
+
+**Meaning:** Report a snapshot of the current running processes.
+
+| Flag | Meaning |
+|------|---------|
+| `-a` | Show processes for all users |
+| `-u` | Display user-oriented format |
+| `-x` | Show processes not attached to a terminal |
+| `-e` | Show all processes |
+| `-f` | Full-format listing |
+
+**Examples:**
+
+```bash
+ps                     # Current shell processes
+ps aux                 # All processes, detailed (BSD style)
+ps -ef                 # All processes, full format (UNIX style)
+ps -u username         # Processes by user
+```
+
+---
+
+### 2. `apt`
+
+**Meaning:** Advanced Package Tool; the package manager used for installing, updating, and removing software on Debian/Ubuntu systems.
+
+| Command | Purpose |
+|---------|---------|
+| `apt install` | Install a package |
+| `apt remove` | Remove a package |
+| `apt purge` | Remove package + config |
+| `apt search` | Search for a package |
+| `apt show` | Show package details |
+| `apt list --installed` | List installed packages |
+
+**Examples:**
+
+```bash
+sudo apt install nginx
+sudo apt remove nginx
+apt search nginx
+apt show nginx
+```
+
+---
+
+### 3. `uname`
+
+**Meaning:** Print system information (kernel name, version, architecture, etc.).
+
+| Flag | Meaning |
+|------|---------|
+| `-a` | All information |
+| `-r` | Kernel release |
+| `-s` | Kernel name |
+| `-m` | Machine hardware (architecture) |
+| `-n` | Hostname |
+
+**Examples:**
+
+```bash
+uname              # Linux
+uname -r           # 6.8.0-31-generic
+uname -a           # Full system info
+uname -m           # x86_64
+```
+
+---
+
+### 4. `du`
+
+**Meaning:** Estimate file space usage (Disk Usage). Shows how much space directories and files take up.
+
+| Flag | Meaning |
+|------|---------|
+| `-h` | Human-readable (KB, MB, GB) |
+| `-s` | Summary only (total per argument) |
+| `-a` | All files, not just directories |
+| `--max-depth=N` | Limit recursion depth |
+
+**Examples:**
+
+```bash
+du -sh folder/                   # Total size of folder
+du -h --max-depth=1              # Sizes at depth 1
+du -ah /var/log | sort -h        # Sorted sizes
+```
+
+---
+
+### 5. `df`
+
+**Meaning:** Report file system disk space usage (Disk Free). Shows available and used space on mounted drives.
+
+| Flag | Meaning |
+|------|---------|
+| `-h` | Human-readable |
+| `-T` | Show filesystem type |
+| `-i` | Show inode usage |
+| `-a` | Include pseudo filesystems |
+
+**Examples:**
+
+```bash
+df -h
+df -hT
+df -i
+```
+
+---
+
+### 6. `top`
+
+**Meaning:** Display a dynamic, real-time view of running processes, CPU, and memory usage.
+
+| Key | Action |
+|-----|--------|
+| `q` | Quit |
+| `k` | Kill a process |
+| `M` | Sort by memory |
+| `P` | Sort by CPU |
+| `1` | Show CPU cores individually |
+
+**Examples:**
+
+```bash
+top
+top -u username         # Processes for a specific user
+top -p PID              # Monitor a specific PID
+```
+
+---
+
+### 7. `kill`
+
+**Meaning:** Send a signal to a process by its PID (Process ID), typically to terminate it.
+
+| Signal | Number | Meaning |
+|--------|--------|---------|
+| SIGHUP | 1 | Hangup |
+| SIGINT | 2 | Interrupt (Ctrl+C) |
+| SIGKILL | 9 | Force kill |
+| SIGTERM | 15 | Graceful terminate (default) |
+| SIGSTOP | 19 | Pause |
+
+**Examples:**
+
+```bash
+kill PID
+kill -9 PID             # Force kill
+kill -15 PID            # Graceful (default)
+kill -l                 # List all signals
+```
+
+---
+
+### 8. `pkill`
+
+**Meaning:** Kill processes by name or other attributes instead of PID.
+
+| Flag | Meaning |
+|------|---------|
+| `-f` | Match full command line |
+| `-u` | Match by user |
+| `-9` | Force kill |
+
+**Examples:**
+
+```bash
+pkill firefox
+pkill -f "python script.py"
+pkill -9 -u john
+```
+
+---
+
+### 9. `adduser`
+
+**Meaning:** Add a user to the system (a friendlier wrapper around `useradd` that also creates the home directory and prompts for a password).
+
+**Examples:**
+
+```bash
+sudo adduser john
+sudo adduser john sudo        # Add user to sudo group
+```
+
+---
+
+### 10. `usermod`
+
+**Meaning:** Modify a user account (e.g., change groups, home directory, shell, or login name).
+
+| Flag | Meaning |
+|------|---------|
+| `-aG` | Append user to supplementary groups |
+| `-d` | Change home directory |
+| `-s` | Change shell |
+| `-l` | Change username |
+| `-L` | Lock account |
+| `-U` | Unlock account |
+
+**Examples:**
+
+```bash
+sudo usermod -aG sudo john
+sudo usermod -s /bin/zsh john
+sudo usermod -L john             # Lock account
+sudo usermod -U john             # Unlock
+```
+
+---
+
+### 11. `ln`
+
+**Meaning:** Make links between files. By default creates hard links; with `-s`, creates symbolic (soft) links.
+
+| Flag | Meaning |
+|------|---------|
+| `-s` | Symbolic link |
+| `-f` | Force (overwrite existing) |
+| `-v` | Verbose |
+
+**Examples:**
+
+```bash
+ln file.txt hardlink.txt         # Hard link
+ln -s /etc/passwd mypasswd       # Symlink
+ln -sf /new/target link          # Force symlink
+```
+
+---
+
+### 12. `chmod`
+
+**Meaning:** Change file mode bits (permissions) for users, groups, and others.
+
+| Value | Meaning |
+| r-------|---------|
+| 7 | rwx |
+w| 6 | rw- |
+|-r 5 | r-x |
+| 4-- | r-- |
+| 0 | --- |
+
+**Examples:**
+
+```bash
+chmod 755 script.sh              # rwxr-xr-x
+chmod 644 file.txt               #r--
+chmod +x script.sh               # Add execute
+chmod -w file.txt                # Remove write
+chmod u+x,g+r file.txt           # Symbolic mode
+```
+
+---
+
+### 13. `chown`
+
+**Meaning:** Change file owner and group.
+
+| Flag | Meaning |
+|------|---------|
+| `-R` | Recursive |
+| `-v` | Verbose |
+| `user:group` | Change both owner and group |
+
+**Examples:**
+
+```bash
+chown user file.txt
+chown user:group file.txt
+sudo chown -R user:group folder/
+```
+
+---
+
+### 14. `apt update`
+
+**Meaning:** Update the list of available packages and their versions (refreshes the package index). Does **not** install or upgrade anything.
+
+**Examples:**
+
+```bash
+sudo apt update
+```
+
+---
+
+### 15. `apt upgrade`
+
+**Meaning:** Install newer versions of all packages currently installed on the system. It does **not** remove packages or change dependencies.
+
+**Examples:**
+
+```bash
+sudo apt upgrade
+sudo apt upgrade -y              # Auto-confirm
+```
+
+---
+
+### 16. `apt dist-upgrade`
+
+**Meaning:** Upgrade the system, intelligently handling changing dependencies (may remove obsolete packages). It can install new packages and remove old ones as needed.
+
+**Examples:**
+
+```bash
+sudo apt dist-upgrade
+```
+
+---
+
+### 17. `apt full-upgrade`
+
+**Meaning:** Similar to `dist-upgrade`, performs a complete system upgrade and handles dependencies. In newer versions of `apt`, `full-upgrade` is an alias for `dist-upgrade`.
+
+**Examples:**
+
+```bash
+sudo apt full-upgrade
+```
+
+---
+
+### 18. `apt autoremove`
+
+**Meaning:** Remove packages that were automatically installed to satisfy dependencies for other packages and are now no longer needed.
+
+**Examples:**
+
+```bash
+sudo apt autoremove
+sudo apt autoremove --purge      # Also remove config files
+```
+
+---
+
+### 19. `ssh-keygen`
+
+**Meaning:** Generate, manage, and convert authentication keys for SSH (Secure Shell).
+
+| Flag | Meaning |
+|------|---------|
+| `-t` | Key type (rsa, ed25519, ecdsa) |
+| `-b` | Key size (bits) |
+| `-f` | Output file |
+| `-C` | Comment |
+
+**Examples:**
+
+```bash
+ssh-keygen -t ed25519
+ssh-keygen -t rsa -b 4096
+ssh-keygen -t ed25519 -C "john@example.com"
+ssh-copy-id user@host            # Copy public key to server
+```
+
+---
+
+### 20. `systemd`
+
+**Meaning:** The system and service manager (init system) for Linux. It is PID 1 and manages services, mounts, timers, sockets, etc.
+
+> **Note:** You usually interact with it via `systemctl`, not by running `systemd` directly.
+
+**Examples:**
+
+```bash
+ps -p 1                          # Show systemd as PID 1
+systemctl --version
+```
+
+---
+
+### 21. `service`
+
+**Meaning:** Run a System V init script (legacy command used to start/stop services; often redirects to `systemctl` on modern systems).
+
+**Examples:**
+
+```bash
+sudo service nginx start
+sudo service nginx stop
+sudo service nginx restart
+sudo service nginx status
+```
+
+---
+
+### 22. `systemctl`
+
+**Meaning:** Control the systemd system and service manager (e.g., start, stop, restart, enable, or check the status of services).
+
+| Command | Purpose |
+|---------|---------|
+| `start` | Start now |
+| `stop` | Stop now |
+| `restart` | Restart |
+| `reload` | Reload config |
+| `enable` | Start at boot |
+| `disable` | Do not start at boot |
+| `status` | Show status |
+
+**Examples:**
+
+```bash
+systemctl status nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+systemctl --failed
+systemctl list-units --type=service
+```
+
+---
+
+### 23. `crontab`
+
+**Meaning:** Maintain crontab files for individual users, used to schedule recurring tasks (cron jobs).
+
+| Flag | Meaning |
+|------|---------|
+| `-e` | Edit crontab |
+| `-l` | List crontab |
+| `-r` | Remove crontab |
+| `-u user` | Specify user |
+
+**Cron syntax:**
+
+```
+* * * * * command
+│ │ │ │ │
+│ │ │ │ └── day of week (0-7)
+│ │ │ └──── month (1-12)
+│ │ └────── day of month (1-31)
+│ └──────── hour (0-23)
+└────────── minute (0-59)
+```
+
+**Examples:**
+
+```bash
+crontab -e
+crontab -l
+0 3 * * * /home/user/backup.sh   # Daily at 3 AM
+```
+
+---
+
+### 24. `ufw`
+
+**Meaning:** Uncomplicated Firewall; a user-friendly frontend for managing iptables/netfilter firewall rules.
+
+| Command | Purpose |
+|---------|---------|
+| `enable` | Enable firewall |
+| `disable` | Disable firewall |
+| `allow` | Allow a port/service |
+| `deny` | Deny a port/service |
+| `status` | Show rules |
+
+**Examples:**
+
+```bash
+sudo ufw enable
+sudo ufw allow 22
+sudo ufw allow 80/tcp
+sudo ufw deny 23
+sudo ufw status verbose
+```
+
+---
+
+### 25. `sudo`
+
+**Meaning:** Execute a command as another user, typically the superuser (root). Uses your own password.
+
+| Flag | Meaning |
+|------|---------|
+| `-i` | Root shell |
+| `-u user` | Run as another user |
+| `-l` | List allowed commands |
+
+**Examples:**
+
+```bash
+sudo apt update
+sudo -i                          # Root shell
+sudo -u john whoami
+sudo -l                          # What can I sudo?
+```
+
+---
+
+### 26. `su`
+
+**Meaning:** Substitute user identity; switch to another user account (usually root). Requires the target user's password.
+
+| Flag | Meaning |
+|------|---------|
+| `-` | Load target's environment |
+| `-c` | Run a single command |
+
+**Examples:**
+
+```bash
+su -                             # Switch to root shell
+su - john                        # Switch to john
+su -c "whoami" john              # Run one command as john
+```
+
+---
+
+### 27. `rsyslog`
+
+**Meaning:** The rocket-fast system for log processing. It is the primary logging daemon on many Linux distributions, responsible for collecting and storing system logs (usually found in `/var/log/`).
+
+**Examples:**
+
+```bash
+systemctl status rsyslog
+cat /etc/rsyslog.conf
+ls /var/log/
+journalctl -u rsyslog
+```
+
+**Common log files managed by rsyslog:**
+
+| Path | Purpose |
+|------|---------|
+| `/var/log/syslog` | General system logs |
+| `/var/log/auth.log` | Authentication |
+| `/var/log/kern.log` | Kernel |
+| `/var/log/mail.log` | Mail |
+
+---
+
+## 3. Quick Reference Cheat Sheet
+
+| Command | Purpose |
+|---------|---------|
+| `ps aux` | List all processes |
+| `apt install pkg` | Install package |
+| `uname -r` | Kernel version |
+| `du -sh folder` | Folder size |
+| `df -h` | Disk space |
+| `top` | Live process view |
+| `kill -9 PID` | Force kill |
+| `pkill name` | Kill by name |
+| `adduser user` | Add user |
+| `usermod -aG sudo user` | Add user to sudo |
+| `ln -s target link` | Symlink |
+| `chmod 755 file` | Change permissions |
+| `chown user:group file` | Change owner |
+| `apt update` | Refresh package list |
+| `apt upgrade` | Upgrade packages |
+| `apt dist-upgrade` | Smart upgrade |
+| `apt full-upgrade` | Full upgrade |
+| `apt autoremove` | Remove unneeded |
+| `ssh-keygen -t ed25519` | SSH key |
+| `systemd` | Init system (PID 1) |
+| `service nginx start` | Legacy service |
+| `systemctl start nginx` | Start service |
+| `crontab -e` | Edit cron jobs |
+| `ufw allow 22` | Firewall rule |
+| `sudo cmd` | Run as root |
+| `su -` | Switch to root |
+| `rsyslog` | Logging daemon |
+
+---
+
+**End of Notes.**

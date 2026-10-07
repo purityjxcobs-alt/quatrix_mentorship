@@ -1513,3 +1513,2408 @@ Explanation ;
 1. Use -- to cross out the rest of one single line.
 
 2. Use /* and */ to cross out a whole paragraph.
+
+
+#  # Bash Scripting Definition & Concept Questions
+
+### Q1: What is a "Shell" in the context of Linux/Unix operating systems?
+* **A.** A hardware component that manages memory allocation.
+* **B.** A command-line interpreter that provides a user interface for interacting with the operating system kernel.
+* **C.** A security firewall that blocks unauthorized network access.
+* **D.** A compiler that transforms source code into executable binary files.
+* **Correct Answer: B**
+
+---
+
+### Q2: Define the term "Idempotency" as it applies to Bash scripting.
+* **A.** The ability of a script to execute faster every time it is run.
+* **B.** A property where running a script multiple times produces the same system state as running it once, without causing unintended side effects.
+* **C.** The process of converting text strings into integer variables automatically.
+* **D.** A critical runtime error caused by infinite loops inside nested functions.
+* **Correct Answer: B**
+
+---
+
+### Q3: What is the main structural difference between a Shell Variable and an Environment Variable?
+* **A.** Shell variables store only numbers, while environment variables store only text.
+* **B.** Shell variables are written in lowercase, while environment variables must be uppercase.
+* **C.** Shell variables are local to the current shell instance, whereas environment variables are passed down to child processes and subshells.
+* **D.** Shell variables are saved permanently on the hard drive, while environment variables disappear when a command finishes.
+* **Correct Answer: C**
+
+---
+
+### Q4: Match the standard I/O stream to its correct file descriptor number:
+* **1.** `stdin` (Standard Input) -> **File Descriptor:** `0`
+* **2.** `stdout` (Standard Output) -> **File Descriptor:** `1`
+* **3.** `stderr` (Standard Error) -> **File Descriptor:** `2`
+
+---
+
+### Q5: What does the command `2>&1` accomplish in a Bash command-line execution?
+* **A.** It doubles the execution speed of the background process.
+* **B.** It redirects Standard Error (stderr) to the same destination as Standard Output (stdout).
+* **C.** It forces the script to prompt the user for input twice before continuing.
+* **D.** It exits the program immediately with an error status code of 2.
+* **Correct Answer: B**
+
+---
+
+### Q6: Fill in the Blank
+To read a line of input from the user via standard input and assign it to a variable named `USER_INPUT`, you use the built-in command named `________`.
+* **Correct Answer:** `read` (e.g., `read USER_INPUT`)
+
+---
+
+### Q7: What is the meaning of a `0` exit status vs a non-zero exit status (e.g., `1`, `127`, `2`)?
+* **A.** `0` means the program failed; non-zero means it succeeded perfectly.
+* **B.** `0` means the script completed successfully; non-zero codes indicate specific errors or execution failures.
+* **C.** `0` means the script is running in background mode; non-zero means foreground mode.
+* **D.** there is no difference; the numbers are randomly chosen by the system kernel.
+* **Correct Answer: B**
+
+---
+
+### Q8: What does the flag `-z` test for when used inside a conditional bracket expression like `if [ -z "$MY_VAR" ]`?
+* **A.** It checks if the file named `MY_VAR` is zipped/compressed.
+* **B.** It checks if the integer variable equals zero.
+* **C.** It checks if the string variable is empty (has a length of zero).
+* **D.** It checks if the system process has zero background threads.
+* **Correct Answer: C**
+
+---
+
+### Q9: True or False
+In Bash, arrays can store a mix of integers and strings, and they are zero-indexed, meaning the first element is accessed using `${array[0]}`.
+* **Correct Answer:** **True**
+
+---
+
+### Q10: What is the purpose of the `alias` command in a Bash environment?
+* **A.** To temporarily change the username of the logged-in user.
+* **B.** To create a shortcut name or alternative string that stands for a longer command or sequence of commands.
+* **C.** To hide the directory path from displaying in the terminal prompt.
+* **D.** To encrypt the source code of a plaintext script file.
+* **Correct Answer: B**
+
+# Additional Bash Scripting & Linux Command Questions
+
+### Q11: What is the main difference between the `exit` command and the `return` command in Bash?
+* **A.** `exit` terminates the entire script execution, while `return` exits a function and hands control back to the caller.
+* **B.** `exit` is used for successful completions, while `return` is only used for errors.
+* **C.** `exit` can only return text strings, while `return` can only return integers.
+* **D.** They are exact synonyms and can be used interchangeably in any part of a script.
+* **Correct Answer: A**
+
+---
+
+### Q12: Which utility is best suited for searching specific text patterns within files using regular expressions?
+* **A.** `sed`
+* **B.** `grep`
+* **C.** `awk`
+* **D.** `find`
+* **Correct Answer: B**
+
+---
+
+### Q13: In a Bash script conditional statement, what is the purpose of the `&&` short-circuit operator?
+* **A.** It executes the second command only if the first command fails (returns a non-zero exit status).
+* **B.** It executes both commands simultaneously in separate background threads.
+* **C.** It executes the second command only if the first command succeeds (returns a `0` exit status).
+* **D.** It acts as a mathematical operator that multiplies two numbers together.
+* **Correct Answer: C**
+
+---
+
+### Q14: What command would you use to change the permissions of a script so that the owner can execute it?
+* **A.** `chown +x script.sh`
+* **B.** `chmod +x script.sh`
+* **C.** `chperm 755 script.sh`
+* **D.** `umask +x script.sh`
+* **Correct Answer: B**
+
+---
+
+### Q15: Fill in the Blank
+To process a text file line-by-line and easily extract specific columns of data (such as printing just the 3rd column), the `________` text-processing utility is most commonly recommended.
+* **Correct Answer:** `awk` (e.g., `awk '{print $3}' file.txt`)
+
+---
+
+### Q16: What happens if you run a script using `source script.sh` (or `. script.sh`) instead of `./script.sh`?
+* **A.** The script runs inside a separate child process, protecting the current shell's environment variables.
+* **B.** The script runs inside the current shell's process, allowing it to modify the current shell's variables and environment directly.
+* **C.** The script is compiled into temporary machine code before running.
+* **D.** The shell runs the script in safe mode without administrative privileges.
+* **Correct Answer: B**
+
+---
+
+### Q17: What does the flag `-d` test for when used inside a conditional bracket expression like `if [ -d "$PATH_VAR" ]`?
+* **A.** It checks if the specified path points to an active disk drive.
+* **B.** It checks if the specified path exists and is a directory.
+* **C.** It checks if the file has deleted data fragments.
+* **D.** It checks if the variable is defined in the system registry.
+* **Correct Answer: B**
+
+---
+
+### Q18: Which structural component is used in Bash to handle multi-way branching based on pattern matching (similar to a switch-case statement in other languages)?
+* **A.** `if ... elif ... else`
+* **B.** `case ... esac`
+* **C.** `select ... done`
+* **D.** `switch ... case`
+* **Correct Answer: B**
+
+---
+
+### Q19: What is the purpose of the special variable `$!` in Bash?
+* **A.** It holds the process ID (PID) of the most recently executed background job.
+* **B.** It forces the script to crash immediately as an intentional panic signal.
+* **C.** It contains the error message text generated by the last failed command.
+* **D.** It expands to the absolute path of the global configuration profile.
+* **Correct Answer: A**
+
+---
+
+### Q20: What does the command `sed -i 's/apple/banana/g' fruit.txt` do?
+* **A.** It prints lines containing the word "apple" from `fruit.txt` to the terminal screen.
+* **B.** It creates a new file called `banana.txt` filled with references to apples.
+* **C.** It searches for the word "apple" and changes it to "banana" everywhere inside the file `fruit.txt`, saving the changes directly in place.
+* **D.** It deletes every line in `fruit.txt` that contains the word "banana".
+* **Correct Answer: C**
+# Comprehensive Bash Question Pool: Detailed Explanations & Rationales
+
+---
+
+## Category 1: Environment, Shebang, & Execution
+
+### Q21: What happens if a Bash script does NOT include a shebang line (`#!/bin/bash`) at the top?
+* **Correct Answer: C**
+* **Why C is correct:** Without an explicit shebang directive, the operating system kernel falls back to executing the script using the default active shell of the user who initiated the command (often `sh`, `dash`, or `zsh`). If your script contains "Bashisms" (syntax specific only to Bash), it will crash or behave unpredictably.
+* **Why other options are incorrect:** 
+  * **A is wrong:** The OS will still attempt to read the file as plain text line-by-line; it does not throw an immediate panic or refuse to execute.
+  * **B is wrong:** Linux shells are strictly interpreters; they lack the ability to magically compile an uncompiled text script into a binary executable file like C.
+  * **D is wrong:** Security encryption is never triggered automatically by the absence of file syntax markers.
+
+### Q22: What is the purpose of the `PATH` environment variable in Linux?
+* **Correct Answer: B**
+* **Why B is correct:** `PATH` is a colon-separated list of system directories. When you type a command like `ls` or `mkdir`, the shell searches these directories from left to right to locate the corresponding executable binary file.
+* **Why other options are incorrect:**
+  * **A is wrong:** The path to the user's home directory is stored in the `$HOME` variable, not `$PATH`.
+  * **C is wrong:** Terminal command history is stored in the memory buffer and written to files like `~/.bash_history`.
+  * **D is wrong:** Network routing maps are managed by the kernel routing tables (`netstat` or `ip route`), completely independent of environment configuration variables.
+
+### Q23: What does the command `export MY_VAR` accomplish?
+* **Correct Answer: C**
+* **Why C is correct:** By default, standard shell variables are local and restricted strictly to the current shell process instance. Using `export` flags the variable so that any child processes, external commands, or subshells spawned from this shell inherit the variable.
+* **Why other options are incorrect:**
+  * **A is wrong:** `export` only alters volatile runtime memory. To make a variable permanent, you must append it textually to a startup file like `~/.bashrc`.
+  * **B is wrong:** It shares data downstream to local software forks, not across networked computers.
+  * **D is wrong:** To clear a variable from memory, the `unset` command must be used.
+
+### Q24: What is the difference between `./my_script.sh` and `source ./my_script.sh`?
+* **Correct Answer: A**
+* **Why A is correct:** Running a script with `./` forks a brand-new, isolated child shell process. Running a script with `source` (or the `.` dot command) evaluates the script lines directly inside your *current* shell process environment, meaning any variables or aliases created inside the script persist after it finishes.
+* **Why other options are incorrect:**
+  * **B is wrong:** Neither command compiles code; they both execute the script lines purely through sequential interpretation.
+  * **C is wrong:** They alter process environments entirely differently, making them fundamentally distinct operations.
+  * **D is wrong:** Execution privileges rely entirely on standard Linux file permissions (`chmod`), not on whether you source or call a script.
+
+---
+
+## Category 2: Variables, Parameters, & String Expansion
+
+### Q25: How do you properly access the length (number of characters) of a string stored in a variable named `STR`?
+* **Correct Answer: A**
+* **Why A is correct:** The hash/pound prefix (`#`) placed right before the variable name inside curly braces `${#VAR}` is the precise native parameter expansion syntax Bash utilizes to count character lengths.
+* **Why other options are incorrect:**
+  * **B is wrong:** Object-oriented dot notation properties (like `.length` or `.size`) do not exist in Bash.
+  * **C & D are wrong:** Neither `length` nor `count` are native built-in functions or structural keywords in Bash logic.
+
+### Q26: What is the operational difference between the special parameters `$*` and `$@` when wrapped in double quotes?
+* **Correct Answer: B**
+* **Why B is correct:** When encapsulated in double quotes, `"$*"` flattens all passed parameters into one singular giant text string separated by spaces (or the first character of your `$IFS`). Conversely, `"$@"` breaks arguments apart into individual, cleanly separated strings, preserving literal parameter blocks even if they contain spaces.
+* **Why other options are incorrect:**
+  * **A is wrong:** This reverses the behavioral rules; `"$@"` is what accurately preserves distinct argument separations.
+  * **C is wrong:** Counting parameters requires the `$#` parameter.
+  * **D is wrong:** They exhibit wildly different mechanics during loop processing, meaning they are absolutely not identical.
+
+### Q27: What is the output of the following block of code?
+```bash
+VAR="OpenOLAT"
+echo '${VAR}'
+```
+* **Correct Answer: C**
+* **Why C is correct:** Single literal quotes (`'...'`) aggressively suppress all underlying shell interpretations. They treat every character between them exactly as literal text, preventing the dollar sign from triggering variable expansion.
+* **Why other options are incorrect:**
+  * **A & B are wrong:** Variable expansion (`OpenOLAT`) only occurs if you use double quotes (`"..."`) or no quotes at all.
+  * **D is wrong:** Passing literal text to `echo` will never cause a critical runtime evaluation script failure.
+
+### Q28: Which configuration file is read and executed when a non-login interactive Bash shell starts up?
+* **Correct Answer: C**
+* **Why C is correct:** Non-login interactive shells (like opening a new standard terminal window while already logged into your desktop GUI) explicitly load the user's localized `~/.bashrc` file to set up environment structures.
+* **Why other options are incorrect:**
+  * **A & B are wrong:** `/etc/profile` and `~/.bash_profile` are explicitly reserved for initial system initialization during **login** shell sequences (e.g., initial SSH access or terminal text logins).
+  * **D is wrong:** `~/.bash_logout` runs exclusively when an active shell session is completely closed or killed.
+
+---
+
+## Category 3: Conditional Logic & File Testing
+
+### Q29: Which flag inside a conditional test statement checks if a file exists and has a size greater than zero bytes?
+* **Correct Answer: B**
+* **Why B is correct:** The `-s` operator specifically runs a dual verification check: it returns true if the targeted file exists and its size size evaluation is actively greater than zero bytes (i.e., it is not empty).
+* **Why other options are incorrect:**
+  * **A is wrong:** The `-e` flag only checks if a file exists, regardless of whether it contains data or is completely empty.
+  * **C is wrong:** The `-f` flag verifies if the target is a regular file (as opposed to a folder or device path).
+  * **D is wrong:** The `-d` flag specifically evaluates whether the target path points to a directory.
+
+### Q30: What operator is used to check if two text strings are NOT equal in a standard Bash test block?
+* **A.** `-ne`
+* **B.** `!=`
+* **Correct Answer: B**
+* **Why B is correct:** In Bash conditional parsing frameworks, `!=` is the designated operator used to evaluate string inequalities.
+* **Why other options are incorrect:**
+  * **A is wrong:** The `-ne` operator is strictly for **numeric integer** inequality evaluation. Using it on strings can break your script.
+  * **C is wrong:** Strict identity operators like `!==` belong to JavaScript/TypeScript paradigms and do not exist in Bash.
+  * **D is wrong:** `-not` is invalid conditional syntax inside classic evaluation brackets.
+
+### Q31: What is the fundamental difference between the operators `-eq` and `==` inside conditional statements?
+* **Correct Answer: A**
+* **Why A is correct:** Bash is strictly typed towards strings by default. Therefore, it uses explicit textual flags like `-eq`, `-ne`, `-lt`, and `-gt` for arithmetic integer processing, while saving operators like `==` and `!=` for exact character-matching string routines.
+* **Why other options are incorrect:**
+  * **B is wrong:** This completely swaps their designated functional roles.
+  * **C is wrong:** Swapping them leads to serious bugs (e.g., matching string text using an arithmetic flag throws standard syntax errors).
+  * **D is wrong:** Boolean values in Bash are simulated via command exit codes (`0` or `1`); neither flag handles raw boolean evaluation fields.
+
+### Q32: What will be the output of this script segment?
+```bash
+if [ 5 -gt 10 ] || [ 2 -eq 2 ]; then
+    echo "Condition Met"
+else
+    echo "Condition Failed"
+fi
+```
+* **Correct Answer: B**
+* **Why B is correct:** The logical `||` operator represents an **OR** condition. Even though the first test evaluates to false (`5` is not greater than `10`), the second test evaluates to true (`2` is equal to `2`). Because at least one side is true, the entire conditional statement passes.
+* **Why other options are incorrect:**
+  * **A is wrong:** The block will only fall back to the `else` sequence if *both* surrounding conditional expressions evaluate to false.
+  * **C & D are wrong:** The formatting of this block utilizes perfectly valid, standard Bash bracket notation grammar rules.
+
+---
+
+## Category 4: Streams, Redirection, & Pipes
+
+### Q33: What is the difference between `>` and `>>` when redirecting output to a file?
+* **Correct Answer: B**
+* **Why B is correct:** A single angle bracket `>` truncates and completely overwrites any pre-existing text inside the file. A double angle bracket `>>` targets the bottom EOF index and safely appends your stream data without wiping out older modifications.
+
+
+# ```markdown
+# Bash Complete Notes — Everything Discussed
+
+> A full compilation of all topics, commands, flags, characters, examples, practice questions, and alternatives covered in this chat.
+> Copy this entire file into VS Code or GitHub as your notes.
+
+---
+
+## Table of Contents
+
+1. [The `ls` Command](#1-the-ls-command)
+2. [Finding Files by Character Count](#2-finding-files-by-character-count)
+3. [`ls *9*` — What It Really Means](#3-ls-9--what-it-really-means)
+4. [Downloading Files with `wget` and Saving with a New Name](#4-downloading-files-with-wget-and-saving-with-a-new-name)
+5. [The `tar` Command — Full Q&A](#5-the-tar-command--full-qa)
+6. [Copying a File — `cp`](#6-copying-a-file--cp)
+7. [Moving a File — `mv`](#7-moving-a-file--mv)
+8. [Using `man` (Manual Pages)](#8-using-man-manual-pages)
+9. [Finding Files with 9, 10, 14, 16 Characters](#9-finding-files-with-9-10-14-16-characters)
+10. [Seven Crucial Takeaways for the Test](#10-seven-crucial-takeaways-for-the-test)
+11. [Practice Question Sets](#11-practice-question-sets)
+12. [Alternatives to `history`](#12-alternatives-to-history)
+13. [Keeping Your Directory Clean While Testing](#13-keeping-your-directory-clean-while-testing)
+14. [Multiple Ways to Get the Same Output](#14-multiple-ways-to-get-the-same-output)
+15. [Case-Insensitive `grep` (`-i`)](#15-case-insensitive-grep--i)
+16. [Files Starting with `d` and Ending with `.log`](#16-files-starting-with-d-and-ending-with-log)
+17. [Fill-in-the-Blank Rules](#17-fill-in-the-blank-rules)
+18. [Spacing & Formatting Rules](#18-spacing--formatting-rules)
+19. [`sudo` Decision Table](#19-sudo-decision-table)
+20. [`echo` and Newlines](#20-echo-and-newlines)
+21. [Complete Command Reference (All Commands + Flags)](#21-complete-command-reference-all-commands--flags)
+22. [Wildcards / Glob Characters](#22-wildcards--glob-characters)
+23. [Regex Characters (grep, find, awk)](#23-regex-characters-grep-find-awk)
+24. [Redirection & Operators](#24-redirection--operators)
+25. [Quick Reference Cheat Sheet](#25-quick-reference-cheat-sheet)
+
+---
+
+## 1. The `ls` Command
+
+`ls` lists directory contents. It does **not** have a built-in flag for filename length.
+
+| Flag | Meaning |
+|------|---------|
+| `-l` | Long format (permissions, size, date) |
+| `-a` | Show hidden files (starting with `.`) |
+| `-1` | One file per line |
+| `-d` | List the directory itself, not its contents |
+| `-h` | Human-readable sizes (KB, MB) |
+| `-t` | Sort by modification time |
+| `-r` | Reverse order |
+| `-S` | Sort by size |
+| `-R` | Recursive |
+
+**Examples:**
+```bash
+ls                    # list files
+ls -la                # all files, long format
+ls -d ?????????       # files with exactly 9 characters
+ls -d1 ?????????      # same, one per line
+ls d*.log             # starts with d, ends with .log
+ls *.txt              # ends with .txt
+ls -lh                # long format with human sizes
+```
+
+---
+
+## 2. Finding Files by Character Count
+
+Use the shell wildcard `?`, which matches **exactly one** character.
+
+**Nine `?` marks** match filenames with exactly 9 characters:
+
+```bash
+ls -d ????????? 2>/dev/null
+```
+
+Count how many match:
+
+```bash
+ls -d ????????? 2>/dev/null | wc -l
+```
+
+If the number is greater than `0`, there are files/directories with 9-character names.
+
+For regular files only, including hidden files, in the current directory:
+
+```bash
+find . -maxdepth 1 -type f -name '?????????' -print
+```
+
+Count them:
+
+```bash
+find . -maxdepth 1 -type f -name '?????????' | wc -l
+```
+
+Remove `-maxdepth 1` if you want to search recursively.
+
+If you meant **file size is 9 characters/bytes**:
+
+```bash
+find . -maxdepth 1 -type f -size 9c
+```
+
+---
+
+## 3. `ls *9*` — What It Really Means
+
+`ls *9*` does **not** mean "filenames with 9 characters."
+
+In shell globbing:
+
+- `*` = any number of characters, including zero
+- `?` = exactly one character
+
+So:
+
+```bash
+ls -d *9*
+```
+
+lists any filename that **contains the digit `9`** anywhere, e.g.:
+
+```text
+file9.txt
+999999999999
+abc9
+9lives
+```
+
+It does **not** check length. For example, `999999999999` has 12 characters but still matches `*9*`.
+
+To list filenames with **exactly 9 characters**, use nine `?` marks:
+
+```bash
+ls -d ????????? 2>/dev/null
+```
+
+Summary:
+
+- `ls *9*` → names containing the character `9`
+- `ls -d ?????????` → names that are exactly 9 characters long
+
+---
+
+## 4. Downloading Files with `wget` and Saving with a New Name
+
+Use `wget -O` to save the download under the name you want:
+
+```bash
+wget -O myfile.zip "https://example.com/somefile.zip"
+```
+
+- `-O myfile.zip` = save as `myfile.zip`
+- It is a capital letter **O**, not zero.
+
+Then unzip it:
+
+```bash
+unzip myfile.zip
+```
+
+If you want to extract it into a specific folder name:
+
+```bash
+unzip myfile.zip -d myfolder
+```
+
+Full one-liner:
+
+```bash
+wget -O myfile.zip "https://example.com/somefile.zip" && unzip myfile.zip -d myfolder
+```
+
+If it's a `.tar.gz` instead of `.zip`:
+
+```bash
+wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && tar -xzf myfile.tar.gz -C myfolder
+```
+
+If you don't use `-O`, `wget` saves it using the filename from the URL.
+
+**Difference between `-O` and `-o`:**
+
+- `wget -O` (capital O) = save the downloaded file with this name.
+- `wget -o` (lowercase o) = write the log output to this file.
+
+```bash
+wget -O myfile.zip "https://example.com/file.zip"    # saves the file as myfile.zip
+wget -o log.txt "https://example.com/file.zip"       # saves download log to log.txt
+```
+
+---
+
+## 5. The `tar` Command — Full Q&A
+
+Your command:
+
+```bash
+wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && tar -xzf myfile.tar.gz -C myfolder
+```
+
+The tar part is:
+
+```bash
+tar -xzf myfile.tar.gz -C myfolder
+```
+
+### Basic Meaning
+
+- **Q:** What does `tar` stand for?
+  **A:** Tape Archive.
+- **Q:** What does the tar part of the command do?
+  **A:** It extracts the gzip-compressed tar archive `myfile.tar.gz` into the directory `myfolder`.
+- **Q:** What does `-x` mean? **A:** Extract.
+- **Q:** What does `-z` mean? **A:** Use gzip compression/decompression.
+- **Q:** What does `-f` mean? **A:** Use a file as the archive. The archive filename follows immediately.
+- **Q:** What does `-C` mean? **A:** Change to the given directory before extracting.
+- **Q:** Why is `-f` usually written last in `-xzf`?
+  **A:** Because `-f` expects the archive filename as its argument. So `-xzf myfile.tar.gz` means `-x -z -f myfile.tar.gz`.
+
+### `-C` Directory Questions
+
+- **Q:** Does `-C myfolder` create `myfolder` if it does not exist?
+  **A:** No. The directory must already exist, or tar will fail.
+- **Q:** How do you create the directory first?
+  **A:** `mkdir -p myfolder && tar -xzf myfile.tar.gz -C myfolder`
+- **Q:** What happens if `myfolder` does not exist?
+  **A:** `tar` exits with an error such as `Cannot chdir: No such file or directory`.
+- **Q:** How do you extract into the current directory instead?
+  **A:** `tar -xzf myfile.tar.gz`
+- **Q:** What if the folder name has spaces? **A:** Quote it:
+  `tar -xzf myfile.tar.gz -C "my folder"`
+
+### Listing and Checking
+
+- **Q:** How do you list the contents without extracting?
+  **A:** `tar -tzf myfile.tar.gz`
+- **Q:** What does `-t` mean? **A:** List/table of contents.
+- **Q:** How do you extract with verbose output?
+  **A:** `tar -xzvf myfile.tar.gz -C myfolder`
+- **Q:** What does `-v` mean? **A:** Verbose — show files as they are processed.
+
+### Other Archive Types
+
+- `.tar.bz2` → `tar -xjf myfile.tar.bz2 -C myfolder`
+- `.tar.xz` → `tar -xJf myfile.tar.xz -C myfolder`
+- `.tar` → `tar -xf myfile.tar -C myfolder`
+
+- **Q:** Difference between `-z`, `-j`, and `-J`?
+  **A:** `-z` = gzip, `-j` = bzip2, `-J` = xz.
+
+### Creating Archives
+
+- **Q:** How do you create a `.tar.gz` archive?
+  **A:** `tar -czf archive.tar.gz myfolder`
+- **Q:** What does `-c` mean? **A:** Create a new archive.
+- **Q:** What does `-czf` mean? **A:** Create a gzip-compressed tar archive with the filename that follows.
+
+### Specific File Extraction
+
+- **Q:** How do you extract only one file?
+  **A:** `tar -xzf myfile.tar.gz -C myfolder path/inside/archive/file.txt`
+- **Q:** How do you extract a file to stdout?
+  **A:** `tar -xOzf myfile.tar.gz path/inside/archive/file.txt`
+
+Note: In `tar`, `-O` means "to stdout". In `wget`, `-O` means "output filename". They are different.
+
+### Common Trick Questions
+
+- **Q:** Is `tar -xzf` the same as `unzip`?
+  **A:** No. `unzip` is for `.zip` files. `tar -xzf` is for `.tar.gz`/`.tgz` files.
+- **Q:** What does `&&` mean in the full command?
+  **A:** Run the `tar` command only if `wget` succeeds.
+- **Q:** What happens if `wget` fails? **A:** The `tar` command will not run because of `&&`.
+- **Q:** What does `wget -O myfile.tar.gz` do? **A:** Saves the downloaded file as `myfile.tar.gz`.
+- **Q:** Difference between `wget -O` and `wget -o`?
+  **A:** `-O` = output filename; `-o` = log file.
+- **Q:** Does `tar` overwrite existing files by default?
+  **A:** Yes, generally it overwrites unless you use options like `--keep-old-files`.
+- **Q:** How do you preserve permissions?
+  **A:** `tar -xzpvf myfile.tar.gz -C myfolder`
+- **Q:** What does `--strip-components=1` do?
+  **A:** It removes the first directory level when extracting.
+  Example: `tar -xzf myfile.tar.gz -C myfolder --strip-components=1`
+
+### Most Likely Short-Answer Question
+
+> **Q:** What does `tar -xzf myfile.tar.gz -C myfolder` do?
+
+**Answer:**
+
+> It extracts the gzip-compressed tar archive `myfile.tar.gz` into the existing directory `myfolder`.
+> `-x` = extract, `-z` = gzip, `-f` = archive file, `-C` = change to directory before extracting.
+
+---
+
+## 6. Copying a File — `cp`
+
+Pattern:
+
+```bash
+cp <source> <destination>
+```
+
+Copy a file and save it under a new name:
+
+```bash
+cp /path/to/original/file.txt /path/to/new/file.txt
+```
+
+**Examples:**
+
+```bash
+cp original.txt newfile.txt                          # same folder, new name
+cp /home/user/original.txt /home/user/backup/new.txt # different folder, new name
+cp original.txt /home/user/backup/                   # same name, into folder
+cp -r /path/to/source_dir /path/to/destination_dir   # copy directory
+```
+
+| Flag | Meaning |
+|------|---------|
+| `-r` | Recursive (for directories) |
+| `-v` | Verbose |
+| `-i` | Ask before overwrite |
+| `-p` | Preserve permissions/timestamps |
+| `-n` | Never overwrite |
+| `-u` | Copy only if newer |
+
+For another computer/server, use `scp`:
+
+```bash
+scp user@remote_host:/path/to/original.txt /local/path/newfile.txt
+```
+
+---
+
+## 7. Moving a File — `mv`
+
+Pattern:
+
+```bash
+mv <source> <destination>
+```
+
+**Rename a file (same folder):**
+
+```bash
+mv original.txt newfile.txt
+```
+
+**Move a file to another folder (same name):**
+
+```bash
+mv original.txt /home/user/backup/
+```
+
+**Move and rename at the same time:**
+
+```bash
+mv /home/user/original.txt /home/user/backup/newfile.txt
+```
+
+**Move a directory:**
+
+```bash
+mv /path/to/source_dir /path/to/destination_dir
+```
+
+No `-r` needed for `mv` — unlike `cp`.
+
+| Flag | Meaning |
+|------|---------|
+| `-v` | Verbose |
+| `-i` | Ask before overwrite |
+| `-n` | Never overwrite |
+| `-u` | Move only if newer |
+
+Summary:
+
+- `cp source newfile` → copy
+- `mv source newfile` → move/rename
+
+Move to another computer:
+
+```bash
+scp original.txt user@remote_host:/path/to/destination/newfile.txt
+rm original.txt
+```
+
+Or use `rsync` with `--remove-source-files`:
+
+```bash
+rsync -av --remove-source-files original.txt user@remote_host:/path/to/destination/
+```
+
+---
+
+## 8. Using `man` (Manual Pages)
+
+Open the manual page for a command:
+
+```bash
+man <command>
+```
+
+**Examples:**
+
+```bash
+man ls
+man cp
+man mv
+man tar
+man wget
+```
+
+### Navigating Inside a Man Page
+
+- `Space` or `Page Down` — next page
+- `b` or `Page Up` — previous page
+- `↑` / `↓` — scroll line by line
+- `/word` — search for `word`
+- `n` — next search match
+- `N` — previous search match
+- `g` — go to top
+- `G` — go to bottom
+- `q` — quit
+
+### Man Sections
+
+| Section | Meaning |
+|---------|---------|
+| 1 | User commands |
+| 2 | System calls |
+| 3 | Library functions |
+| 4 | Devices |
+| 5 | File formats |
+| 6 | Games |
+| 7 | Miscellaneous |
+| 8 | System administration |
+
+Open a specific section:
+
+```bash
+man 5 passwd
+man 1 passwd
+```
+
+### Searching Man Pages
+
+```bash
+man -k password       # search by keyword
+apropos password      # same
+man -f ls             # short description
+whatis ls             # same
+man -a passwd         # all sections
+man -w ls             # show file path
+```
+
+### Quick Help
+
+```bash
+ls --help
+cp --help
+tar --help
+```
+
+Learn about `man` itself:
+
+```bash
+man man
+```
+
+---
+
+## 9. Finding Files with 9, 10, 14, 16 Characters
+
+Using `ls` in your home directory:
+
+```bash
+cd ~
+ls -d1 ????????? ?????????? ?????????????? ???????????????? 2>/dev/null
+```
+
+Breakdown:
+
+| Pattern | Characters |
+|---------|------------|
+| `?????????` | 9 |
+| `??????????` | 10 |
+| `??????????????` | 14 |
+| `????????????????` | 16 |
+
+- `-d` → list the directory name itself, not its contents
+- `-1` → one file per line
+- `2>/dev/null` → hide "No such file" errors
+
+If you also want **hidden files**, use `find`:
+
+```bash
+find ~ -maxdepth 1 -type f \( \
+  -name '?????????' -o \
+  -name '??????????' -o \
+  -name '????????????????' -o \
+  -name '??????????????' \
+\) -printf '%f\n'
+```
+
+---
+
+## 10. Seven Crucial Takeaways for the Test
+
+1. **Test Your Commands in the Terminal First.**
+   Using the command line to verify your logic before submitting is the single best way to catch syntax errors. If a test question requires modifying a restricted folder (like `/usr/bin`), replicate the structure in a location you own (e.g., `~/Documents`), test your command until it works, and then update the final path in your answer.
+   (Also ask yourself: why don't you have access to those folders in the first place?)
+   However, if you have to test simple commands, it could use up valuable time.
+
+2. **Leverage the `man` Pages.**
+   The `man` command is your built-in cheat sheet. If you haven't been using it regularly, read up on how to navigate manual pages and practice looking up options today.
+
+3. **Create Test Files for Verification.**
+   If a question asks how to find or list files matching a pattern (e.g., files ending in `.txt`), take 10 seconds to `touch` a few test files in a safe directory and verify your wildcard/glob syntax.
+
+4. **Understand `sudo` Before Using It.**
+   Blindly adding `sudo` to commands indicates a lack of understanding regarding Linux permissions. Review when root privilege is actually required versus when standard user permissions suffice.
+
+5. **Stop Using Your Home Directory for Testing.**
+   Testing risky or destructive commands directly in `~` is dangerous and messy. Always `mkdir` a dedicated temporary folder for sandbox testing.
+
+6. **Watch Your Spacing and Formatting.**
+   Automated grading is strict. Unnecessary leading or trailing spaces (e.g., `"ls "` instead of `"ls"`) can mark a correct command wrong. Conversely, missing mandatory spaces (e.g., `"ls-la"` instead of `"ls -la"`) is invalid syntax. If a question asks "how do you `cp` all directories: `cp ___`" and you answer `cp *`, then you could also get it wrong instead of answering only `*`. You only need to fill the blank, not repeat the `cp` part.
+
+7. **Practice `wget` Scenarios & Utilize Shell History.**
+   Practice real-world `wget` downloads today. During the test, rely on your shell history (`history` command or up arrow) to quickly recall and adapt complex flags you've already verified.
+
+---
+
+## 11. Practice Question Sets
+
+### Section A: Testing Commands First
+
+**Q1.** You need to find all `.txt` files in `/usr/bin` and copy them to `/usr/bin/backup`. Why can't you test this directly in `/usr/bin`?
+
+**Answer:** Because `/usr/bin` is owned by `root`. A normal user does not have write permission there. Test in a folder you own first.
+
+```bash
+mkdir -p ~/Documents/practice/usr_bin
+cd ~/Documents/practice/usr_bin
+touch file1.txt file2.txt file3.log
+mkdir backup
+find . -name "*.txt" -exec cp {} backup/ \;
+ls backup/
+```
+
+**Q2.** Test this in `~/Documents/practice` before submitting: *Find all files ending in `.log` in `/var/log` and move them to `/var/log/old`.*
+
+```bash
+mkdir -p ~/Documents/practice/var_log/old
+cd ~/Documents/practice/var_log
+touch a.log b.log c.txt d.log
+find . -name "*.log" -exec mv {} old/ \;
+ls old/
+```
+
+Final answer:
+
+```bash
+find /var/log -name "*.log" -exec mv {} /var/log/old/ \;
+```
+
+### Section B: Man Pages
+
+**Q3.** Open the manual page for `cp`.
+
+```bash
+man cp
+```
+
+**Q4.** Inside a man page, search for "recursive".
+
+Type `/recursive`, press Enter. `n` for next, `N` for previous.
+
+**Q5.** Open section 5 of the `passwd` man page.
+
+```bash
+man 5 passwd
+```
+
+**Q6.** One-line description of `ls`.
+
+```bash
+whatis ls
+# or
+man -f ls
+```
+
+**Q7.** Search all man pages for "password".
+
+```bash
+man -k password
+# or
+apropos password
+```
+
+### Section C: Creating Test Files
+
+**Q8.** List all files ending in `.txt`.
+
+```bash
+mkdir -p ~/Documents/practice/globtest
+cd ~/Documents/practice/globtest
+touch file1.txt file2.txt notes.md image.png
+ls *.txt
+```
+
+**Q9.** List files with exactly 9 characters.
+
+```bash
+ls -d ????????? 2>/dev/null
+```
+
+**Q10.** List files starting with `report` and ending with `.pdf`.
+
+```bash
+touch report1.pdf report2.pdf report3.txt other.pdf
+ls report*.pdf
+```
+
+### Section D: Understanding `sudo`
+
+**Q11.** Which needs `sudo`?
+a) `ls /usr/bin` b) `cp file.txt /usr/bin/` c) `cat /etc/passwd` d) `mkdir /usr/bin/newfolder`
+
+**Answer:** b and d need `sudo`.
+
+**Q12.** Do you need `sudo` to copy to `~/Documents`? **No.**
+
+**Q13.** Why does `sudo ls /root` work but `ls /root` fails?
+
+**Answer:** `/root` has permissions like `dr-xr-x---` — only root can read it. `sudo` temporarily gives root privileges.
+
+### Section E: Sandbox Testing
+
+**Q14.** What's wrong with `rm -rf *` in your home directory?
+
+**Answer:** It deletes **everything** in your current directory. Always `mkdir` a sandbox first.
+
+**Q15.** Write commands to create a safe sandbox, add test files, and clean up.
+
+```bash
+mkdir -p ~/Documents/sandbox
+cd ~/Documents/sandbox
+touch a.txt b.txt c.log
+ls
+cd ~
+rm -rf ~/Documents/sandbox
+```
+
+### Section F: Spacing & Formatting
+
+**Q16.** `cp ___ /backup` — copy all files. **Answer:** `*` (not `cp *`)
+
+**Q17.** Is `ls-la` valid? **No.** Correct: `ls -la`
+
+**Q18.** Is `ls ` (trailing space) the same as `ls`? Functionally yes, but grading may mark it wrong.
+
+**Q19.** `mv ___ /tmp` — move all `.log` files. **Answer:** `*.log`
+
+**Q20.** Which is correct?
+a) `tar -xzf file.tar.gz -C myfolder`
+b) `tar-xzf file.tar.gz -C myfolder`
+c) `tar -xzf file.tar.gz -C  myfolder`
+d) `tar -xzf file.tar.gz -C myfolder `
+
+**Answer:** a)
+
+### Section G: `wget` Scenarios
+
+**Q21.** Download and save as `myfile.zip`.
+
+```bash
+wget -O myfile.zip "https://example.com/file.zip"
+```
+
+**Q22.** Download and extract a `.tar.gz` into `myfolder`.
+
+```bash
+mkdir -p myfolder
+wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && tar -xzf myfile.tar.gz -C myfolder
+```
+
+**Q23.** Difference between `wget -O` and `wget -o`?
+
+- `-O` (capital) = output filename.
+- `-o` (lowercase) = log file.
+
+**Q24.** Rerun an earlier command quickly.
+
+Use `history | grep wget`, then `!123`. Or just press `Ctrl+R` and type `wget`.
+
+**Q25.** Download, extract, and list in one line.
+
+```bash
+mkdir -p myfolder && wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && tar -xzf myfile.tar.gz -C myfolder && ls myfolder
+```
+
+### Section H: Mixed
+
+**Q26.** List all files in home directory with exactly 14 characters, including hidden.
+
+```bash
+find ~ -maxdepth 1 -type f -name '??????????????' -printf '%f\n'
+```
+
+**Q27.** Copy all `.conf` files from `/etc` to `~/backup_conf`. Need `sudo`? **No.**
+
+```bash
+mkdir -p ~/backup_conf
+cp /etc/*.conf ~/backup_conf/
+```
+
+**Q28.** What does this do?
+
+```bash
+wget -O data.tar.gz "https://example.com/data.tar.gz" && tar -xzf data.tar.gz -C ~/Documents/sandbox
+```
+
+**Answer:** Downloads `data.tar.gz`, then extracts it into `~/Documents/sandbox`. The folder must already exist.
+
+**Q29.** `mv ___ /tmp/old` — move all `.bak` files. **Answer:** `*.bak`
+
+**Q30.** Why is testing in `~/Documents/sandbox` better than `~`?
+
+- Keeps home clean.
+- Prevents accidental deletion.
+- Lets you safely use destructive commands.
+- Mirrors restricted folders without `sudo`.
+
+---
+
+## 12. Alternatives to `history`
+
+| Method | How to use | Example |
+|--------|-----------|---------|
+| **Up arrow** | Press `↑` repeatedly | Cycles through previous commands |
+| **Ctrl + R** | Press `Ctrl+R`, type part of command | Reverse search — fastest |
+| **`!!`** | Run the last command again | `sudo !!` reruns last with sudo |
+| **`!n`** | Run command number `n` | `!42` |
+| **`!string`** | Run last command starting with `string` | `!wget` |
+| **`!?string?`** | Run last command containing `string` | `!?tar?` |
+| **`fc -l`** | List recent commands | Similar to history |
+| **`fc`** | Open last command in editor | Fix and rerun |
+| **`alias`** | Create shortcuts | `alias dl='wget -O'` |
+| **Tab completion** | Press `Tab` to autocomplete | Saves typing |
+| **Script file** | Save commands to `.sh` | `./myscript.sh` |
+| **`script` command** | Log entire session | `script session.log` |
+
+**Ctrl+R is the best alternative to `history`.**
+
+```bash
+# Press Ctrl+R, then type:
+wget
+# Shows the last wget command. Press Ctrl+R again for older ones.
+# Press Enter to run, or arrow keys to edit first.
+```
+
+---
+
+## 13. Keeping Your Directory Clean While Testing
+
+| Method | Command | Why |
+|--------|---------|-----|
+| **Subshell** | `(cd /tmp && command)` | Runs in a subshell — original directory unchanged |
+| **`pushd`/`popd`** | `pushd /tmp` ... `popd` | Saves your place and returns |
+| **`cd -`** | `cd -` | Toggles between two directories |
+| **`mktemp -d`** | `tmp=$(mktemp -d)` | Creates a unique temp directory |
+| **`trap` cleanup** | `trap 'rm -rf $tmp' EXIT` | Auto-deletes temp dir when script ends |
+| **Sandbox folder** | `mkdir -p ~/Documents/sandbox` | Dedicated safe space |
+| **`cd ~`** | `cd ~` | Return home instantly |
+| **`cd /tmp`** | `cd /tmp` | Use system temp for scratch work |
+
+**Subshell example (cleanest method):**
+
+```bash
+(cd /tmp && touch a.txt b.txt && ls *.txt)
+# You are still in your original directory after this runs
+pwd
+```
+
+**mktemp with auto-cleanup:**
+
+```bash
+tmp=$(mktemp -d)
+cd "$tmp"
+touch test1 test2
+ls
+cd ~
+rm -rf "$tmp"
+```
+
+**pushd/popd example:**
+
+```bash
+pushd /tmp
+touch a.txt b.txt
+ls *.txt
+popd
+# Back to where you started
+```
+
+---
+
+## 14. Multiple Ways to Get the Same Output
+
+### 14.1 List files with exactly 9 characters
+
+```bash
+# Method 1: ls with glob (simplest)
+ls -d ????????? 2>/dev/null
+
+# Method 2: find
+find . -maxdepth 1 -name '?????????' -printf '%f\n'
+
+# Method 3: ls piped to grep
+ls | grep -E '^.{9}$'
+
+# Method 4: ls piped to awk
+ls | awk 'length($0)==9'
+
+# Method 5: printf with glob
+printf '%s\n' ?????????
+
+# Method 6: for loop
+for f in ?????????; do echo "$f"; done
+
+# Method 7: find with regex
+find . -maxdepth 1 -regextype posix-extended -regex '.*/[^/]{9}'
+```
+
+### 14.2 List files ending in `.txt`
+
+```bash
+# Method 1: glob (simplest)
+ls *.txt
+
+# Method 2: find
+find . -maxdepth 1 -name '*.txt'
+
+# Method 3: grep
+ls | grep '\.txt$'
+
+# Method 4: printf
+printf '%s\n' *.txt
+
+# Method 5: for loop
+for f in *.txt; do echo "$f"; done
+
+# Method 6: find with type filter
+find . -maxdepth 1 -type f -name '*.txt' -printf '%f\n'
+```
+
+### 14.3 Files that start with `d` and end with `.log`
+
+```bash
+# Method 1: ls glob
+ls d*.log
+
+# Method 2: find
+find . -maxdepth 1 -name 'd*.log'
+
+# Method 3: grep
+ls | grep '^d.*\.log$'
+
+# Method 4: grep -E
+ls | grep -E '^d.*\.log$'
+
+# Method 5: awk
+ls | awk '/^d.*\.log$/'
+
+# Method 6: printf
+printf '%s\n' d*.log
+
+# Method 7: for loop
+for f in d*.log; do echo "$f"; done
+
+# Method 8: find with regex
+find . -maxdepth 1 -regextype posix-extended -regex '.*/d[^/]*\.log'
+
+# Method 9: compgen
+compgen -G 'd*.log'
+
+# Method 10: case-insensitive find
+find . -maxdepth 1 -type f -iname 'd*.log' -printf '%f\n'
+```
+
+### 14.4 Copy a file to a new name
+
+```bash
+cp original.txt newfile.txt
+cp -v original.txt newfile.txt
+cat original.txt > newfile.txt
+install -m 644 original.txt newfile.txt
+rsync -a original.txt newfile.txt
+dd if=original.txt of=newfile.txt
+tee newfile.txt < original.txt
+```
+
+### 14.5 Move / rename a file
+
+```bash
+mv original.txt newfile.txt
+cp original.txt newfile.txt && rm original.txt
+rsync -a --remove-source-files original.txt newfile.txt
+mv -v original.txt newfile.txt
+mv -n original.txt newfile.txt
+```
+
+### 14.6 Download with a new name
+
+```bash
+wget -O myfile.zip "https://example.com/file.zip"
+curl -o myfile.zip "https://example.com/file.zip"
+curl -L -o myfile.zip "https://example.com/file.zip"
+wget "https://example.com/file.zip" && mv file.zip myfile.zip
+curl "https://example.com/file.zip" > myfile.zip
+```
+
+### 14.7 Download and extract tar.gz into a folder
+
+```bash
+# Method 1: wget -O + tar -C
+mkdir -p myfolder
+wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && tar -xzf myfile.tar.gz -C myfolder
+
+# Method 2: curl + tar --directory
+mkdir -p myfolder
+curl -o myfile.tar.gz "https://example.com/somefile.tar.gz" && tar -xzf myfile.tar.gz --directory=myfolder
+
+# Method 3: cd into folder first
+mkdir -p myfolder
+wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && cd myfolder && tar -xzf ../myfile.tar.gz
+
+# Method 4: pipe directly
+mkdir -p myfolder
+curl -L "https://example.com/somefile.tar.gz" | tar -xzf - -C myfolder
+
+# Method 5: gunzip pipe
+mkdir -p myfolder
+wget -O - "https://example.com/somefile.tar.gz" | gunzip | tar -xf - -C myfolder
+
+# Method 6: zcat pipe
+mkdir -p myfolder
+wget -O myfile.tar.gz "https://example.com/somefile.tar.gz" && zcat myfile.tar.gz | tar -xf - -C myfolder
+```
+
+### 14.8 Combined (9, 10, 14, 16 characters)
+
+```bash
+# Method 1: ls with multiple globs
+ls -d1 ????????? ?????????? ?????????????? ???????????????? 2>/dev/null
+
+# Method 2: find with -o
+find ~ -maxdepth 1 \( -name '?????????' -o -name '??????????' -o -name '??????????????' -o -name '????????????????' \) -printf '%f\n'
+
+# Method 3: ls piped to grep
+ls | grep -E '^.{9}$|^.{10}$|^.{14}$|^.{16}$'
+
+# Method 4: ls piped to awk
+ls | awk 'length==9 || length==10 || length==14 || length==16'
+
+# Method 5: for loop with case
+for f in *; do
+  n=${#f}
+  case $n in
+    9|10|14|16) echo "$f" ;;
+  esac
+done
+```
+
+---
+
+## 15. Case-Insensitive `grep` (`-i`)
+
+Flag for case-insensitive matching:
+
+```bash
+grep -i "pattern"
+# or
+grep --ignore-case "pattern"
+```
+
+Combined with extended regex:
+
+```bash
+grep -iE "pattern"
+```
+
+### Examples
+
+```bash
+ls | grep -i '\.txt$'                 # files ending .txt (any case)
+ls | grep -i 'report'                 # contains "report" (any case)
+ls | grep -iE '^.{9}$'                # exactly 9 chars
+ls | grep -i '_'                      # contains underscore
+ls | grep -iE '^.{9}$|^.{10}$|^.{14}$|^.{16}$'   # multiple lengths
+ls | grep -iE '\.(txt|log)$'          # .txt or .log
+```
+
+### Case-Insensitive with `find`
+
+```bash
+find . -maxdepth 1 -type f -iname '*.txt'
+find . -maxdepth 1 -type f -iname '*report*'
+find . -maxdepth 1 -type f \( -iname '*.txt' -o -iname '*.log' \)
+```
+
+### Summary Table
+
+| Task | Standard | Case-insensitive grep | Case-insensitive find |
+|------|----------|-----------------------|------------------------|
+| Files ending `.txt` | `ls *.txt` | `ls \| grep -i '\.txt$'` | `find . -iname '*.txt'` |
+| Contains "report" | `ls *report*` | `ls \| grep -i 'report'` | `find . -iname '*report*'` |
+| Exactly 9 chars | `ls -d ?????????` | `ls \| grep -iE '^.{9}$'` | `find . -name '?????????'` |
+| Contains underscore | `ls *_*` | `ls \| grep -i '_'` | `find . -name '*_*'` |
+| Multiple extensions | `ls *.{txt,log}` | `ls \| grep -iE '\.(txt\|log)$'` | `find . \( -iname '*.txt' -o -iname '*.log' \)` |
+
+**Key points:**
+
+- `grep -i` = ignore case.
+- `grep -iE` = ignore case + extended regex.
+- `find -iname` = case-insensitive filename search.
+- `ls` globs are **not** case-insensitive by default.
+- In fill-in-the-blank, only write `-i` or `-iE`, not `grep -i`.
+
+---
+
+## 16. Files Starting with `d` and Ending with `.log`
+
+First, correction about your glob:
+
+```bash
+ls d*.log*
+```
+
+This matches: **starts with `d`**, then anything, then `.log`, then anything.
+
+So it matches `data.log`, `data.log.txt`, `d.log`, `debug.log.bak`.
+
+If you want **starts with `d` AND ends with `.log` exactly**:
+
+```bash
+ls d*.log
+```
+
+No trailing `*`. That is the cleanest, test-ready answer.
+
+### All the Ways
+
+**Method 1: `ls` glob (simplest)**
+
+```bash
+ls d*.log
+ls d*.log 2>/dev/null
+```
+
+**Method 2: `find`**
+
+```bash
+find . -maxdepth 1 -type f -name 'd*.log' -printf '%f\n'
+find . -maxdepth 1 -name 'd*.log'
+```
+
+**Method 3: `ls` piped to `grep`**
+
+```bash
+ls | grep '^d.*\.log$'
+ls | grep -i '^d.*\.log$'
+```
+
+**Method 4: `ls | grep -E`**
+
+```bash
+ls | grep -E '^d.*\.log$'
+```
+
+**Method 5: `awk`**
+
+```bash
+ls | awk '/^d.*\.log$/'
+ls | awk '$0 ~ /^d.*\.log$/'
+```
+
+**Method 6: `printf`**
+
+```bash
+printf '%s\n' d*.log
+```
+
+**Method 7: `for` loop**
+
+```bash
+for f in d*.log; do echo "$f"; done
+```
+
+**Method 8: `find` with regex**
+
+```bash
+find . -maxdepth 1 -regextype posix-extended -regex '.*/d[^/]*\.log'
+```
+
+**Method 9: `compgen`**
+
+```bash
+compgen -G 'd*.log'
+```
+
+**Method 10: case-insensitive `find`**
+
+```bash
+find . -maxdepth 1 -type f -iname 'd*.log' -printf '%f\n'
+```
+
+### Side-by-Side
+
+| Method | Command |
+|--------|---------|
+| 1 | `ls d*.log` |
+| 2 | `find . -maxdepth 1 -name 'd*.log'` |
+| 3 | `ls \| grep '^d.*\.log$'` |
+| 4 | `ls \| grep -E '^d.*\.log$'` |
+| 5 | `ls \| awk '/^d.*\.log$/'` |
+| 6 | `printf '%s\n' d*.log` |
+| 7 | `for f in d*.log; do echo "$f"; done` |
+| 8 | `find . -regextype posix-extended -regex '.*/d[^/]*\.log'` |
+| 9 | `compgen -G 'd*.log'` |
+| 10 | `find . -iname 'd*.log'` |
+
+### Key Distinction
+
+| Pattern | Meaning | Matches `data.log.txt`? |
+|---------|---------|--------------------------|
+| `d*.log` | starts d, ends `.log` | ❌ No |
+| `d*.log*` | starts d, contains `.log` | ✅ Yes |
+
+---
+
+## 17. Fill-in-the-Blank Rules
+
+| Question | Answer | NOT |
+|----------|--------|-----|
+| `cp ___ /backup` | `*` | `cp *` |
+| `mv ___ /tmp/old` | `*.bak` | `mv *.bak` |
+| `tar ___ file.tar.gz` | `-xzf` | `tar -xzf` |
+| `ls ___` (9 chars) | `?????????` | `ls ?????????` |
+| `ls \| grep ___ '^.{9}$'` | `-E` or `-iE` | `grep -E` |
+| `ls ___` (start d, end .log) | `d*.log` | `ls d*.log` |
+
+---
+
+## 18. Spacing & Formatting Rules
+
+| Correct | Wrong | Why |
+|---------|-------|-----|
+| `ls -la` | `ls-la` | Missing space |
+| `ls` | `ls ` | Trailing space |
+| `tar -xzf f.tar.gz -C dir` | `tar -xzf f.tar.gz -C  dir` | Double space |
+| `cp a b` | `cp  a  b` | Extra spaces |
+| `grep -i 'x'` | `grep  -i  'x'` | Extra spaces |
+
+---
+
+## 19. `sudo` Decision Table
+
+| Task | Need sudo? |
+|------|------------|
+| `ls /usr/bin` | No |
+| `cat /etc/passwd` | No |
+| `cp file /usr/bin/` | Yes |
+| `mkdir /usr/bin/new` | Yes |
+| `ls /root` | Yes |
+| `cp file ~/Documents/` | No |
+| `rm ~/file.txt` | No |
+
+---
+
+## 20. `echo` and Newlines
+
+`echo` prints a newline by default.
+
+```bash
+echo "Hello World "
+```
+
+Output:
+
+```
+Hello World 
+```
+
+Cursor moves to the next line.
+
+**Use straight quotes `"`, not curly quotes `“ ”`.**
+
+If you want **no** newline:
+
+```bash
+echo -n "Hello World "
+```
+
+If you want an **extra** newline:
+
+```bash
+echo -e "Hello World \n"
+printf "Hello World \n"
+echo "Hello World "
+echo
+```
+
+| Command | Output |
+|---------|--------|
+| `echo "Hello World "` | `Hello World ` + newline (default) |
+| `echo -n "Hello World "` | `Hello World ` with **no** newline |
+| `echo -e "Hello World \n"` | `Hello World ` + newline + extra newline |
+| `printf "Hello World \n"` | `Hello World ` + newline |
+
+---
+
+## 21. Complete Command Reference (All Commands + Flags)
+
+### `ls`
+
+| Flag | Meaning |
+|------|---------|
+| `-l` | Long format |
+| `-a` | Show hidden files |
+| `-1` | One file per line |
+| `-d` | List directory itself |
+| `-h` | Human-readable |
+| `-t` | Sort by time |
+| `-r` | Reverse |
+| `-S` | Sort by size |
+| `-R` | Recursive |
+
+### `cp`
+
+| Flag | Meaning |
+|------|---------|
+| `-r` | Recursive |
+| `-v` | Verbose |
+| `-i` | Ask before overwrite |
+| `-p` | Preserve permissions |
+| `-n` | Never overwrite |
+| `-u` | Copy if newer |
+
+### `mv`
+
+| Flag | Meaning |
+|------|---------|
+| `-v` | Verbose |
+| `-i` | Ask before overwrite |
+| `-n` | Never overwrite |
+| `-u` | Move if newer |
+
+### `rm`
+
+| Flag | Meaning |
+|------|---------|
+| `-r` | Recursive |
+| `-f` | Force |
+| `-i` | Interactive |
+| `-v` | Verbose |
+
+### `mkdir`
+
+| Flag | Meaning |
+|------|---------|
+| `-p` | Create parents |
+| `-v` | Verbose |
+
+### `find`
+
+| Flag | Meaning |
+|------|---------|
+| `-name` | Match name (case-sensitive) |
+| `-iname` | Match name (case-insensitive) |
+| `-type f` | Regular files |
+| `-type d` | Directories |
+| `-maxdepth N` | Limit depth |
+| `-printf` | Custom output |
+| `-exec` | Run command on results |
+| `-size` | Match size |
+| `-regex` | Regex |
+| `-regextype` | Regex dialect |
+| `-o` | OR |
+
+### `grep`
+
+| Flag | Meaning |
+|------|---------|
+| `-i` | Case-insensitive |
+| `-E` | Extended regex |
+| `-r` | Recursive |
+| `-v` | Invert |
+| `-n` | Line numbers |
+| `-l` | Filenames only |
+| `-w` | Whole word |
+| `-c` | Count |
+
+### `wget`
+
+| Flag | Meaning |
+|------|---------|
+| `-O` | Output filename (capital O) |
+| `-o` | Log file (lowercase o) |
+| `-c` | Continue download |
+| `-q` | Quiet |
+
+### `curl`
+
+| Flag | Meaning |
+|------|---------|
+| `-o` | Output file |
+| `-L` | Follow redirects |
+| `-O` | Use remote filename |
+
+### `tar`
+
+| Flag | Meaning |
+|------|---------|
+| `-c` | Create |
+| `-x` | Extract |
+| `-t` | List |
+| `-z` | gzip |
+| `-j` | bzip2 |
+| `-J` | xz |
+| `-f` | Filename (last) |
+| `-v` | Verbose |
+| `-C` | Change directory |
+| `-p` | Preserve permissions |
+| `-O` | Stdout |
+| `--strip-components=N` | Strip N dirs |
+
+### `man`
+
+| Flag | Meaning |
+|------|---------|
+| `-k` | Search keyword |
+| `-f` | One-line description |
+| `-a` | All sections |
+| `-w` | Show path |
+| `N` | Section number |
+
+### `rsync`
+
+| Flag | Meaning |
+|------|---------|
+| `-a` | Archive |
+| `-v` | Verbose |
+| `--remove-source-files` | Delete source after copy |
+
+### `shopt`
+
+| Flag | Meaning |
+|------|---------|
+| `-s nullglob` | Empty glob returns nothing |
+| `-s nocaseglob` | Case-insensitive globbing |
+
+### Other Commands
+
+- `cd ~`, `cd -`, `cd ..`
+- `pwd`
+- `touch file.txt`
+- `echo "text"`, `echo -n`, `echo -e`
+- `cat file.txt`
+- `chmod 644 file.txt`
+- `pushd /tmp`, `popd`
+- `mktemp -d`
+- `trap 'rm -rf "$tmp"' EXIT`
+- `install -m 644 a b`
+- `dd if=a of=b`
+- `tee newfile.txt < original.txt`
+- `script session.log`
+- `compgen -G '?????????'`
+- `printf '%s\n' d*.log`
+- `whatis ls`
+- `apropos password`
+- `history`
+- `sudo command`
+- `scp user@host:/path/file ./newfile`
+
+---
+
+## 22. Wildcards / Glob Characters
+
+| Char | Meaning | Example | Matches |
+|------|---------|---------|---------|
+| `*` | Any number of characters (0+) | `*.txt` | `a.txt`, `notes.txt` |
+| `?` | Exactly one character | `?????????` | any 9-char name |
+| `[abc]` | Any one of a, b, c | `file[123].txt` | `file1.txt`, `file2.txt` |
+| `[a-z]` | Range | `file[a-z].txt` | `filea.txt` |
+| `[!abc]` | Not a, b, c | `file[!0-9].txt` | `filea.txt` |
+| `{a,b}` | Brace expansion | `*.{txt,log}` | `.txt` or `.log` |
+| `~` | Home directory | `~/Documents` | `/home/user/Documents` |
+
+---
+
+## 23. Regex Characters (grep, find, awk)
+
+| Char | Meaning | Example |
+|------|---------|---------|
+| `^` | Start of line | `^d` = starts with d |
+| `$` | End of line | `\.log$` = ends with .log |
+| `.` | Any single character | `d.*` |
+| `\.` | Literal dot | `\.log` |
+| `.*` | Any characters | `d.*\.log$` |
+| `\|` | OR | `txt\|log` |
+| `{n}` | Exactly n times | `^.{9}$` = exactly 9 chars |
+| `[abc]` | Character class | `[0-9]` = digit |
+| `[^abc]` | Negated class | `[^0-9]` = non-digit |
+| `+` | One or more | `d+` |
+| `?` | Zero or one | `colou?r` |
+| `\` | Escape | `\.` |
+| `()` | Group | `(txt\|log)` |
+
+---
+
+## 24. Redirection & Operators
+
+| Char | Meaning | Example |
+|------|---------|---------|
+| `>` | Redirect stdout (overwrite) | `ls > out.txt` |
+| `>>` | Append stdout | `ls >> out.txt` |
+| `<` | Redirect stdin | `cat < file.txt` |
+| `2>` | Redirect stderr | `cmd 2> err.txt` |
+| `2>/dev/null` | Discard errors | `ls x 2>/dev/null` |
+| `2>&1` | stderr to stdout | `cmd > out.txt 2>&1` |
+| `\|` | Pipe | `ls \| grep txt` |
+| `&&` | Run next if success | `wget ... && tar ...` |
+| `\|\|` | Run next if failure | `cmd1 \|\| echo fail` |
+| `;` | Run sequentially | `cmd1 ; cmd2` |
+| `&` | Background | `cmd &` |
+| `$( )` | Command substitution | `tmp=$(mktemp -d)` |
+| `` ` ` `` | Command substitution (old) | `` tmp=`mktemp -d` `` |
+| `!` | History / negate | `!!`, `!wget` |
+| `#` | Comment | `# comment` |
+| `/` | Path separator | `/usr/bin` |
+| `-` | Flag prefix / stdin | `ls -l`, `tar -` |
+| `--` | Long flag | `--help` |
+| `.` | Current directory | `./script.sh` |
+| `..` | Parent directory | `cd ..` |
+| `~` | Home | `cd ~` |
+| `'...'` | Literal string | `'*.txt'` |
+| `"..."` | String with expansion | `"$HOME"` |
+| `\` | Escape next char | `\.` |
+
+**Glob vs literal:**
+
+```bash
+ls *.txt              # glob expands → lists files
+ls '*.txt'            # literal → tries to find file named "*.txt"
+ls "*.txt"            # same as single quotes here
+```
+
+---
+
+## 25. Quick Reference Cheat Sheet
+
+| Task | Command |
+|------|---------|
+| Read manual | `man <command>` |
+| Search man | `man -k <word>` |
+| One-line description | `whatis <command>` |
+| Exactly 9 characters | `ls -d ????????? 2>/dev/null` |
+| Files ending `.txt` | `ls *.txt` |
+| Files starting d, ending .log | `ls d*.log` |
+| Copy | `cp source dest` |
+| Move/rename | `mv source dest` |
+| Copy directory | `cp -r source dest` |
+| Download with new name | `wget -O newname URL` |
+| Download + extract | `wget -O file.tar.gz URL && tar -xzf file.tar.gz -C folder` |
+| Create sandbox | `mkdir -p ~/Documents/sandbox` |
+| Check history | `history \| grep wget` |
+| Run last command | `!!` or up arrow |
+| Reverse search | `Ctrl+R` |
+| Only use sudo when | writing to system folders like `/usr/bin`, `/etc`, `/var` |
+| Case-insensitive grep | `grep -i "pattern"` |
+| Case-insensitive + regex | `grep -iE "pattern"` |
+| Find case-insensitive | `find . -iname '*.txt'` |
+| Exactly 9 chars (grep) | `ls \| grep -E '^.{9}$'` |
+| Exactly 9 chars (awk) | `ls \| awk 'length==9'` |
+| Multiple lengths | `ls \| grep -E '^.{9}$\|^.{10}$\|^.{14}$\|^.{16}$'` |
+| Subshell (stay clean) | `(cd /tmp && cmd)` |
+| Auto-cleanup | `tmp=$(mktemp -d); trap 'rm -rf $tmp' EXIT` |
+| Print with newline | `echo "text"` |
+| Print without newline | `echo -n "text"` |
+| Print extra newline | `echo -e "text\n"` |
+
+---
+
+Yes. I found the **200-question Bash Fundamentals quiz** you uploaded. I’ll give you the **question followed directly by the correct answer**, in the same order as your uploaded test. :chatgpt-content-reference{index="0"}
+
+## Bash Fundamentals — 200 Questions and Answers
+
+1. To search for files named `config.json` within `/etc/nginx`, use `find /etc/nginx -name ___`.  
+**Answer:** `config.json`
+
+2. To view the manual page for the `ls` command, type `___ ls`.  
+**Answer:** `man`
+
+3. To create a directory named `modules` inside `/usr/share`, use `mkdir /usr/share/___`.  
+**Answer:** `modules`
+
+4. Which `tar` command creates a gzipped archive of `my_project` while excluding `node_modules`?  
+**Answer:** `tar -czf project.tar.gz --exclude=node_modules my_project/`
+
+5. To recall and re-execute a previous command, use the `___` command, then press the Up arrow.  
+**Answer:** `history`
+
+6. To display the manual page for `wget`, type `man ___`.  
+**Answer:** `wget`
+
+7. What is the purpose of `tree -L 2`?  
+**Answer:** To list directories and files up to 2 levels deep.
+
+8. To list files beginning with `d` and ending in `.log`, use `ls d*.log` or `ls ___`.  
+**Answer:** `d*.log`
+
+9. To extract `backup.tar` compressed with bzip2, use `tar -xjf ___`.  
+**Answer:** `backup.tar`
+
+10. To extract `website.tar.bz2` to `/var/www`, use `tar -xjf website.tar.bz2 -C ___`.  
+**Answer:** `/var/www`
+
+11. To extract `website.tar.gz` to `/var/www/html`, use `tar -xzf website.tar.gz -C ___`.  
+**Answer:** `/var/www/html`
+
+12. To remove `old_report.doc` without confirmation, use `rm ___ old_report.doc`.  
+**Answer:** `-f`
+
+13. To display the last 250 lines of `access.log`, use `tail -n ___ access.log`.  
+**Answer:** `250`
+
+14. To copy `config.txt` to `config_backup.txt`, use `cp config.txt ___`.  
+**Answer:** `config_backup.txt`
+
+15. To remove `temp_data` and all its contents without prompting, use `rm -rf ___`.  
+**Answer:** `temp_data`
+
+16. To change to your home directory, you can type `cd` or `cd ___`.  
+**Answer:** `~`
+
+17. To download `https://www.example.com/data.csv` with its original filename, use `wget ___`.  
+**Answer:** `https://www.example.com/data.csv`
+
+18. To remove `temp_report.csv` without confirmation, use `rm ___ temp_report.csv`.  
+**Answer:** `-f`
+
+19. To search for `install.log` inside `/var/log`, use `find /var/log -name ___`.  
+**Answer:** `install.log`
+
+20. To copy `document.txt` to `doc_copy.txt`, use `cp document.txt ___`.  
+**Answer:** `doc_copy.txt`
+
+21. To find `"failed login"` in `auth.log` and show 10 lines after each match, use `grep -A 10 "failed login" ___`.  
+**Answer:** `auth.log`
+
+22. To list files having exactly five characters in their name, use `ls ___`.  
+**Answer:** `?????`
+
+23. To search for `.bak` files in `/home/user/documents`, use `find /home/user/documents -name ___`.  
+**Answer:** `*.bak`
+
+24. To move `config.yaml` to `~/settings`, use `mv config.yaml ___/settings/`.  
+**Answer:** `~`
+
+25. To remove `temp_image.png` without confirmation, use `rm ___ temp_image.png`.  
+**Answer:** `-f`
+
+26. To copy the `docs` directory and its contents to `~/backups/`, use `cp -r docs ___`.  
+**Answer:** `~/backups/`
+
+27. Which `wget` option resumes a partially downloaded file?  
+**Answer:** `-c` or `--continue`
+
+28. To list files beginning with `r` and ending in `.txt`, use `ls r*.txt` or `ls ___`.  
+**Answer:** `r*.txt`
+
+29. To download an FTP file and save it as `app.zip`, use `wget -O app.zip ___`.  
+**Answer:** `ftp://example.com/software.zip`
+
+30. Which `ls` option sorts files by modification time with newest first?  
+**Answer:** `ls -t`
+
+31. To display the manual page for `rm`, type `man ___`.  
+**Answer:** `rm`
+
+32. What does `ssh-keygen -t rsa` do?  
+**Answer:** Generates an SSH key pair using the RSA algorithm.
+
+33. To copy `document.docx` to `~/reports/`, use `cp document.docx ___/reports/`.  
+**Answer:** `~`
+
+34. To create `config_files` inside `/etc`, use `mkdir /etc/___`.  
+**Answer:** `config_files`
+
+35. To search for `database.sql` inside `/opt/app`, use `find /opt/app -name ___`.  
+**Answer:** `database.sql`
+
+36. To find `"warning"` in `messages.log` and display 2 lines before and after, use `grep -C 2 "warning" ___`.  
+**Answer:** `messages.log`
+
+37. Which `cp` option asks before overwriting a file?  
+**Answer:** `-i` or `--interactive`
+
+38. To list files having exactly nine characters in their name, use `ls ___`.  
+**Answer:** `?????????`
+
+39. To search for `"warning"` case-insensitively and show 2 lines before and after, use `grep -i -C 2 "warning" ___`.  
+**Answer:** `debug.log`
+
+40. Which command displays previously executed commands?  
+**Answer:** `history`
+
+41. Replace `old_value` with `new_value` and print the result without modifying the original file.  
+**Answer:** `cat data.csv | sed 's/old_value/new_value/g'`
+
+42. Which `sort` option sorts in reverse order?  
+**Answer:** `-r`
+
+43. Which command writes the current shell history to `~/.bash_history`?  
+**Answer:** `history -w`
+
+44. To search for `index.php` in `/var/www/html`, use `find /var/www/html -name ___`.  
+**Answer:** `index.php`
+
+45. To create `uploads` inside `/var/www/html`, use `mkdir /var/www/html/___`.  
+**Answer:** `uploads`
+
+46. To list files beginning with `b` and ending in `.bak`, use `ls b*.bak` or `ls ___`.  
+**Answer:** `b*.bak`
+
+47. To change to the root directory, use `cd ___`.  
+**Answer:** `/`
+
+48. To search for `config.json` inside `/etc`, use `find /etc -name ___`.  
+**Answer:** `config.json`
+
+49. To list files modified today using `grep`, you could use `ls -l | grep "___"`.  
+**Answer:** The current date/day, e.g. `24`
+
+50. To list regular `.txt` files, use `ls -p | grep -v / | grep ___`.  
+**Answer:** `\.txt$`
+
+51. To copy `report.txt` to the `backups` directory, use `cp report.txt ___`.  
+**Answer:** `backups/`
+
+52. Which `wget` option saves a download under a different filename?  
+**Answer:** `-O`
+
+53. To create `temp_backup` inside `/var/log`, use `mkdir /var/log/___`.  
+**Answer:** `temp_backup`
+
+54. To display the first 20 lines of `kern.log`, use `head -n ___ kern.log`.  
+**Answer:** `20`
+
+55. To download `setup.sh` using its original name, use `wget ___`.  
+**Answer:** `http://example.com/setup.sh`
+
+56. To search for `"error"` case-insensitively in `syslog` and show 3 lines before and after, use `grep -i -C 3 "error" ___`.  
+**Answer:** `syslog`
+
+57. Which command displays the full path of the current directory?  
+**Answer:** `pwd`
+
+58. What does `tree` do without options?  
+**Answer:** Lists the current directory and subdirectories in a tree-like format.
+
+59. To display the manual page for `mkdir`, type `man ___`.  
+**Answer:** `mkdir`
+
+60. In `man`, which character searches forward?  
+**Answer:** `/` followed by the search word
+
+61. To search for `"warning"` case-insensitively in `syslog` and show 10 lines after each match, use `grep -i -A 10 "warning" ___`.  
+**Answer:** `syslog`
+
+62. To download `file.zip` as `my_download.zip`, use `wget -O my_download.zip ___`.  
+**Answer:** `https://secure.example.com/file.zip`
+
+63. To create `configs` inside `/etc`, use `mkdir /etc/___`.  
+**Answer:** `configs`
+
+64. To display the last 50 lines of `server.log`, use `tail -n ___ server.log`.  
+**Answer:** `50`
+
+65. To find lines containing digits in `numbers.txt`, use `grep "___" numbers.txt`.  
+**Answer:** `[0-9]`
+
+66. To list `.gz` files in `/var/log`, use `ls /var/log/___`.  
+**Answer:** `*.gz`
+
+67. To remove `temp_image.jpeg` without confirmation, use `rm ___ temp_image.jpeg`.  
+**Answer:** `-f`
+
+68. To search for `logs.txt` inside `/var/log`, use `find /var/log -name ___`.  
+**Answer:** `logs.txt`
+
+69. Which `mv` command moves all `.bak` files into `old_files`?  
+**Answer:** `mv *.bak old_files/`
+
+70. To search for `"connection"` case-insensitively and show 1 line before and after, use `grep -i -C 1 "connection" ___`.  
+**Answer:** `network.log`
+
+71. To remove `temp_logs.tar.gz` without confirmation, use `rm ___ temp_logs.tar.gz`.  
+**Answer:** `-f`
+
+72. To remove `temp_document.docx` without confirmation, use `rm ___ temp_document.docx`.  
+**Answer:** `-f`
+
+73. To list files with exactly seven characters followed by `.log`, use `ls ???????.log` or `ls ___`.  
+**Answer:** `???????.log`
+
+74. To create `temp_files` two levels above the current directory, use `mkdir ___/temp_files`.  
+**Answer:** `../..`
+
+75. To download `data.csv` as `sales_data.csv`, use `wget -O sales_data.csv ___`.  
+**Answer:** `http://example.com/data.csv`
+
+76. To display the last 50 lines of `syslog`, use `tail -n ___ syslog`.  
+**Answer:** `50`
+
+77. Which `ls` commands display hidden files?  
+**Answer:** `ls -a` and `ls -al`
+
+78. To list files having exactly fourteen characters, use `ls ___`.  
+**Answer:** `??????????????`
+
+79. To change directly to `/etc`, use `cd ___`.  
+**Answer:** `/etc`
+
+80. To search for `"connection"` case-insensitively and show 5 lines before each match, use `grep -i -B 5 "connection" ___`.  
+**Answer:** `network.log`
+
+81. To list files having exactly fifteen characters, use `ls ___`.  
+**Answer:** `???????????????`
+
+82. To search for `"connection refused"` and show 1 line before and after, use `grep -C 1 "connection refused" ___`.  
+**Answer:** `network.log`
+
+83. To display the first 10 lines of `messages.log`, use `head -n ___ messages.log`.  
+**Answer:** `10`
+
+84. To list files beginning with `f`, followed by exactly two characters, then `.txt`, use `ls f??.txt` or `ls ___`.  
+**Answer:** `f??.txt`
+
+85. To search history for commands containing `config` and display them page by page, use `history | grep 'config' | ___`.  
+**Answer:** `less`
+
+86. To display the first 10 lines of `ls -l`, use `ls -l | ___ -n 10`.  
+**Answer:** `head`
+
+87. To copy `report.docx` to `final_report.docx`, use `cp report.docx ___`.  
+**Answer:** `final_report.docx`
+
+88. What is the main difference between `cat` and `less`?  
+**Answer:** `cat` displays the entire file at once, while `less` allows pagination and navigation.
+
+89. Which commands can find `"warning"` or `"error"` using regular expressions?  
+**Answer:** `grep -E "warning|error" system.log` or `grep "warning\|error" system.log`
+
+90. To download `archive.tar.gz` as `my_archive.tar.gz`, use `wget -O my_archive.tar.gz ___`.  
+**Answer:** `http://example.com/archive.tar.gz`
+
+91. To search for `"error"` case-sensitively and show 1 line before and after, use `grep -C 1 "error" ___`.  
+**Answer:** `syslog`
+
+92. To display the manual page for `ls`, type `man ___`.  
+**Answer:** `ls`
+
+93. To list files beginning with `d` and ending with `.csv`, use `ls d*.csv` or `ls ___`.  
+**Answer:** `d*.csv`
+
+94. To move `old_config.txt` to `new_config.txt`, use `mv old_config.txt ___`.  
+**Answer:** `new_config.txt`
+
+95. Which symbol pipes one command's output into another command?  
+**Answer:** `|`
+
+96. To clear the current shell's entire history list, use `history -___`.  
+**Answer:** `-c` → `history -c`
+
+97. To list files having exactly three characters, use `ls ___`.  
+**Answer:** `???`
+
+98. To list all `.bak` files, use `ls ___`.  
+**Answer:** `*.bak`
+
+99. To list files beginning with `t` and ending with `.txt`, use `ls t*.txt` or `ls ___`.  
+**Answer:** `t*.txt`
+
+100. To search for `"failed login"` and show 1 line before and after, use `grep -C 1 "failed login" ___`.  
+**Answer:** `auth.log`
+
+101. To list files having exactly two characters, use `ls ___`.  
+**Answer:** `??`
+
+102. Which command creates a temporary alias `c` for `clear`?  
+**Answer:** `alias c='clear'`
+
+103. To extract `backup.tar` compressed with bzip2, use `tar -xjf ___`.  
+**Answer:** `backup.tar`
+
+104. To copy `presentation.pptx` to `final_presentation.pptx`, use `cp presentation.pptx ___`.  
+**Answer:** `final_presentation.pptx`
+
+105. To create an SSH key pair without a passphrase, use `ssh-keygen -P ___`.  
+**Answer:** `""`
+
+106. To copy `/etc/config.txt` to the current directory, use `cp /etc/config.txt ___`.  
+**Answer:** `.`
+
+107. Which command creates a permanent alias `ll` for `ls -l` when placed in `.bashrc`?  
+**Answer:** `alias ll='ls -l'`
+
+108. To display the manual page for `find`, type `man ___`.  
+**Answer:** `find`
+
+109. To display the manual page for `tail`, type `man ___`.  
+**Answer:** `tail`
+
+110. Which `ssh` option forwards a local port to a remote port?  
+**Answer:** `-L`
+
+111. To copy `config.json` to `config_prod.json`, use `cp config.json ___`.  
+**Answer:** `config_prod.json`
+
+112. To list the contents of `app.tar.gz` without extracting, use `tar -tzf ___`.  
+**Answer:** `app.tar.gz`
+
+113. To list files with exactly two characters ending in `.md`, use `ls ??.md` or `ls ___`.  
+**Answer:** `??.md`
+
+114. To display the last 50 lines of `auth.log`, use `tail -n ___ auth.log`.  
+**Answer:** `50`
+
+115. To extract `software.tar.bz2`, use `tar -xjf ___`.  
+**Answer:** `software.tar.bz2`
+
+116. To list files having exactly ten characters, use `ls ___`.  
+**Answer:** `??????????`
+
+117. To list files beginning with `a` and ending with `e`, use `ls a*e` or `ls ___`.  
+**Answer:** `a*e`
+
+118. To display the current working directory, use the `___` command.  
+**Answer:** `pwd`
+
+119. To search for `config.yaml` inside `/etc`, use `find /etc -name ___`.  
+**Answer:** `config.yaml`
+
+120. To list the contents of `archive.tar.gz` without extracting, use `tar -tzf ___`.  
+**Answer:** `archive.tar.gz`
+
+121. To view the first 10 lines of `error.log`, use `___ error.log`.  
+**Answer:** `head -n 10`
+
+122. To create `temp_data` inside `/tmp`, use `mkdir /tmp/___`.  
+**Answer:** `temp_data`
+
+123. To list files having exactly four characters, use `ls ___`.  
+**Answer:** `????`
+
+124. Which history option reads the history file?  
+**Answer:** `history -r`
+
+125. To display the current date and time using `echo`, use `echo "Current time: $(___)"`.  
+**Answer:** `date`
+
+126. To copy `report.xlsx` to `financial_report.xlsx`, use `cp report.xlsx ___`.  
+**Answer:** `financial_report.xlsx`
+
+127. To display the manual page for `head`, type `man ___`.  
+**Answer:** `head`
+
+128. Which commands can create `documents/reports` even when `documents` doesn't exist?  
+**Answer:** `mkdir -p documents/reports` or `mkdir --parents documents/reports`
+
+129. To search for `"error"` case-insensitively and show 2 lines before, use `grep -i -B 2 "error" ___`.  
+**Answer:** `syslog`
+
+130. To display the first 25 lines of `syslog`, use `head -n ___ syslog`.  
+**Answer:** `25`
+
+131. To search for `"warning"` and display 5 lines after each match, use `grep -A 5 "warning" ___`.  
+**Answer:** `messages.log`
+
+132. To remove the alias `ll`, use the `___ ll` command.  
+**Answer:** `unalias`
+
+133. To delete lines 5–10 from `document.txt`, use `sed '5,10___' document.txt`.  
+**Answer:** `d`
+
+134. To extract `archive.tar.xz` to `/opt/archive`, use `tar -xJf archive.tar.xz -C ___`.  
+**Answer:** `/opt/archive`
+
+135. Which command is best for viewing a very large file without loading it all at once?  
+**Answer:** `less`
+
+136. To create `scripts` inside `/home/user`, use `mkdir /home/user/___`.  
+**Answer:** `scripts`
+
+137. To copy `notes.txt` to `notes_backup.txt`, use `cp notes.txt ___`.  
+**Answer:** `notes_backup.txt`
+
+138. To display the manual page for `pwd`, type `man ___`.  
+**Answer:** `pwd`
+
+139. To list files beginning with `d` and ending with `.txt`, use `ls d*.txt` or `ls ___`.  
+**Answer:** `d*.txt`
+
+140. To extract `archive.tar.gz` to `/opt/backup`, use `tar -xzf archive.tar.gz -C ___`.  
+**Answer:** `/opt/backup`
+
+141. To display the manual page for `grep`, type `man ___`.  
+**Answer:** `grep`
+
+142. To extract `project.tar.gz` to the current directory, use `tar -xzf ___`.  
+**Answer:** `project.tar.gz`
+
+143. To display the last 20 lines of `messages.log`, use `tail -n ___ messages.log`.  
+**Answer:** `20`
+
+144. To download `data.txt` as `raw_data.txt`, use `wget -O raw_data.txt ___`.  
+**Answer:** `http://example.com/data.txt`
+
+145. To count lines in `data.csv`, use `wc -l ___`.  
+**Answer:** `data.csv`
+
+146. To download `latest.tar.gz` as `latest_app.tar.gz`, use `wget -O latest_app.tar.gz ___`.  
+**Answer:** `http://example.com/latest.tar.gz`
+
+147. To display only the first 10 lines of `ls -l`, use `ls -l | ___ -n 10`.  
+**Answer:** `head`
+
+148. To display the contents of `data` and its subdirectories in long-listing format, use `ls -l ___`.  
+**Answer:** `-R data` / `ls -lR data`
+
+149. To search for `database.sql` inside `/var/lib/postgresql`, use `find /var/lib/postgresql -name ___`.  
+**Answer:** `database.sql`
+
+150. Which `diff` commands show differences in unified format?  
+**Answer:** `diff -u file1.txt file2.txt` or `diff --unified file1.txt file2.txt`
+
+151. To remove `temp_dir` and all its contents, use `rm -rf ___`.  
+**Answer:** `temp_dir`
+
+152. What is the purpose of `man`?  
+**Answer:** To display the manual page for a command and provide information about its usage and options.
+
+153. To search for `error` in all `.log` files, use `grep 'error' ___`.  
+**Answer:** `*.log`
+
+154. To display the manual page for `tree`, type `man ___`.  
+**Answer:** `tree`
+
+155. To list files with one character followed by `.log`, use `ls ?.log` or `ls ___`.  
+**Answer:** `?.log`
+
+156. To copy `document.pdf` to the `archive` directory, use `cp document.pdf ___`.  
+**Answer:** `archive/`
+
+157. To display environment variables, use `printenv` or `echo ___`.  
+**Answer:** `$` followed by the variable name, e.g. `$PATH`
+
+158. To search for `"permission denied"` and show 2 lines before and after, use `grep -C 2 "permission denied" ___`.  
+**Answer:** `syslog`
+
+159. What does `wget` do by default when no output filename is specified?  
+**Answer:** Saves the file with its original name in the current directory.
+
+160. To search for `access.log` inside `/var/log/nginx`, use `find /var/log/nginx -name ___`.  
+**Answer:** `access.log`
+
+161. To display the last 10 lines of `auth.log`, use `tail -n ___ auth.log`.  
+**Answer:** `10`
+
+162. To copy `report.csv` to `sales_report.csv`, use `cp report.csv ___`.  
+**Answer:** `sales_report.csv`
+
+163. To list files beginning with `s` and ending in `.txt`, use `ls s*.txt` or `ls ___`.  
+**Answer:** `s*.txt`
+
+164. To remove `old_data` and everything inside it, use `rm -rf ___`.  
+**Answer:** `old_data`
+
+165. To display the last 20 lines of `syslog`, use `tail -n ___ syslog`.  
+**Answer:** `20`
+
+166. Which grep command finds `user` followed by exactly one digit?  
+**Answer:** `grep "user[0-9]" accounts.log`
+
+167. To create `test_area` inside `/tmp`, use `mkdir /tmp/___`.  
+**Answer:** `test_area`
+
+168. To remove `temp_file.log` without confirmation, use `rm ___ temp_file.log`.  
+**Answer:** `-f`
+
+169. To display the manual page for `grep`, type `man ___`.  
+**Answer:** `grep`
+
+170. To list all `.pdf` files, use `ls ___`.  
+**Answer:** `*.pdf`
+
+171. To list files containing `data` anywhere in their name, use `ls ___`.  
+**Answer:** `*data*`
+
+172. To create `web_content` inside `/var/www`, use `mkdir /var/www/___`.  
+**Answer:** `web_content`
+
+173. To search for `database.db` inside `/var/lib`, use `find /var/lib -name ___`.  
+**Answer:** `database.db`
+
+174. To search for `script.sh` inside `~/bin`, use `find ~/bin -name ___`.  
+**Answer:** `script.sh`
+
+175. To display the manual page for `man`, type `man ___`.  
+**Answer:** `man`
+
+176. To search for `database.sqlite` inside `/var/lib`, use `find /var/lib -name ___`.  
+**Answer:** `database.sqlite`
+
+177. To copy `image.jpg` to `image_copy.jpg`, use `cp image.jpg ___`.  
+**Answer:** `image_copy.jpg`
+
+178. To list files starting with `a` and having `b` as their third character, use `ls a?b*` or `ls ___`.  
+**Answer:** `a?b*`
+
+179. To search for `"critical"` case-insensitively and show 1 line before and after, use `grep -i -C 1 "critical" ___`.  
+**Answer:** `syslog`
+
+180. Which command displays previously executed commands?  
+**Answer:** `history`
+
+181. To download `software.zip` using its original name, use `wget ___`.  
+**Answer:** `http://example.com/software.zip`
+
+182. To display the last 5 lines of `syslog`, use `tail -n ___ syslog`.  
+**Answer:** `5`
+
+183. To search for `error.log` inside `/var/log/apache2`, use `find /var/log/apache2 -name ___`.  
+**Answer:** `error.log`
+
+184. To download `manual.pdf` with its original name, use `wget ___`.  
+**Answer:** `http://example.com/docs/manual.pdf`
+
+185. To list files having exactly six characters, use `ls ___`.  
+**Answer:** `??????`
+
+186. To remove `old_archive.zip` without confirmation, use `rm ___ old_archive.zip`.  
+**Answer:** `-f`
+
+187. To display the first 20 lines of `kern.log`, use `head -n ___ kern.log`.  
+**Answer:** `20`
+
+188. To create `downloads` inside your home directory, use `mkdir ___/downloads`.  
+**Answer:** `~`
+
+189. Which `tar` command creates a compressed `.tar.gz` archive of `my_project`?  
+**Answer:** `tar -czvf my_project.tar.gz my_project/`  
+(`tar -czf` is also valid if verbose output is not required.)
+
+190. To view the last 10 lines of `system.log`, use `___ system.log`.  
+**Answer:** `tail -n 10`
+
+191. What is the purpose of `cat file.txt | head -n 5`?  
+**Answer:** To display the first 5 lines of `file.txt`.
+
+192. To display the first 100 lines of `access.log`, use `head -n ___ access.log`.  
+**Answer:** `100`
+
+193. To search for `data.csv` inside `~/Downloads`, use `find ~/Downloads -name ___`.  
+**Answer:** `data.csv`
+
+194. To list files having exactly seven characters, use `ls ___`.  
+**Answer:** `???????`
+
+195. Which `tar` options extract files and show verbose output?  
+**Answer:** `-xvf`  
+(`--extract --verbose --file` is also valid.)
+
+196. To create `data` inside `/var/lib`, use `mkdir /var/lib/___`.  
+**Answer:** `data`
+
+197. To download `archive.zip` as `downloaded_archive.zip`, use `wget -O downloaded_archive.zip ___`.  
+**Answer:** `http://files.example.com/archive.zip`
+
+198. Which commands can create an empty directory named `my_folder`?  
+**Answer:** `mkdir my_folder` and `mkdir -p my_folder`
+
+199. To remove `old_data.json` without confirmation, use `rm ___ old_data.json`.  
+**Answer:** `-f`
+
+200. What does `ssh-keygen -p` do?  
+**Answer:** Changes the passphrase of an existing private key.
+
+**You now have all 200 questions with their answers in order.**

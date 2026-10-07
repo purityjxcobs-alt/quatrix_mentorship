@@ -3089,3 +3089,2743 @@ ALTER ROLE purity NOSUPERUSER NOCREATEROLE NOCREATEDB;
 ## What is Normalization?
 
 #### is the process of organizing data in a relational database to reduce data redundancy and improve data integrity.
+
+
+# # SQL Complete Notes — Commands, Concepts, Queries, Practice & Exam Questions
+
+> A full compilation of SQL topics, commands, syntax, queries, practice questions, and exam-style answers.
+> Copy this entire file into VS Code or GitHub as your study notes.
+
+---
+
+## Table of Contents
+
+1. [What is SQL?](#1-what-is-sql)
+2. [Database Concepts](#2-database-concepts)
+3. [Types of SQL Commands](#3-types-of-sql-commands)
+4. [Data Types](#4-data-types)
+5. [DDL — Data Definition Language](#5-ddl--data-definition-language)
+6. [DML — Data Manipulation Language](#6-dml--data-manipulation-language)
+7. [DQL — Data Query Language (SELECT)](#7-dql--data-query-language-select)
+8. [Filtering with WHERE](#8-filtering-with-where)
+9. [Sorting with ORDER BY](#9-sorting-with-order-by)
+10. [Limiting Results](#10-limiting-results)
+11. [Aggregate Functions](#11-aggregate-functions)
+12. [GROUP BY and HAVING](#12-group-by-and-having)
+13. [Joins](#13-joins)
+14. [Subqueries](#14-subqueries)
+15. [Set Operations (UNION, INTERSECT, EXCEPT)](#15-set-operations-union-intersect-except)
+16. [String Functions](#16-string-functions)
+17. [Date Functions](#17-date-functions)
+18. [Numeric Functions](#18-numeric-functions)
+19. [CASE Expressions](#19-case-expressions)
+20. [Constraints](#20-constraints)
+21. [Keys](#21-keys)
+22. [Normalization](#22-normalization)
+23. [Indexes](#23-indexes)
+24. [Views](#24-views)
+25. [Transactions (TCL)](#25-transactions-tcl)
+26. [DCL — Data Control Language](#26-dcl--data-control-language)
+27. [Stored Procedures and Triggers](#27-stored-procedures-and-triggers)
+28. [Complete Command Reference (All Commands + Syntax)](#28-complete-command-reference-all-commands--syntax)
+29. [Multiple Ways to Get the Same Output](#29-multiple-ways-to-get-the-same-output)
+30. [Fill-in-the-Blank Rules](#30-fill-in-the-blank-rules)
+31. [Practice Questions & Answers](#31-practice-questions--answers)
+32. [Exam-Style Questions](#32-exam-style-questions)
+33. [Quick Reference Cheat Sheet](#33-quick-reference-cheat-sheet)
+
+---
+
+## 1. What is SQL?
+
+**SQL (Structured Query Language)** is the standard language for managing and manipulating **relational databases**. It was developed at IBM in the 1970s (originally SEQUEL) and standardized by ANSI and ISO.
+
+**Key points:**
+
+- SQL is a **declarative** language — you say *what* you want, not *how* to get it.
+- It works with **relational databases** where data is stored in tables (relations).
+- SQL is **case-insensitive** for keywords (`SELECT` = `select`), but table/column names may be case-sensitive depending on the DBMS.
+- SQL statements are usually terminated with a **semicolon** `;`.
+- It is used by MySQL, PostgreSQL, SQLite, Oracle, SQL Server, MariaDB, and others.
+
+**Q: What does SQL stand for?**
+Structured Query Language.
+
+**Q: Who developed SQL and when?**
+IBM in the 1970s (originally called SEQUEL).
+
+**Q: Is SQL case-sensitive?**
+Keywords are not case-sensitive. Table/column names may be, depending on the DBMS.
+
+**Q: What is a relational database?**
+A database that stores data in tables with rows and columns, and defines relationships between tables.
+
+---
+
+## 2. Database Concepts
+
+| Term | Meaning |
+|------|---------|
+| Database | Organized collection of data |
+| Table | A set of rows and columns (a relation) |
+| Row / Record / Tuple | One entry in a table |
+| Column / Field / Attribute | A property of the entity |
+| Primary Key | Unique identifier for each row |
+| Foreign Key | Column referencing a primary key in another table |
+| Schema | Structure/blueprint of the database |
+| DBMS | Database Management System (MySQL, PostgreSQL, etc.) |
+| RDBMS | Relational DBMS |
+| Query | A request for data |
+| Index | Speeds up searching |
+| View | A virtual table based on a query |
+
+**Q: What is a primary key?**
+A column (or set of columns) that uniquely identifies each row in a table.
+
+**Q: What is a foreign key?**
+A column that references the primary key of another table to enforce referential integrity.
+
+**Q: What is a DBMS? Give examples.**
+Database Management System — software that manages databases. Examples: MySQL, PostgreSQL, Oracle, SQL Server, SQLite.
+
+**Q: What is the difference between DBMS and RDBMS?**
+- DBMS → stores data as files; no relationships enforced.
+- RDBMS → stores data in tables; enforces relationships (keys, constraints).
+
+---
+
+## 3. Types of SQL Commands
+
+SQL commands are grouped into five categories:
+
+| Category | Full Form | Purpose | Commands |
+|----------|-----------|---------|----------|
+| DDL | Data Definition Language | Define/modify structure | `CREATE`, `ALTER`, `DROP`, `TRUNCATE`, `RENAME` |
+| DML | Data Manipulation Language | Modify data | `INSERT`, `UPDATE`, `DELETE` |
+| DQL | Data Query Language | Retrieve data | `SELECT` |
+| DCL | Data Control Language | Control access | `GRANT`, `REVOKE` |
+| TCL | Transaction Control Language | Manage transactions | `COMMIT`, `ROLLBACK`, `SAVEPOINT` |
+
+**Q: What are the types of SQL commands?**
+DDL, DML, DQL, DCL, TCL.
+
+**Q: Which category does `SELECT` belong to?**
+DQL (sometimes classified under DML).
+
+**Q: Difference between DDL and DML?**
+
+| DDL | DML |
+|-----|-----|
+| Defines structure | Modifies data |
+| Auto-committed | Can be rolled back |
+| `CREATE`, `ALTER`, `DROP` | `INSERT`, `UPDATE`, `DELETE` |
+
+---
+
+## 4. Data Types
+
+Common SQL data types:
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `INT` / `INTEGER` | Whole numbers | 42 |
+| `SMALLINT` | Small integers | 100 |
+| `BIGINT` | Large integers | 9999999999 |
+| `DECIMAL(p,s)` / `NUMERIC` | Exact decimals | 19.99 |
+| `FLOAT` / `REAL` / `DOUBLE` | Approximate decimals | 3.14 |
+| `CHAR(n)` | Fixed-length string | 'ABC' |
+| `VARCHAR(n)` | Variable-length string | 'Hello' |
+| `TEXT` | Long text | paragraph |
+| `DATE` | Date only | '2025-01-01' |
+| `TIME` | Time only | '14:30:00' |
+| `DATETIME` / `TIMESTAMP` | Date + time | '2025-01-01 14:30:00' |
+| `BOOLEAN` | True/false | TRUE |
+| `BLOB` | Binary data | image |
+
+**Q: Difference between `CHAR` and `VARCHAR`?**
+
+| `CHAR(n)` | `VARCHAR(n)` |
+|-----------|--------------|
+| Fixed length | Variable length |
+| Padded with spaces | No padding |
+| Faster for fixed data | Saves space |
+
+**Q: Difference between `DECIMAL` and `FLOAT`?**
+`DECIMAL` is exact; `FLOAT` is approximate (floating-point). Use `DECIMAL` for money.
+
+---
+
+## 5. DDL — Data Definition Language
+
+### CREATE
+
+```sql
+-- Create database
+CREATE DATABASE school;
+
+-- Create table
+CREATE TABLE students (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE,
+    age INT CHECK (age >= 0),
+    enrolled DATE DEFAULT CURRENT_DATE
+);
+
+-- Create with foreign key
+CREATE TABLE enrollments (
+    id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (course_id) REFERENCES courses(id)
+);
+```
+
+### ALTER
+
+```sql
+ALTER TABLE students ADD COLUMN phone VARCHAR(20);
+ALTER TABLE students DROP COLUMN phone;
+ALTER TABLE students MODIFY COLUMN name VARCHAR(200);
+ALTER TABLE students RENAME TO learners;
+ALTER TABLE students ADD CONSTRAINT fk_course FOREIGN KEY (course_id) REFERENCES courses(id);
+```
+
+### DROP
+
+```sql
+DROP TABLE students;         -- Deletes table + data
+DROP DATABASE school;        -- Deletes entire database
+```
+
+### TRUNCATE
+
+```sql
+TRUNCATE TABLE students;     -- Removes all rows, keeps structure
+```
+
+### RENAME
+
+```sql
+RENAME TABLE old_name TO new_name;
+```
+
+**Q: Difference between `DROP`, `TRUNCATE`, and `DELETE`?**
+
+| DROP | TRUNCATE | DELETE |
+|------|----------|--------|
+| Removes table structure + data | Removes all rows only | Removes rows based on condition |
+| DDL | DDL | DML |
+| Cannot rollback | Cannot rollback (usually) | Can rollback |
+| No `WHERE` clause | No `WHERE` clause | Supports `WHERE` |
+| Fastest | Fast | Slower |
+
+**Q: What does `ALTER TABLE` do?**
+Modifies the structure of an existing table (add/drop/rename columns, constraints).
+
+---
+
+## 6. DML — Data Manipulation Language
+
+### INSERT
+
+```sql
+-- Single row
+INSERT INTO students (id, name, email, age)
+VALUES (1, 'Alice', 'alice@example.com', 20);
+
+-- Multiple rows
+INSERT INTO students (id, name, email, age) VALUES
+(2, 'Bob', 'bob@example.com', 22),
+(3, 'Carol', 'carol@example.com', 21);
+
+-- Insert from another table
+INSERT INTO students_backup SELECT * FROM students;
+```
+
+### UPDATE
+
+```sql
+UPDATE students SET age = 21 WHERE id = 1;
+UPDATE students SET age = age + 1;                     -- All rows
+UPDATE students SET name = 'Al', email = 'al@x.com' WHERE id = 1;
+```
+
+### DELETE
+
+```sql
+DELETE FROM students WHERE id = 3;
+DELETE FROM students;                                   -- All rows
+```
+
+**Q: What is the difference between `INSERT INTO` and `INSERT INTO ... SELECT`?**
+The first inserts literal values; the second inserts rows from another query/table.
+
+**Q: Do you need a `WHERE` clause with `UPDATE` or `DELETE`?**
+No, but without it, **all rows** are affected. Always use `WHERE` unless you intend to modify every row.
+
+---
+
+## 7. DQL — Data Query Language (SELECT)
+
+### Basic SELECT
+
+```sql
+SELECT * FROM students;
+SELECT name, age FROM students;
+```
+
+### Aliases
+
+```sql
+SELECT name AS student_name, age AS student_age FROM students;
+SELECT s.name, s.age FROM students AS s;
+```
+
+### DISTINCT
+
+```sql
+SELECT DISTINCT age FROM students;
+SELECT DISTINCT city, country FROM customers;
+```
+
+### Arithmetic in SELECT
+
+```sql
+SELECT name, age, age + 1 AS next_age FROM students;
+SELECT price, quantity, price * quantity AS total FROM orders;
+```
+
+**Q: What does `SELECT *` mean?**
+Selects all columns from the table.
+
+**Q: What does `DISTINCT` do?**
+Removes duplicate rows from the result.
+
+**Q: What is an alias?**
+A temporary name given to a column or table using `AS`.
+
+---
+
+## 8. Filtering with WHERE
+
+### Comparison operators
+
+| Operator | Meaning |
+|----------|---------|
+| `=` | Equal |
+| `!=` or `<>` | Not equal |
+| `>` | Greater than |
+| `<` | Less than |
+| `>=` | Greater or equal |
+| `<=` | Less or equal |
+
+```sql
+SELECT * FROM students WHERE age > 20;
+SELECT * FROM students WHERE name = 'Alice';
+SELECT * FROM students WHERE age <> 21;
+```
+
+### Logical operators
+
+```sql
+SELECT * FROM students WHERE age > 20 AND city = 'Nairobi';
+SELECT * FROM students WHERE age < 18 OR age > 65;
+SELECT * FROM students WHERE NOT city = 'Nairobi';
+```
+
+### BETWEEN
+
+```sql
+SELECT * FROM students WHERE age BETWEEN 18 AND 25;
+```
+
+### IN
+
+```sql
+SELECT * FROM students WHERE city IN ('Nairobi', 'Mombasa', 'Kisumu');
+```
+
+### LIKE (pattern matching)
+
+| Wildcard | Meaning |
+|----------|---------|
+| `%` | Zero or more characters |
+| `_` | Exactly one character |
+
+```sql
+SELECT * FROM students WHERE name LIKE 'A%';        -- Starts with A
+SELECT * FROM students WHERE name LIKE '%a';        -- Ends with a
+SELECT * FROM students WHERE name LIKE '%li%';      -- Contains li
+SELECT * FROM students WHERE name LIKE '_lice';     -- 5 chars ending in lice
+```
+
+### IS NULL / IS NOT NULL
+
+```sql
+SELECT * FROM students WHERE email IS NULL;
+SELECT * FROM students WHERE email IS NOT NULL;
+```
+
+**Q: Difference between `=` and `LIKE`?**
+`=` matches exactly; `LIKE` allows wildcards (`%`, `_`).
+
+**Q: Difference between `%` and `_` in LIKE?**
+`%` matches zero or more characters; `_` matches exactly one character.
+
+**Q: Why can't you use `= NULL`?**
+`NULL` is not equal to anything, even itself. Use `IS NULL` or `IS NOT NULL`.
+
+---
+
+## 9. Sorting with ORDER BY
+
+```sql
+SELECT * FROM students ORDER BY age;                    -- Ascending (default)
+SELECT * FROM students ORDER BY age DESC;               -- Descending
+SELECT * FROM students ORDER BY city ASC, age DESC;     -- Multiple columns
+SELECT * FROM students ORDER BY 2;                      -- By column position
+```
+
+**Q: Default sort order of `ORDER BY`?**
+Ascending (`ASC`).
+
+**Q: How do you sort by multiple columns?**
+List them separated by commas: `ORDER BY city ASC, age DESC`.
+
+---
+
+## 10. Limiting Results
+
+```sql
+-- MySQL / PostgreSQL / SQLite
+SELECT * FROM students LIMIT 10;
+SELECT * FROM students ORDER BY age DESC LIMIT 5;
+SELECT * FROM students LIMIT 10 OFFSET 20;              -- Skip 20, take 10
+
+-- SQL Server / MS Access
+SELECT TOP 10 * FROM students;
+
+-- Oracle
+SELECT * FROM students WHERE ROWNUM <= 10;
+```
+
+**Q: How do you get the top 5 records?**
+MySQL: `LIMIT 5`; SQL Server: `TOP 5`; Oracle: `ROWNUM <= 5`.
+
+---
+
+## 11. Aggregate Functions
+
+| Function | Purpose |
+|----------|---------|
+| `COUNT()` | Count rows |
+| `SUM()` | Sum values |
+| `AVG()` | Average |
+| `MIN()` | Minimum |
+| `MAX()` | Maximum |
+
+```sql
+SELECT COUNT(*) FROM students;
+SELECT COUNT(DISTINCT city) FROM students;
+SELECT AVG(age) FROM students;
+SELECT SUM(price) FROM orders;
+SELECT MIN(age), MAX(age) FROM students;
+```
+
+**Q: Difference between `COUNT(*)` and `COUNT(column)`?**
+`COUNT(*)` counts all rows; `COUNT(column)` counts non-NULL values in that column.
+
+**Q: Do aggregate functions ignore NULLs?**
+Yes — all aggregate functions except `COUNT(*)` ignore NULLs.
+
+---
+
+## 12. GROUP BY and HAVING
+
+### GROUP BY
+
+```sql
+SELECT city, COUNT(*) AS num_students
+FROM students
+GROUP BY city;
+
+SELECT department, AVG(salary)
+FROM employees
+GROUP BY department;
+```
+
+### HAVING
+
+Filters groups **after** aggregation (unlike `WHERE`, which filters rows before).
+
+```sql
+SELECT city, COUNT(*) AS num_students
+FROM students
+GROUP BY city
+HAVING COUNT(*) > 5;
+
+SELECT department, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department
+HAVING AVG(salary) > 50000;
+```
+
+**Q: Difference between `WHERE` and `HAVING`?**
+
+| `WHERE` | `HAVING` |
+|---------|----------|
+| Filters rows before grouping | Filters groups after grouping |
+| Cannot use aggregates | Can use aggregates |
+| Used with `SELECT` | Used with `GROUP BY` |
+
+**Q: Correct order of SQL clauses?**
+
+```
+SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT
+```
+
+---
+
+## 13. Joins
+
+Combine rows from two or more tables.
+
+### Sample tables
+
+**students**
+
+| id | name | course_id |
+|----|------|-----------|
+| 1 | Alice | 101 |
+| 2 | Bob | 102 |
+| 3 | Carol | NULL |
+
+**courses**
+
+| id | title |
+|----|-------|
+| 101 | Math |
+| 102 | Science |
+| 103 | History |
+
+### INNER JOIN
+
+Returns rows with matching values in both tables.
+
+```sql
+SELECT s.name, c.title
+FROM students s
+INNER JOIN courses c ON s.course_id = c.id;
+```
+
+**Result:** Alice–Math, Bob–Science.
+
+### LEFT JOIN (LEFT OUTER JOIN)
+
+Returns all rows from the left table, matched rows from the right (NULL if no match).
+
+```sql
+SELECT s.name, c.title
+FROM students s
+LEFT JOIN courses c ON s.course_id = c.id;
+```
+
+**Result:** Alice–Math, Bob–Science, Carol–NULL.
+
+### RIGHT JOIN (RIGHT OUTER JOIN)
+
+Returns all rows from the right table, matched from the left.
+
+```sql
+SELECT s.name, c.title
+FROM students s
+RIGHT JOIN courses c ON s.course_id = c.id;
+```
+
+**Result:** Alice–Math, Bob–Science, NULL–History.
+
+### FULL OUTER JOIN
+
+Returns all rows when there is a match in either table.
+
+```sql
+SELECT s.name, c.title
+FROM students s
+FULL OUTER JOIN courses c ON s.course_id = c.id;
+```
+
+(MySQL doesn't support FULL OUTER JOIN directly — emulate with LEFT + UNION + RIGHT.)
+
+### CROSS JOIN
+
+Cartesian product — every row of A × every row of B.
+
+```sql
+SELECT s.name, c.title FROM students s CROSS JOIN courses c;
+```
+
+### SELF JOIN
+
+Joining a table to itself.
+
+```sql
+SELECT e.name AS employee, m.name AS manager
+FROM employees e
+LEFT JOIN employees m ON e.manager_id = m.id;
+```
+
+**Q: Difference between INNER JOIN and LEFT JOIN?**
+INNER JOIN returns only matching rows; LEFT JOIN returns all rows from the left table plus matches.
+
+**Q: What is a self join?**
+A join where a table is joined with itself.
+
+**Q: What is a cross join?**
+A Cartesian product — every row of one table combined with every row of another.
+
+---
+
+## 14. Subqueries
+
+A query inside another query.
+
+### In WHERE
+
+```sql
+SELECT name FROM students
+WHERE age > (SELECT AVG(age) FROM students);
+
+SELECT name FROM students
+WHERE course_id IN (SELECT id FROM courses WHERE title LIKE 'M%');
+```
+
+### In FROM
+
+```sql
+SELECT AVG(avg_age) FROM (
+    SELECT city, AVG(age) AS avg_age
+    FROM students
+    GROUP BY city
+) AS city_avgs;
+```
+
+### In SELECT
+
+```sql
+SELECT name,
+       (SELECT COUNT(*) FROM enrollments e WHERE e.student_id = s.id) AS num_courses
+FROM students s;
+```
+
+### Correlated subquery
+
+```sql
+SELECT name FROM students s
+WHERE EXISTS (
+    SELECT 1 FROM enrollments e WHERE e.student_id = s.id
+);
+```
+
+**Q: What is a subquery?**
+A query nested inside another query.
+
+**Q: Difference between a subquery and a join?**
+Subqueries are often simpler; joins are usually faster for large datasets.
+
+---
+
+## 15. Set Operations (UNION, INTERSECT, EXCEPT)
+
+```sql
+-- UNION removes duplicates
+SELECT name FROM students
+UNION
+SELECT name FROM teachers;
+
+-- UNION ALL keeps duplicates
+SELECT name FROM students
+UNION ALL
+SELECT name FROM teachers;
+
+-- INTERSECT — rows in both
+SELECT name FROM students
+INTERSECT
+SELECT name FROM teachers;
+
+-- EXCEPT / MINUS — rows in first but not second
+SELECT name FROM students
+EXCEPT
+SELECT name FROM teachers;
+```
+
+| Operator | Meaning |
+|----------|---------|
+| UNION | Combines, removes duplicates |
+| UNION ALL | Combines, keeps duplicates |
+| INTERSECT | Rows common to both |
+| EXCEPT / MINUS | Rows in first but not second |
+
+**Q: Difference between UNION and UNION ALL?**
+`UNION` removes duplicates; `UNION ALL` keeps them (and is faster).
+
+---
+
+## 16. String Functions
+
+| Function | Purpose | Example |
+|----------|---------|---------|
+| `UPPER(s)` | To uppercase | `UPPER('hi')` → 'HI' |
+| `LOWER(s)` | To lowercase | `LOWER('HI')` → 'hi' |
+| `LENGTH(s)` / `LEN(s)` | Length | `LENGTH('abc')` → 3 |
+| `SUBSTRING(s, start, len)` | Extract part | `SUBSTRING('hello', 1, 3)` → 'hel' |
+| `CONCAT(a, b)` | Concatenate | `CONCAT('a','b')` → 'ab' |
+| `TRIM(s)` | Remove spaces | `TRIM('  hi  ')` → 'hi' |
+| `REPLACE(s, from, to)` | Replace text | `REPLACE('abc','b','X')` → 'aXc' |
+| `LEFT(s, n)` | First n chars | `LEFT('hello', 2)` → 'he' |
+| `RIGHT(s, n)` | Last n chars | `RIGHT('hello', 2)` → 'lo' |
+| `INSTR(s, sub)` | Position of substring | `INSTR('hello','l')` → 3 |
+
+```sql
+SELECT UPPER(name) FROM students;
+SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM users;
+SELECT SUBSTRING(name, 1, 3) FROM students;
+```
+
+---
+
+## 17. Date Functions
+
+| Function | Purpose |
+|----------|---------|
+| `NOW()` / `CURRENT_TIMESTAMP` | Current date and time |
+| `CURDATE()` / `CURRENT_DATE` | Current date |
+| `CURTIME()` | Current time |
+| `YEAR(d)` | Extract year |
+| `MONTH(d)` | Extract month |
+| `DAY(d)` | Extract day |
+| `DATEDIFF(d1, d2)` | Days between dates |
+| `DATE_ADD(d, INTERVAL n unit)` | Add to date |
+| `DATE_FORMAT(d, format)` | Format date |
+
+```sql
+SELECT NOW();
+SELECT YEAR(order_date) FROM orders;
+SELECT DATEDIFF(NOW(), birth_date) / 365 AS age FROM users;
+SELECT * FROM orders WHERE order_date >= '2025-01-01';
+```
+
+---
+
+## 18. Numeric Functions
+
+| Function | Purpose |
+|----------|---------|
+| `ROUND(n, d)` | Round to d decimals |
+| `CEIL(n)` / `CEILING(n)` | Round up |
+| `FLOOR(n)` | Round down |
+| `ABS(n)` | Absolute value |
+| `MOD(a, b)` | Remainder |
+| `POWER(a, b)` | a^b |
+| `SQRT(n)` | Square root |
+
+```sql
+SELECT ROUND(3.14159, 2);   -- 3.14
+SELECT CEIL(4.2);           -- 5
+SELECT FLOOR(4.8);          -- 4
+SELECT ABS(-7);             -- 7
+SELECT MOD(10, 3);          -- 1
+```
+
+---
+
+## 19. CASE Expressions
+
+If/then/else logic in SQL.
+
+```sql
+SELECT name, age,
+       CASE
+           WHEN age < 18 THEN 'Minor'
+           WHEN age BETWEEN 18 AND 64 THEN 'Adult'
+           ELSE 'Senior'
+       END AS age_group
+FROM students;
+```
+
+```sql
+SELECT
+    SUM(CASE WHEN gender = 'M' THEN 1 ELSE 0 END) AS males,
+    SUM(CASE WHEN gender = 'F' THEN 1 ELSE 0 END) AS females
+FROM users;
+```
+
+**Q: What is a CASE expression?**
+SQL's version of if/then/else — returns different values based on conditions.
+
+---
+
+## 20. Constraints
+
+Rules enforced on columns to maintain data integrity.
+
+| Constraint | Purpose |
+|------------|---------|
+| `NOT NULL` | Column cannot be empty |
+| `UNIQUE` | All values must be distinct |
+| `PRIMARY KEY` | Unique + NOT NULL; identifies row |
+| `FOREIGN KEY` | References primary key of another table |
+| `CHECK` | Values must satisfy a condition |
+| `DEFAULT` | Default value if none provided |
+
+```sql
+CREATE TABLE users (
+    id INT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    age INT CHECK (age >= 18),
+    status VARCHAR(10) DEFAULT 'active',
+    dept_id INT,
+    FOREIGN KEY (dept_id) REFERENCES departments(id)
+);
+```
+
+**Q: What is the difference between `UNIQUE` and `PRIMARY KEY`?**
+
+| UNIQUE | PRIMARY KEY |
+|--------|-------------|
+| Can have multiple per table | Only one per table |
+| Allows NULL | Does not allow NULL |
+| Ensures uniqueness | Ensures uniqueness + NOT NULL |
+
+**Q: What does a `CHECK` constraint do?**
+Ensures values satisfy a condition (e.g., `age >= 18`).
+
+---
+
+## 21. Keys
+
+| Key | Meaning |
+|-----|---------|
+| Primary Key | Uniquely identifies each row |
+| Foreign Key | References a primary key in another table |
+| Candidate Key | Any column that could be primary key |
+| Composite Key | Primary key made of 2+ columns |
+| Super Key | Any set of columns that uniquely identify rows |
+| Alternate Key | Candidate key not chosen as primary key |
+
+**Q: What is a composite key?**
+A primary key made up of two or more columns.
+
+**Q: Difference between a primary key and a candidate key?**
+A candidate key is any column that could be primary; the primary key is the one actually chosen.
+
+---
+
+## 22. Normalization
+
+Organizing data to reduce redundancy and improve integrity.
+
+| Normal Form | Rule |
+|-------------|------|
+| 1NF | Atomic values; no repeating groups |
+| 2NF | 1NF + no partial dependencies |
+| 3NF | 2NF + no transitive dependencies |
+| BCNF | Every determinant is a candidate key |
+
+### 1NF Example
+
+**Before:** `orders(id, customer, products)` — `products` = "apple, banana"
+**After:** Split into `orders` and `order_items`.
+
+### 2NF Example
+
+A table `(student_id, course_id, student_name, course_name)` where student_name depends only on student_id → split into students and courses.
+
+### 3NF Example
+
+A table `(student_id, student_name, dept_id, dept_name)` where dept_name depends on dept_id → split into students and departments.
+
+**Q: What is normalization?**
+Organizing data into tables to reduce redundancy and prevent anomalies.
+
+**Q: What is 1NF?**
+Atomic values in each cell; no repeating groups.
+
+**Q: What is 2NF?**
+1NF + no partial dependencies (non-key columns depend on the whole primary key).
+
+**Q: What is 3NF?**
+2NF + no transitive dependencies (non-key columns depend only on the primary key).
+
+**Q: What is denormalization?**
+Intentionally adding redundancy for performance (opposite of normalization).
+
+---
+
+## 23. Indexes
+
+Speed up queries at the cost of slower writes and more storage.
+
+```sql
+CREATE INDEX idx_name ON students(name);
+CREATE UNIQUE INDEX idx_email ON students(email);
+DROP INDEX idx_name;
+```
+
+**Q: What is an index?**
+A data structure that speeds up searching in a table.
+
+**Q: What is the downside of indexes?**
+They slow down inserts/updates/deletes and consume storage.
+
+**Q: Difference between clustered and non-clustered index?**
+
+| Clustered | Non-Clustered |
+|-----------|---------------|
+| Physical order of rows | Separate structure |
+| One per table | Many per table |
+| Fast for range queries | Fast for lookups |
+
+---
+
+## 24. Views
+
+A view is a virtual table based on a query.
+
+```sql
+CREATE VIEW student_summary AS
+SELECT city, COUNT(*) AS num_students
+FROM students
+GROUP BY city;
+
+SELECT * FROM student_summary;
+
+CREATE OR REPLACE VIEW v2 AS ...;
+DROP VIEW student_summary;
+```
+
+**Q: What is a view?**
+A saved query that behaves like a table.
+
+**Q: Can you insert into a view?**
+Sometimes — only if the view is based on a single table with no aggregates/distinct.
+
+**Q: Advantage of views?**
+Simplicity, security (hide columns), abstraction.
+
+---
+
+## 25. Transactions (TCL)
+
+A transaction is a set of operations that succeed or fail as a unit.
+
+### ACID properties
+
+| Property | Meaning |
+|----------|---------|
+| Atomicity | All or nothing |
+| Consistency | Data remains valid |
+| Isolation | Transactions don't interfere |
+| Durability | Committed data persists |
+
+### Commands
+
+```sql
+BEGIN;                            -- or START TRANSACTION
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+COMMIT;                           -- Save changes
+
+ROLLBACK;                         -- Undo changes
+
+SAVEPOINT sp1;
+-- ...
+ROLLBACK TO sp1;
+```
+
+**Q: What are ACID properties?**
+Atomicity, Consistency, Isolation, Durability.
+
+**Q: Difference between `COMMIT` and `ROLLBACK`?**
+`COMMIT` saves changes permanently; `ROLLBACK` undoes uncommitted changes.
+
+**Q: What is a SAVEPOINT?**
+A marker within a transaction you can roll back to.
+
+---
+
+## 26. DCL — Data Control Language
+
+### GRANT
+
+```sql
+GRANT SELECT, INSERT ON students TO 'john'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
+```
+
+### REVOKE
+
+```sql
+REVOKE INSERT ON students FROM 'john'@'localhost';
+REVOKE ALL PRIVILEGES FROM 'john'@'localhost';
+```
+
+**Q: Difference between `GRANT` and `REVOKE`?**
+`GRANT` gives privileges; `REVOKE` removes them.
+
+---
+
+## 27. Stored Procedures and Triggers
+
+### Stored Procedure
+
+A saved set of SQL statements that can be called.
+
+```sql
+DELIMITER //
+CREATE PROCEDURE GetStudentsByCity(IN city_name VARCHAR(50))
+BEGIN
+    SELECT * FROM students WHERE city = city_name;
+END //
+DELIMITER ;
+
+CALL GetStudentsByCity('Nairobi');
+```
+
+### Trigger
+
+Automatically runs when an event (INSERT/UPDATE/DELETE) occurs.
+
+```sql
+CREATE TRIGGER after_student_insert
+AFTER INSERT ON students
+FOR EACH ROW
+BEGIN
+    INSERT INTO audit_log(action) VALUES ('New student added');
+END;
+```
+
+**Q: What is a stored procedure?**
+A precompiled set of SQL statements stored in the database and callable by name.
+
+**Q: What is a trigger?**
+Code that automatically runs on INSERT, UPDATE, or DELETE events.
+
+**Q: Difference between procedure and function?**
+
+| Procedure | Function |
+|-----------|----------|
+| Called with `CALL` | Called inside a query |
+| May not return a value | Must return a value |
+| Can modify data | Usually read-only |
+
+---
+
+## 28. Complete Command Reference (All Commands + Syntax)
+
+### DDL
+
+| Command | Syntax |
+|---------|--------|
+| Create DB | `CREATE DATABASE name;` |
+| Drop DB | `DROP DATABASE name;` |
+| Create table | `CREATE TABLE name (col type [constraints], ...);` |
+| Drop table | `DROP TABLE name;` |
+| Truncate | `TRUNCATE TABLE name;` |
+| Alter | `ALTER TABLE name ADD/DROP/MODIFY COLUMN ...;` |
+| Rename | `RENAME TABLE old TO new;` |
+
+### DML
+
+| Command | Syntax |
+|---------|--------|
+| Insert | `INSERT INTO t (cols) VALUES (...);` |
+| Insert multi | `INSERT INTO t (cols) VALUES (...),(...);` |
+| Update | `UPDATE t SET col = val WHERE cond;` |
+| Delete | `DELETE FROM t WHERE cond;` |
+
+### DQL
+
+| Clause | Purpose |
+|--------|---------|
+| `SELECT` | Columns to return |
+| `FROM` | Table(s) |
+| `WHERE` | Filter rows |
+| `GROUP BY` | Group rows |
+| `HAVING` | Filter groups |
+| `ORDER BY` | Sort |
+| `LIMIT` / `TOP` | Limit rows |
+| `JOIN` | Combine tables |
+
+### DCL
+
+| Command | Purpose |
+|---------|---------|
+| `GRANT` | Give privileges |
+| `REVOKE` | Remove privileges |
+
+### TCL
+
+| Command | Purpose |
+|---------|---------|
+| `COMMIT` | Save |
+| `ROLLBACK` | Undo |
+| `SAVEPOINT` | Marker |
+| `SET TRANSACTION` | Set properties |
+
+---
+
+## 29. Multiple Ways to Get the Same Output
+
+### 29.1 Get top 5 by age
+
+```sql
+-- MySQL / PostgreSQL
+SELECT * FROM students ORDER BY age DESC LIMIT 5;
+
+-- SQL Server
+SELECT TOP 5 * FROM students ORDER BY age DESC;
+
+-- Oracle
+SELECT * FROM (SELECT * FROM students ORDER BY age DESC) WHERE ROWNUM <= 5;
+```
+
+### 29.2 Count students per city (only cities with > 5)
+
+```sql
+SELECT city, COUNT(*) AS n
+FROM students
+GROUP BY city
+HAVING COUNT(*) > 5;
+```
+
+Alternative with subquery:
+
+```sql
+SELECT * FROM (
+    SELECT city, COUNT(*) AS n FROM students GROUP BY city
+) t WHERE n > 5;
+```
+
+### 29.3 Find students older than average
+
+```sql
+-- Subquery
+SELECT name FROM students WHERE age > (SELECT AVG(age) FROM students);
+
+-- Join with derived table
+SELECT s.name
+FROM students s
+JOIN (SELECT AVG(age) AS avg_age FROM students) a
+  ON s.age > a.avg_age;
+```
+
+### 29.4 Get all students and their courses (even if no course)
+
+```sql
+-- LEFT JOIN
+SELECT s.name, c.title
+FROM students s
+LEFT JOIN courses c ON s.course_id = c.id;
+
+-- NOT EXISTS for those with no course
+SELECT s.name FROM students s
+WHERE NOT EXISTS (SELECT 1 FROM courses c WHERE c.id = s.course_id);
+```
+
+### 29.5 Remove duplicates
+
+```sql
+SELECT DISTINCT city FROM students;
+
+SELECT city FROM students GROUP BY city;
+```
+
+### 29.6 Upsert (insert or update)
+
+```sql
+-- MySQL
+INSERT INTO t (id, name) VALUES (1, 'Alice')
+ON DUPLICATE KEY UPDATE name = 'Alice';
+
+-- PostgreSQL
+INSERT INTO t (id, name) VALUES (1, 'Alice')
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
+
+-- SQL Server / Oracle
+MERGE INTO t USING (SELECT 1 id, 'Alice' name FROM dual) src
+ON (t.id = src.id)
+WHEN MATCHED THEN UPDATE SET t.name = src.name
+WHEN NOT MATCHED THEN INSERT (id, name) VALUES (src.id, src.name);
+```
+
+### 29.7 Conditional count
+
+```sql
+-- SUM + CASE
+SELECT SUM(CASE WHEN gender = 'M' THEN 1 ELSE 0 END) AS males,
+       SUM(CASE WHEN gender = 'F' THEN 1 ELSE 0 END) AS females
+FROM users;
+
+-- COUNT + FILTER (PostgreSQL)
+SELECT COUNT(*) FILTER (WHERE gender = 'M') AS males,
+       COUNT(*) FILTER (WHERE gender = 'F') AS females
+FROM users;
+```
+
+---
+
+## 30. Fill-in-the-Blank Rules
+
+When the question shows part of the command, only write the missing part:
+
+| Question | Answer | NOT |
+|----------|--------|-----|
+| `SELECT * ___ students;` | `FROM` | `FROM students` |
+| `SELECT name FROM students ___ age > 20;` | `WHERE` | `WHERE age > 20` |
+| `SELECT city, COUNT(*) FROM students ___ city;` | `GROUP BY` | `GROUP BY city` |
+| `SELECT city, COUNT(*) FROM students GROUP BY city ___ COUNT(*) > 5;` | `HAVING` | `HAVING COUNT(*) > 5` |
+| `SELECT * FROM students ___ age DESC;` | `ORDER BY` | `ORDER BY age DESC` |
+| `SELECT * FROM students ORDER BY age ___ 5;` | `LIMIT` | `LIMIT 5` |
+| `SELECT * FROM students s ___ JOIN courses c ON s.course_id = c.id;` | `INNER` | `INNER JOIN courses c ...` |
+| `CREATE ___ students (...);` | `TABLE` | `TABLE students` |
+| `INSERT ___ students (id, name) VALUES (1, 'Alice');` | `INTO` | `INTO students ...` |
+| `UPDATE students ___ age = 21 WHERE id = 1;` | `SET` | `SET age = 21 ...` |
+| `DELETE ___ students WHERE id = 3;` | `FROM` | `FROM students ...` |
+| `SELECT DISTINCT ___ FROM students;` | `city` | `city FROM students` |
+
+---
+
+## 31. Practice Questions & Answers
+
+### Section A: Basics
+
+**Q1.** What does SQL stand for?
+**Answer:** Structured Query Language.
+
+**Q2.** What are the 5 categories of SQL commands?
+**Answer:** DDL, DML, DQL, DCL, TCL.
+
+**Q3.** Difference between DBMS and RDBMS?
+**Answer:** DBMS stores data as files; RDBMS stores data in tables with enforced relationships.
+
+**Q4.** What is a primary key?
+**Answer:** A column (or set of columns) that uniquely identifies each row.
+
+**Q5.** What is a foreign key?
+**Answer:** A column referencing the primary key of another table.
+
+**Q6.** Difference between `CHAR` and `VARCHAR`?
+**Answer:** `CHAR` is fixed-length (padded); `VARCHAR` is variable-length.
+
+**Q7.** Difference between `DECIMAL` and `FLOAT`?
+**Answer:** `DECIMAL` is exact; `FLOAT` is approximate.
+
+### Section B: DDL
+
+**Q8.** Create a table `employees` with `id` (primary key), `name`, `email` (unique), `age`.
+
+**Answer:**
+
+```sql
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE,
+    age INT CHECK (age >= 18)
+);
+```
+
+**Q9.** Add a column `phone` to `employees`.
+
+**Answer:** `ALTER TABLE employees ADD COLUMN phone VARCHAR(20);`
+
+**Q10.** Difference between `DROP TABLE` and `TRUNCATE TABLE`?
+**Answer:** `DROP` removes the table structure and data; `TRUNCATE` removes only the data.
+
+**Q11.** Difference between `TRUNCATE` and `DELETE`?
+**Answer:** `TRUNCATE` is DDL, removes all rows quickly; `DELETE` is DML, can use `WHERE`, can rollback.
+
+### Section C: DML
+
+**Q12.** Insert a new employee `(1, 'Alice', 'alice@example.com', 30)`.
+
+**Answer:**
+
+```sql
+INSERT INTO employees (id, name, email, age)
+VALUES (1, 'Alice', 'alice@example.com', 30);
+```
+
+**Q13.** Update Alice's age to 31.
+
+**Answer:**
+
+```sql
+UPDATE employees SET age = 31 WHERE id = 1;
+```
+
+**Q14.** Delete employee with id 5.
+
+**Answer:** `DELETE FROM employees WHERE id = 5;`
+
+### Section D: SELECT and Filtering
+
+**Q15.** Select all employees older than 25.
+
+**Answer:** `SELECT * FROM employees WHERE age > 25;`
+
+**Q16.** Select names and emails of employees in 'Nairobi'.
+
+**Answer:** `SELECT name, email FROM employees WHERE city = 'Nairobi';`
+
+**Q17.** Get employees whose age is between 25 and 40.
+
+**Answer:** `SELECT * FROM employees WHERE age BETWEEN 25 AND 40;`
+
+**Q18.** Get employees whose name starts with 'A'.
+
+**Answer:** `SELECT * FROM employees WHERE name LIKE 'A%';`
+
+**Q19.** Get employees whose email is NULL.
+
+**Answer:** `SELECT * FROM employees WHERE email IS NULL;`
+
+**Q20.** Get employees in Nairobi or Mombasa.
+
+**Answer:** `SELECT * FROM employees WHERE city IN ('Nairobi', 'Mombasa');`
+
+### Section E: Sorting and Limiting
+
+**Q21.** Sort employees by age descending.
+
+**Answer:** `SELECT * FROM employees ORDER BY age DESC;`
+
+**Q22.** Get the top 3 highest-paid employees.
+
+**Answer:** `SELECT * FROM employees ORDER BY salary DESC LIMIT 3;`
+
+### Section F: Aggregates and Grouping
+
+**Q23.** Count all employees.
+
+**Answer:** `SELECT COUNT(*) FROM employees;`
+
+**Q24.** Get the average salary per department.
+
+**Answer:**
+
+```sql
+SELECT department, AVG(salary) FROM employees GROUP BY department;
+```
+
+**Q25.** Show departments with more than 5 employees.
+
+**Answer:**
+
+```sql
+SELECT department, COUNT(*) FROM employees
+GROUP BY department
+HAVING COUNT(*) > 5;
+```
+
+**Q26.** Difference between `WHERE` and `HAVING`?
+**Answer:** `WHERE` filters rows before grouping; `HAVING` filters groups after aggregation.
+
+### Section G: Joins
+
+**Q27.** Show employees with their department names.
+
+**Answer:**
+
+```sql
+SELECT e.name, d.name AS department
+FROM employees e
+JOIN departments d ON e.dept_id = d.id;
+```
+
+**Q28.** Show all employees even if they have no department.
+
+**Answer:** Use `LEFT JOIN`:
+
+```sql
+SELECT e.name, d.name
+FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.id;
+```
+
+**Q29.** Difference between INNER JOIN and LEFT JOIN?
+**Answer:** INNER returns only matching rows; LEFT returns all rows from the left table plus matches.
+
+**Q30.** What is a self join? Example?
+**Answer:** A table joined to itself.
+
+```sql
+SELECT e.name AS employee, m.name AS manager
+FROM employees e
+LEFT JOIN employees m ON e.manager_id = m.id;
+```
+
+### Section H: Subqueries
+
+**Q31.** Find employees earning more than the average.
+
+**Answer:**
+
+```sql
+SELECT name FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);
+```
+
+**Q32.** Find employees who are not assigned to any project.
+
+**Answer:**
+
+```sql
+SELECT name FROM employees e
+WHERE NOT EXISTS (SELECT 1 FROM projects p WHERE p.employee_id = e.id);
+```
+
+### Section I: Constraints and Keys
+
+**Q33.** Difference between `UNIQUE` and `PRIMARY KEY`?
+**Answer:** Primary key is unique + NOT NULL, only one per table; UNIQUE allows NULL and can be multiple.
+
+**Q34.** What is a composite key?
+**Answer:** A primary key made of two or more columns.
+
+### Section J: Transactions
+
+**Q35.** What are ACID properties?
+**Answer:** Atomicity, Consistency, Isolation, Durability.
+
+**Q36.** Difference between `COMMIT` and `ROLLBACK`?
+**Answer:** COMMIT saves changes permanently; ROLLBACK undoes uncommitted changes.
+
+### Section K: Normalization
+
+**Q37.** What is 1NF?
+**Answer:** Atomic values, no repeating groups.
+
+**Q38.** What is 2NF?
+**Answer:** 1NF + no partial dependencies (non-key columns depend on the full primary key).
+
+**Q39.** What is 3NF?
+**Answer:** 2NF + no transitive dependencies (non-key columns depend only on the primary key).
+
+**Q40.** Why normalize?
+**Answer:** Reduce redundancy, avoid update/insert/delete anomalies, improve integrity.
+
+---
+
+## 32. Exam-Style Questions
+
+**Q1.** Which SQL statement is used to extract data from a database?
+a) OPEN
+b) EXTRACT
+c) SELECT
+d) GET
+
+**Answer: c**
+
+---
+
+**Q2.** Which SQL statement is used to update data in a database?
+a) SAVE
+b) MODIFY
+c) UPDATE
+d) SAVE AS
+
+**Answer: c**
+
+---
+
+**Q3.** Which SQL statement is used to delete data from a database?
+a) REMOVE
+b) COLLAPSE
+c) DELETE
+d) DROP
+
+**Answer: c**
+
+---
+
+**Q4.** Which SQL statement is used to insert new data in a database?
+a) INSERT INTO
+b) ADD RECORD
+c) ADD NEW
+d) INSERT NEW
+
+**Answer: a**
+
+---
+
+**Q5.** With SQL, how do you select all the records from a table named "Persons" where the "LastName" is alphabetically between (and including) "Hansen" and "Pettersen"?
+a) `SELECT * FROM Persons WHERE LastName BETWEEN 'Hansen' AND 'Pettersen'`
+b) `SELECT * FROM Persons WHERE LastName > 'Hansen'`
+c) `SELECT LastName > 'Hansen' AND LastName < 'Pettersen' FROM Persons`
+d) `SELECT * FROM Persons WHERE LastName > 'Hansen' AND LastName < 'Pettersen'`
+
+**Answer: a**
+
+---
+
+**Q6.** Which SQL statement is used to return only different values?
+a) `SELECT DIFFERENT`
+b) `SELECT UNIQUE`
+c) `SELECT DISTINCT`
+d) `SELECT SINGLE`
+
+**Answer: c**
+
+---
+
+**Q7.** Which SQL statement is used to return the number of rows in a table?
+a) `SELECT COUNT(*) FROM table_name`
+b) `SELECT COUNT FROM table_name`
+c) `SELECT ROWS FROM table_name`
+d) `SELECT * FROM table_name`
+
+**Answer: a**
+
+---
+
+**Q8.** With SQL, how can you return all the records from a table named "Persons" sorted descending by "FirstName"?
+a) `SELECT * FROM Persons SORT 'FirstName' DESC`
+b) `SELECT * FROM Persons ORDER BY FirstName DESC`
+c) `SELECT * FROM Persons ORDER FirstName DESC`
+d) `SELECT * FROM Persons SORT BY 'FirstName' DESC`
+
+**Answer: b**
+
+---
+
+**Q9.** What does the `WHERE` clause do?
+a) Sorts the result
+b) Filters rows
+c) Groups rows
+d) Limits rows
+
+**Answer: b**
+
+---
+
+**Q10.** Difference between `HAVING` and `WHERE`?
+a) No difference
+b) `HAVING` filters rows, `WHERE` filters groups
+c) `HAVING` filters groups, `WHERE` filters rows
+d) Both filter groups
+
+**Answer: c**
+
+---
+
+**Q11.** Which JOIN returns all rows from the left table?
+a) INNER JOIN
+b) LEFT JOIN
+c) RIGHT JOIN
+d) CROSS JOIN
+
+**Answer: b**
+
+---
+
+**Q12.** Which JOIN produces the Cartesian product of two tables?
+a) INNER JOIN
+b) LEFT JOIN
+c) CROSS JOIN
+d) FULL OUTER JOIN
+
+**Answer: c**
+
+---
+
+**Q13.** What does `SELECT DISTINCT city FROM students;` return?
+a) All cities including duplicates
+b) Unique cities only
+c) Count of cities
+d) First city only
+
+**Answer: b**
+
+---
+
+**Q14.** What does `COUNT(*)` return?
+a) Count of non-NULL columns
+b) Count of all rows
+c) Count of distinct rows
+d) Count of unique columns
+
+**Answer: b**
+
+---
+
+**Q15.** Do aggregate functions ignore NULLs?
+a) No
+b) Yes, except `COUNT(*)`
+c) Only `SUM`
+d) Only `AVG`
+
+**Answer: b**
+
+---
+
+**Q16.** Correct order of SQL clauses in a SELECT statement?
+
+**Answer:**
+
+```
+SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT
+```
+
+---
+
+**Q17.** What is the difference between `DELETE`, `TRUNCATE`, and `DROP`?
+
+**Answer:**
+
+| DELETE | TRUNCATE | DROP |
+|--------|----------|------|
+| DML | DDL | DDL |
+| Removes rows | Removes all rows | Removes table |
+| Supports WHERE | No WHERE | No WHERE |
+| Can rollback | Usually cannot | Cannot |
+
+---
+
+**Q18.** What are ACID properties?
+
+**Answer:** Atomicity, Consistency, Isolation, Durability — properties that ensure reliable transactions.
+
+---
+
+**Q19.** What is the difference between `UNION` and `UNION ALL`?
+
+**Answer:** `UNION` removes duplicates; `UNION ALL` keeps them and is faster.
+
+---
+
+**Q20.** Write a query to find the second-highest salary.
+
+**Answer (MySQL):**
+
+```sql
+SELECT MAX(salary) FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);
+```
+
+**PostgreSQL:**
+
+```sql
+SELECT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 1;
+```
+
+---
+
+**Q21.** Write a query to find duplicate emails.
+
+**Answer:**
+
+```sql
+SELECT email, COUNT(*) FROM users
+GROUP BY email
+HAVING COUNT(*) > 1;
+```
+
+---
+
+**Q22.** Write a query to find employees with no manager.
+
+**Answer:**
+
+```sql
+SELECT name FROM employees WHERE manager_id IS NULL;
+```
+
+---
+
+**Q23.** Write a query to find the department with the highest average salary.
+
+**Answer:**
+
+```sql
+SELECT department, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department
+ORDER BY avg_salary DESC
+LIMIT 1;
+```
+
+---
+
+**Q24.** Delete duplicate rows keeping the lowest id.
+
+**Answer (MySQL):**
+
+```sql
+DELETE t1 FROM users t1
+JOIN users t2
+ON t1.email = t2.email AND t1.id > t2.id;
+```
+
+---
+
+**Q25.** What is the difference between a view and a table?
+
+**Answer:** A table stores data physically; a view is a saved query that produces a virtual table.
+
+---
+
+**Q26.** What is an index? Downside?
+
+**Answer:** Speeds up lookups. Downsides: slows writes and consumes storage.
+
+---
+
+**Q27.** Difference between a stored procedure and a function?
+
+**Answer:** Procedures use `CALL`, may not return values; functions are called in queries and must return a value.
+
+---
+
+**Q28.** What does a trigger do?
+
+**Answer:** Automatically runs code when INSERT/UPDATE/DELETE occurs on a table.
+
+---
+
+**Q29.** What is a transaction?
+
+**Answer:** A group of operations that execute as a single unit — all succeed or all fail.
+
+---
+
+**Q30.** What is normalization? Why do it?
+
+**Answer:** Structuring tables to reduce redundancy and anomalies. Improves integrity and efficiency.
+
+---
+
+## 33. Quick Reference Cheat Sheet
+
+| Task | Command |
+|------|---------|
+| Create database | `CREATE DATABASE db;` |
+| Drop database | `DROP DATABASE db;` |
+| Create table | `CREATE TABLE t (...);` |
+| Drop table | `DROP TABLE t;` |
+| Truncate table | `TRUNCATE TABLE t;` |
+| Alter table | `ALTER TABLE t ADD COLUMN c type;` |
+| Insert row | `INSERT INTO t (c1,c2) VALUES (v1,v2);` |
+| Insert multi-row | `INSERT INTO t (c1,c2) VALUES (v1,v2),(v3,v4);` |
+| Update | `UPDATE t SET c = v WHERE cond;` |
+| Delete | `DELETE FROM t WHERE cond;` |
+| Select all | `SELECT * FROM t;` |
+| Select columns | `SELECT c1, c2 FROM t;` |
+| Distinct | `SELECT DISTINCT c FROM t;` |
+| Alias | `SELECT c AS name FROM t;` |
+| Where | `SELECT * FROM t WHERE c = v;` |
+| AND/OR | `WHERE c1 = v1 AND c2 = v2` |
+| BETWEEN | `WHERE c BETWEEN a AND b` |
+| IN | `WHERE c IN (v1, v2, v3)` |
+| LIKE | `WHERE c LIKE 'A%'` |
+| IS NULL | `WHERE c IS NULL` |
+| Order | `SELECT * FROM t ORDER BY c DESC;` |
+| Limit | `SELECT * FROM t LIMIT 10;` |
+| Offset | `SELECT * FROM t LIMIT 10 OFFSET 20;` |
+| Count | `SELECT COUNT(*) FROM t;` |
+| Sum | `SELECT SUM(c) FROM t;` |
+| Avg | `SELECT AVG(c) FROM t;` |
+| Min/Max | `SELECT MIN(c), MAX(c) FROM t;` |
+| Group by | `SELECT c, COUNT(*) FROM t GROUP BY c;` |
+| Having | `... GROUP BY c HAVING COUNT(*) > 5;` |
+| Inner join | `... INNER JOIN t2 ON a.id = b.a_id;` |
+| Left join | `... LEFT JOIN t2 ON a.id = b.a_id;` |
+| Right join | `... RIGHT JOIN t2 ON a.id = b.a_id;` |
+| Full outer join | `... FULL OUTER JOIN t2 ON a.id = b.a_id;` |
+| Cross join | `... CROSS JOIN t2;` |
+| Self join | `... FROM t e JOIN t m ON e.mgr = m.id;` |
+| Subquery | `SELECT * FROM t WHERE c > (SELECT AVG(c) FROM t);` |
+| Exists | `WHERE EXISTS (SELECT 1 FROM t2 WHERE t2.id = t.id)` |
+| Union | `SELECT ... UNION SELECT ...;` |
+| Union all | `SELECT ... UNION ALL SELECT ...;` |
+| Intersect | `SELECT ... INTERSECT SELECT ...;` |
+| Except | `SELECT ... EXCEPT SELECT ...;` |
+| Case | `CASE WHEN c THEN v ELSE v2 END` |
+| Coalesce | `COALESCE(col, 'default')` |
+| String upper | `UPPER(col)` |
+| String lower | `LOWER(col)` |
+| Substring | `SUBSTRING(col, 1, 3)` |
+| Concat | `CONCAT(a, b)` |
+| Length | `LENGTH(col)` |
+| Trim | `TRIM(col)` |
+| Replace | `REPLACE(col, 'a', 'b')` |
+| Current date | `CURDATE()` |
+| Current time | `NOW()` |
+| Year | `YEAR(date_col)` |
+| Date add | `DATE_ADD(d, INTERVAL 1 DAY)` |
+| Date diff | `DATEDIFF(d1, d2)` |
+| Round | `ROUND(n, 2)` |
+| Ceil | `CEIL(n)` |
+| Floor | `FLOOR(n)` |
+| Abs | `ABS(n)` |
+| Mod | `MOD(a, b)` |
+| Create index | `CREATE INDEX idx ON t(c);` |
+| Drop index | `DROP INDEX idx;` |
+| Create view | `CREATE VIEW v AS SELECT ...;` |
+| Drop view | `DROP VIEW v;` |
+| Grant | `GRANT SELECT ON t TO user;` |
+| Revoke | `REVOKE SELECT ON t FROM user;` |
+| Begin | `BEGIN;` or `START TRANSACTION;` |
+| Commit | `COMMIT;` |
+| Rollback | `ROLLBACK;` |
+| Savepoint | `SAVEPOINT sp;` |
+| Rollback to | `ROLLBACK TO sp;` |
+| Procedure | `CREATE PROCEDURE p(...) BEGIN ... END;` |
+| Call procedure | `CALL p(...);` |
+| Trigger | `CREATE TRIGGER t AFTER INSERT ON tbl ...` |
+
+---
+
+# SQL & PostgreSQL Complete Notes — Based on Practice Screenshots
+
+> A full compilation of all topics, questions, correct answers, and explanations from the screenshots.
+> Copy this entire file into VS Code or GitHub as your study notes.
+
+---
+
+## Table of Contents
+
+1. [PostgreSQL CLI (`psql`)](#1-postgresql-cli-psql)
+2. [PostgreSQL Roles & Privileges](#2-postgresql-roles--privileges)
+3. [PostgreSQL Data Types & Columns](#3-postgresql-data-types--columns)
+4. [Data Integrity & Constraints](#4-data-integrity--constraints)
+5. [SQL Query Clauses](#5-sql-query-clauses)
+6. [SQL Joins](#6-sql-joins)
+7. [SQL Window Functions](#7-sql-window-functions)
+8. [SQL DDL (Data Definition Language)](#8-sql-ddl-data-definition-language)
+9. [SQL Transactions & Foreign Keys](#9-sql-transactions--foreign-keys)
+10. [Exam Tips & Common Traps](#10-exam-tips--common-traps)
+11. [Quick Reference Cheat Sheet](#11-quick-reference-cheat-sheet)
+
+---
+
+## 1. PostgreSQL CLI (`psql`)
+
+Based on questions about `psql` options and variables.
+
+### The `-c` Option
+**Q: What does the `-c` option do?**
+**Correct Answer:** Executes a single SQL command or query and then exits.
+
+*   Do not confuse this with `-d` (which specifies the database) or `\cd` (which changes the working directory inside psql).
+*   **Example:**
+    ```bash
+    psql -d mydatabase -c "SELECT * FROM users;"
+    ```
+
+### Variables (`-v`)
+**Q: To display all SQL statements that `psql` sends to the server, including those generated internally, which variable would you set?**
+**Correct Answer:** `psql -v ECHO_HIDDEN=on`
+*(Note: `ECHO_SQL` and `ECHO_ALL` are not valid `psql` variables. `ECHO_HIDDEN` reveals the internal queries generated by meta-commands like `\d` or `\dt`).*
+
+---
+
+## 2. PostgreSQL Roles & Privileges
+
+Based on questions about `INHERIT`, `CREATEDB`, and `NOLOGIN`.
+
+### Role Inheritance (`INHERIT`)
+**Q: By default, when a role is a member of another role, does it automatically inherit the privileges of the parent role?**
+**Correct Answer:** Yes, by default, roles inherit privileges from roles they are members of.
+
+*   `INHERIT` is the default attribute in PostgreSQL.
+*   `NOINHERIT` must be explicitly set to disable this behavior.
+
+### Creating Databases (`CREATEDB`)
+**Q: Which attribute, when granted to a PostgreSQL role, allows that role to create new databases?**
+**Correct Answer:** `CREATEDB`
+
+```sql
+-- Grant at creation
+CREATE ROLE alice WITH CREATEDB LOGIN;
+-- Grant to existing role
+ALTER ROLE alice CREATEDB;
+```
+
+### No Login (`NOLOGIN`)
+**Q: If a role is created with the `NOLOGIN` attribute, what does this imply?**
+**Correct Answer:** The role cannot be used to directly connect to the database.
+
+*   Used for "group roles" to manage permissions centrally.
+*   You cannot log in as a `NOLOGIN` role, but you can grant it to other roles that *do* have `LOGIN`.
+
+### Default Database Owner
+**Q: When a new database is created in PostgreSQL without specifying an owner, who typically becomes the owner by default?**
+**Correct Answer:** The role that executed the `CREATE DATABASE` command.
+
+*   It does **not** automatically become owned by the `postgres` superuser.
+*   If `alice` (with `CREATEDB`) runs it, `alice` owns it.
+
+---
+
+## 3. PostgreSQL Data Types & Columns
+
+Based on questions about `SERIAL`, `AUTO_INCREMENT`, and column order.
+
+### Auto-Incrementing Columns
+**Q: In PostgreSQL, which keyword is typically used to define an auto-incrementing integer column?**
+**Correct Answer:** `SERIAL` (or `BIGSERIAL`)
+
+**Q: Besides `SERIAL` or `BIGSERIAL`, what is another way to define an auto-incrementing column in PostgreSQL 10+?**
+**Correct Answer:** Using `IDENTITY` columns.
+
+*   **`SERIAL`**: Classic PostgreSQL pseudo-type. Implicitly creates a sequence.
+    ```sql
+    CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(50));
+    ```
+*   **`IDENTITY`**: Modern SQL standard way.
+    ```sql
+    CREATE TABLE users (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name VARCHAR(50));
+    ```
+*   **`AUTO_INCREMENT`**: **MySQL ONLY.** Does NOT work in PostgreSQL.
+
+### Column Definition Order
+**Q: When defining columns in a `CREATE TABLE` statement, is the order of column definitions significant for anything other than `SELECT *` output?**
+**Correct Answer:** Yes, it affects the physical storage order of data on disk, which can sometimes have minor performance implications.
+
+### Data Types
+*   `INTEGER` (or `INT`): Standard 4-byte integer.
+*   `BIGINT`: 8-byte integer for larger numbers.
+*   `NUMERIC`: Exact precision, good for money.
+
+---
+
+## 4. Data Integrity & Constraints
+
+Based on questions about `UNIQUE`, `NOT NULL`, and `PRIMARY KEY`.
+
+### Ensuring Unique Values
+**Q: Which constraint ensures that all values in a column are unique?**
+**Correct Answer:** `UNIQUE`
+
+*   **`PRIMARY KEY`**: Combines `UNIQUE` + `NOT NULL`. It does more than just enforce uniqueness, so it is the wrong answer to this specific question.
+*   **`UNIQUE`**: Specifically enforces uniqueness. Allows `NULL` values (multiple `NULL`s are allowed in PostgreSQL).
+*   **`NOT NULL`**: Ensures no empty values, but doesn't prevent duplicates.
+
+### Preventing NULLs
+**Q: Which constraint ensures that a column cannot store NULL values?**
+**Correct Answer:** `NOT NULL`
+
+*   `PRIMARY KEY` implicitly includes `NOT NULL`, but `NOT NULL` is the direct, specific constraint.
+
+---
+
+## 5. SQL Query Clauses
+
+Based on questions about `FROM`, `SELECT`, `WHERE`, `LIMIT`, and `COUNT`.
+
+### The `FROM` Clause
+**Q: The `FROM` clause in a SQL query specifies:**
+**Correct Answer:** The table(s) or view(s) from which data will be retrieved.
+
+*   `SELECT` → Specifies the **columns**.
+*   `FROM` → Specifies the **tables/views**.
+*   `WHERE` → Filters **rows**.
+*   `GROUP BY` → Groups rows for aggregation.
+
+### `WHERE` with `AND`/`OR`
+**Q: To select orders placed by 'customer_A' AND with a 'total_amount' greater than 100, OR orders placed by 'customer_B', which query logic is correct?**
+**Correct Answer:** `WHERE (customer_id = 'customer_A' AND total_amount > 100) OR customer_id = 'customer_B'`
+
+*   **Operator Precedence:** `AND` binds tighter than `OR`. Always use parentheses `()` to make your logic explicit and correct.
+*   *Example of how SQL interprets a query without parentheses:*
+    `WHERE customer_id = 'customer_A' OR (customer_id = 'customer_B' AND total_amount > 100)`
+
+### `LIMIT` without `OFFSET`
+**Q: If you use `LIMIT 5` without an `OFFSET` clause, which rows will be returned?**
+**Correct Answer:** The first 5 rows of the result set (after any `ORDER BY`).
+
+*   `LIMIT 5` → First 5 rows.
+*   `LIMIT 5 OFFSET 4` → Skips 4 rows, returns the next 5.
+
+### `WHERE NOT LIKE` Wildcard Usage
+**Q: To select all product names that do NOT end with 'Kit', which condition is correct?**
+**Correct Answer:** `WHERE product_name NOT LIKE '%Kit'`
+
+*   `%` matches any sequence of characters.
+*   `NOT LIKE` inverts the pattern match.
+
+### Aggregate Function: `COUNT`
+**Q: To count the total number of rows in a table named 'orders', which function would you use with SELECT?**
+**Correct Answer:** `COUNT(*)`
+
+*   Counts all rows, regardless of whether any columns contain `NULL` values.
+*   `SUM(*)`, `AVG(*)`, and `MAX(*)` are invalid syntax. These require a specific column name inside the parentheses.
+
+---
+
+## 6. SQL Joins
+
+Based on questions about `INNER JOIN`, `OUTER JOIN`, `LEFT JOIN`, and multiple joins.
+
+### `INNER JOIN` vs `OUTER JOIN`
+**Q: What is the fundamental difference in the result set between an `INNER JOIN` and any type of `OUTER JOIN` (LEFT, RIGHT, FULL)?**
+**Correct Answer:** `INNER JOIN` returns only matching rows, while `OUTER JOIN` returns matching rows plus non-matching rows (filled with NULLs).
+
+### `LEFT JOIN` vs `LEFT OUTER JOIN`
+**Q: What is the difference between `LEFT JOIN` and `LEFT OUTER JOIN` in SQL?**
+**Correct Answer:** There is no difference. `OUTER` is an optional keyword and `LEFT JOIN` is shorthand for `LEFT OUTER JOIN`.
+
+### Joining Multiple Tables
+**Q: When joining three or more tables, how are the `JOIN` clauses typically structured?**
+**Correct Answer:** By chaining multiple `JOIN` clauses together, one after the other.
+
+```sql
+SELECT c.name, o.order_date, p.product_name
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN products p ON o.product_id = p.product_id;
+```
+
+---
+
+## 7. SQL Window Functions
+
+Based on questions about `ROW_NUMBER()`.
+
+### `ROW_NUMBER()` Tie-breaking
+**Q: If `ROW_NUMBER()` is used with `ORDER BY score DESC`, and two rows have the same `score`, how does it assign their ranks?**
+**Correct Answer:** It assigns unique, consecutive numbers based on an arbitrary but consistent tie-breaking mechanism (e.g., physical order, internal ID).
+
+### `ROW_NUMBER()` Uniqueness
+**Q: Can `ROW_NUMBER()` assign the same number to two different rows within the same partition?**
+**Correct Answer:** No, `ROW_NUMBER()` always assigns a unique sequential number within its partition.
+
+### Comparison of Ranking Functions
+
+| Function | Tie Behavior | Example Scores (10, 10, 8) |
+| :--- | :--- | :--- |
+| `ROW_NUMBER()` | Always unique (1, 2, 3) | 1, 2, 3 |
+| `RANK()` | Ties get same number, next number skips | 1, 1, 3 |
+| `DENSE_RANK()` | Ties get same number, no gaps | 1, 1, 2 |
+
+---
+
+## 8. SQL DDL (Data Definition Language)
+
+Based on questions about `DROP TABLE IF EXISTS`, `ALTER TABLE`, and derived values.
+
+### `DROP TABLE IF EXISTS`
+**Q: What is the benefit of using `DROP TABLE IF EXISTS my_table;`?**
+**Correct Answer:** It prevents an error if `my_table` does not exist, allowing the script to continue.
+
+*   Does **not** prompt for confirmation.
+*   Does **not** force drop if there are dependencies (use `CASCADE` for that).
+*   Does **not** create the table.
+
+### `ALTER TABLE RENAME COLUMN`
+**Q: To rename a column 'old_name' to 'new_name', what is the syntax?**
+**Correct Answer:** `ALTER TABLE my_table RENAME COLUMN old_name TO new_name;`
+
+### Derived Values
+**Q: Which of the following are examples of derived (computed) values in SQL?**
+**Correct Answer:**
+*   The total amount of an order calculated from item prices and quantities.
+*   The age of a person calculated from their birth date.
+
+**Why:**
+*   A unique product ID assigned upon creation is a **generated base value** (like a `SERIAL`), not derived from other columns.
+*   A customer's name directly stored is a **base value**.
+
+---
+
+## 9. SQL Transactions & Foreign Keys
+
+Based on questions about transaction isolation and `ON DELETE` rules.
+
+### SQL Transaction Isolation
+**Q: Which of the following statements about SQL transactions is true?**
+**Correct Answer:** Transactions ensure that a series of database operations are treated as a single, atomic unit of work.
+
+*   Related to the 'A' in ACID (Atomicity).
+*   Autocommit mode is a default setting, not a universal truth about transactions.
+
+### `ON DELETE RESTRICT` vs `ON DELETE NO ACTION`
+**Q: The key difference in *timing* between `ON DELETE RESTRICT` and `ON DELETE NO ACTION` is that `RESTRICT` checks immediately, while `NO ACTION` checks:**
+**Correct Answer:** At the end of the transaction.
+
+*   **`RESTRICT`**: Checks immediately. You cannot temporarily violate the constraint.
+*   **`NO ACTION`**: Checks at the end of the transaction. Allows temporary violations within a transaction (deferred check).
+
+### ACID Properties
+*   **Atomicity:** All or nothing.
+*   **Consistency:** Data remains valid.
+*   **Isolation:** Transactions don't interfere.
+*   **Durability:** Committed data persists.
+
+---
+
+## 10. Exam Tips & Common Traps
+
+1.  **MySQL vs PostgreSQL:** `AUTO_INCREMENT` is MySQL. `SERIAL` or `IDENTITY` is PostgreSQL.
+2.  **Constraints:** `UNIQUE` is the pure constraint for uniqueness. `PRIMARY KEY` = `UNIQUE` + `NOT NULL`.
+3.  **`FROM` vs `SELECT`:** `FROM` specifies tables. `SELECT` specifies columns.
+4.  **`RESTRICT` vs `NO ACTION`:** `RESTRICT` = immediate check. `NO ACTION` = end of transaction check.
+5.  **Operator Precedence:** Always use parentheses `()` when mixing `AND` and `OR` in `WHERE` clauses.
+6.  **`LIMIT` vs `OFFSET`:** `LIMIT` = how many to return. `OFFSET` = how many to skip.
+7.  **`LEFT JOIN` vs `LEFT OUTER JOIN`:** They are exactly the same. `OUTER` is optional.
+8.  **Derived Values:** Look for calculations using *other columns* (e.g., `price * quantity`). Generated IDs are base values.
+9.  **`psql -c`:** Executes one command and exits (very useful for bash scripts).
+10. **`psql ECHO_HIDDEN`:** The secret to seeing the internal queries behind meta-commands like `\d`.
+
+---
+
+## 11. Quick Reference Cheat Sheet
+
+| Task | Command / Concept |
+|------|-------------------|
+| Auto-increment (Postgres) | `SERIAL` or `GENERATED AS IDENTITY` |
+| Auto-increment (MySQL) | `AUTO_INCREMENT` |
+| Constraint for uniqueness | `UNIQUE` |
+| Constraint for no NULLs | `NOT NULL` |
+| Combine UNIQUE + NOT NULL | `PRIMARY KEY` |
+| Retrieve tables | `FROM` |
+| Retrieve columns | `SELECT` |
+| Filter rows | `WHERE` |
+| Filter groups | `HAVING` |
+| Sort results | `ORDER BY` |
+| Limit results | `LIMIT N` |
+| Skip results | `OFFSET N` |
+| Join only matching rows | `INNER JOIN` |
+| Join all left + matching right | `LEFT JOIN` (or `LEFT OUTER JOIN`) |
+| Join all right + matching left | `RIGHT JOIN` |
+| Unique sequential number | `ROW_NUMBER()` |
+| Rank with gaps | `RANK()` |
+| Rank without gaps | `DENSE_RANK()` |
+| Safe drop table | `DROP TABLE IF EXISTS t;` |
+| Rename column | `ALTER TABLE t RENAME COLUMN a TO b;` |
+| Not ending with X | `NOT LIKE '%X'` |
+| Immediate FK check | `ON DELETE RESTRICT` |
+| Deferred FK check | `ON DELETE NO ACTION` |
+| Run single SQL from bash | `psql -c "SELECT ..."` |
+| See hidden psql queries | `psql -v ECHO_HIDDEN=on` |
+| Total rows in table | `SELECT COUNT(*) FROM t;`
+
+
+
+# SQL `PARTITION BY` — Complete Notes
+
+> A full compilation of `PARTITION BY` concepts, syntax, use cases, and exam traps.
+> Copy this into VS Code or GitHub as your study notes.
+
+---
+
+## Table of Contents
+
+1. [What is `PARTITION BY`?](#1-what-is-partition-by)
+2. [`PARTITION BY` vs `GROUP BY`](#2-partition-by-vs-group-by)
+3. [Syntax](#3-syntax)
+4. [Common Use Cases with Examples](#4-common-use-cases-with-examples)
+5. [`PARTITION BY` with Different Window Functions](#5-partition-by-with-different-window-functions)
+6. [Multiple Columns in `PARTITION BY`](#6-multiple-columns-in-partition-by)
+7. [`PARTITION BY` without `ORDER BY`](#7-partition-by-without-order-by)
+8. [Exam Tips & Common Traps](#8-exam-tips--common-traps)
+9. [Quick Reference Cheat Sheet](#9-quick-reference-cheat-sheet)
+
+---
+
+## 1. What is `PARTITION BY`?
+
+`PARTITION BY` is a clause used with **window functions** (also called analytic functions) in SQL. It divides the result set into **partitions** (groups) and performs a calculation **within each partition separately**.
+
+- It does **not** collapse rows like `GROUP BY`.
+- It keeps **all rows** in the output.
+- It resets the calculation for each new partition.
+
+Think of it as: "Split the data into groups, then do the math inside each group, but keep all the original rows."
+
+**Basic Example:**
+
+```sql
+SELECT
+    department,
+    employee_name,
+    salary,
+    ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS rank_in_dept
+FROM employees;
+```
+
+This assigns a rank to each employee **within their own department**, based on salary (highest first).
+
+---
+
+## 2. `PARTITION BY` vs `GROUP BY`
+
+| Feature | `GROUP BY` | `PARTITION BY` |
+|---------|------------|----------------|
+| Purpose | Aggregate rows into groups | Calculate within groups |
+| Output rows | One row per group | All original rows preserved |
+| Used with | Aggregate functions (`SUM`, `COUNT`, etc.) | Window functions (`ROW_NUMBER`, `RANK`, etc.) |
+| Example | `SELECT dept, AVG(salary) FROM emp GROUP BY dept;` | `SELECT dept, salary, AVG(salary) OVER (PARTITION BY dept) FROM emp;` |
+| Result | Collapses rows | Does not collapse rows |
+
+**Key Point for Exams:**
+- `GROUP BY` → fewer rows (one per group).
+- `PARTITION BY` → same number of rows as the original table.
+
+---
+
+## 3. Syntax
+
+```sql
+<window_function>() OVER (
+    PARTITION BY column1, column2
+    ORDER BY column3
+)
+```
+
+- **`PARTITION BY`** → splits the data into groups (optional in a window function).
+- **`ORDER BY`** → sorts the rows within each partition (optional, but required for ranking functions).
+- **`OVER()`** → the clause that turns a regular function into a window function.
+
+**Example:**
+
+```sql
+SELECT
+    product_name,
+    category,
+    price,
+    AVG(price) OVER (PARTITION BY category) AS avg_category_price
+FROM products;
+```
+
+---
+
+## 4. Common Use Cases with Examples
+
+### 4.1 Rank within each group
+
+```sql
+SELECT
+    employee_name,
+    department,
+    salary,
+    RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS salary_rank
+FROM employees;
+```
+
+**Result:** Each employee gets a rank within their department (not the whole company).
+
+### 4.2 Running total within each group
+
+```sql
+SELECT
+    order_date,
+    customer_id,
+    amount,
+    SUM(amount) OVER (PARTITION BY customer_id ORDER BY order_date) AS running_total
+FROM orders;
+```
+
+**Result:** A running total of each customer's orders over time.
+
+### 4.3 Row number within each group
+
+```sql
+SELECT
+    product_name,
+    category,
+    ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC) AS rn
+FROM products
+WHERE rn <= 3;
+```
+
+*(Note: You can't use `rn` in `WHERE` directly; you need a subquery or CTE.)*
+
+**Correct version:**
+
+```sql
+SELECT * FROM (
+    SELECT
+        product_name,
+        category,
+        price,
+        ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC) AS rn
+    FROM products
+) t
+WHERE rn <= 3;
+```
+
+**Result:** Top 3 most expensive products in each category.
+
+### 4.4 Moving average
+
+```sql
+SELECT
+    sale_date,
+    product_id,
+    amount,
+    AVG(amount) OVER (
+        PARTITION BY product_id
+        ORDER BY sale_date
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) AS moving_avg_3
+FROM sales;
+```
+
+**Result:** 3-day moving average of sales per product.
+
+### 4.5 Difference from group average
+
+```sql
+SELECT
+    employee_name,
+    department,
+    salary,
+    salary - AVG(salary) OVER (PARTITION BY department) AS diff_from_dept_avg
+FROM employees;
+```
+
+**Result:** How much each employee earns above or below their department's average.
+
+### 4.6 Percentage of group total
+
+```sql
+SELECT
+    employee_name,
+    department,
+    salary,
+    ROUND(100.0 * salary / SUM(salary) OVER (PARTITION BY department), 2) AS pct_of_dept
+FROM employees;
+```
+
+**Result:** Each employee's salary as a percentage of their department's total payroll.
+
+---
+
+## 5. `PARTITION BY` with Different Window Functions
+
+| Function | What it does with `PARTITION BY` |
+|----------|-----------------------------------|
+| `ROW_NUMBER()` | Unique sequential number per partition |
+| `RANK()` | Rank with gaps for ties, per partition |
+| `DENSE_RANK()` | Rank without gaps for ties, per partition |
+| `SUM()` | Sum per partition |
+| `AVG()` | Average per partition |
+| `MIN()` | Min per partition |
+| `MAX()` | Max per partition |
+| `COUNT()` | Count per partition |
+| `LAG()` | Previous row value per partition |
+| `LEAD()` | Next row value per partition |
+| `FIRST_VALUE()` | First value per partition |
+| `LAST_VALUE()` | Last value per partition |
+| `NTILE(n)` | Divides partition into n buckets |
+
+**Example with `LAG`:**
+
+```sql
+SELECT
+    employee_name,
+    department,
+    salary,
+    LAG(salary) OVER (PARTITION BY department ORDER BY salary) AS prev_salary
+FROM employees;
+```
+
+**Result:** The salary of the previous employee (in order) within the same department.
+
+---
+
+## 6. Multiple Columns in `PARTITION BY`
+
+You can partition by more than one column:
+
+```sql
+SELECT
+    year,
+    month,
+    region,
+    salesperson,
+    SUM(sales) OVER (PARTITION BY year, region) AS yearly_region_total
+FROM sales_data;
+```
+
+**Result:** Sum of sales per year per region, keeping all original rows.
+
+---
+
+## 7. `PARTITION BY` without `ORDER BY`
+
+If you omit `ORDER BY`, the window function operates on the **entire partition** without a specific order.
+
+```sql
+SELECT
+    employee_name,
+    department,
+    salary,
+    SUM(salary) OVER (PARTITION BY department) AS dept_total
+FROM employees;
+```
+
+**Result:** Each row shows the total salary for the department. No ordering is needed because it's a total over the whole partition.
+
+**Note:** For ranking functions like `ROW_NUMBER()` or `RANK()`, if you omit `ORDER BY`, the result is non-deterministic (arbitrary order).
+
+---
+
+## 8. Exam Tips & Common Traps
+
+1. **`PARTITION BY` does NOT reduce rows.** If you want to reduce rows, use `GROUP BY`.
+
+2. **`PARTITION BY` is used with `OVER()`.** Without `OVER()`, it's not a window function.
+
+3. **`PARTITION BY` and `ORDER BY` are different:**
+   - `PARTITION BY` = groups
+   - `ORDER BY` = sorting within each group
+
+4. **You can't use a window function alias in `WHERE`.** You must use a subquery or CTE:
+   ```sql
+   -- WRONG
+   SELECT ROW_NUMBER() OVER (...) AS rn FROM t WHERE rn <= 3;
+   
+   -- CORRECT
+   SELECT * FROM (
+       SELECT ROW_NUMBER() OVER (...) AS rn FROM t
+   ) x WHERE rn <= 3;
+   ```
+
+5. **`PARTITION BY` vs `GROUP BY` in one query:** You can use both in a single query, but they serve different purposes.
+   ```sql
+   SELECT
+       department,
+       AVG(salary) AS avg_salary,
+       COUNT(*) OVER (PARTITION BY department) AS emp_count
+   FROM employees
+   GROUP BY department;
+   ```
+
+6. **`PARTITION BY` can reference any column** (not just the ones in the `SELECT` list).
+
+7. **`PARTITION BY` order does matter** for output: partitions are processed independently, and results are combined.
+
+8. **Common exam question:** "What's the difference between `GROUP BY` and `PARTITION BY`?"
+   - `GROUP BY` → one row per group.
+   - `PARTITION BY` → all rows preserved, calculation within groups.
+
+9. **`PARTITION BY` resets at each boundary.** Calculations start fresh for every new partition.
+
+10. **Performance tip:** `PARTITION BY` can be slower than `GROUP BY` on large datasets because it processes every row, not just groups.
+
+---
+
+## 9. Quick Reference Cheat Sheet
+
+| Task | SQL |
+|------|-----|
+| Rank within department | `RANK() OVER (PARTITION BY department ORDER BY salary DESC)` |
+| Row number within category | `ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC)` |
+| Running total per customer | `SUM(amount) OVER (PARTITION BY customer_id ORDER BY order_date)` |
+| Department total (all rows) | `SUM(salary) OVER (PARTITION BY department)` |
+| Department average | `AVG(salary) OVER (PARTITION BY department)` |
+| Previous row value | `LAG(salary) OVER (PARTITION BY department ORDER BY salary)` |
+| Next row value | `LEAD(salary) OVER (PARTITION BY department ORDER BY salary)` |
+| Difference from group average | `salary - AVG(salary) OVER (PARTITION BY department)` |
+| Percent of group total | `100.0 * salary / SUM(salary) OVER (PARTITION BY department)` |
+| Multiple columns | `PARTITION BY year, region` |
+| Top N per group | `SELECT * FROM (SELECT ..., ROW_NUMBER() OVER (PARTITION BY ...) AS rn FROM t) x WHERE rn <= N;` |
+| 3-day moving average | `AVG(amount) OVER (PARTITION BY product_id ORDER BY sale_date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)` |
+| Bucket into quartiles | `NTILE(4) OVER (PARTITION BY department ORDER BY salary DESC)` |
+
+---
+
+### Example Table for Practice
+
+**employees**
+
+| id | name | department | salary |
+|----|------|------------|--------|
+| 1 | Alice | HR | 50000 |
+| 2 | Bob | HR | 60000 |
+| 3 | Carol | IT | 80000 |
+| 4 | Dave | IT | 75000 |
+| 5 | Eve | IT | 90000 |
+| 6 | Frank | Sales | 70000 |
+
+**Query:**
+
+```sql
+SELECT
+    name,
+    department,
+    salary,
+    ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS rn,
+    AVG(salary) OVER (PARTITION BY department) AS dept_avg,
+    SUM(salary) OVER (PARTITION BY department) AS dept_total
+FROM employees;
+```
+
+**Result:**
+
+| name | department | salary | rn | dept_avg | dept_total |
+|------|------------|--------|----|-----------|------------|
+| Bob | HR | 60000 | 1 | 55000 | 110000 |
+| Alice | HR | 50000 | 2 | 55000 | 110000 |
+| Eve | IT | 90000 | 1 | 81666.67 | 245000 |
+| Carol | IT | 80000 | 2 | 81666.67 | 245000 |
+| Dave | IT | 75000 | 3 | 81666.67 | 245000 |
+| Frank | Sales | 70000 | 1 | 70000 | 70000 |
+
+**Observation:**
+- `rn` resets for each department.
+- `dept_avg` and `dept_total` repeat for every row in the same department.
+- All original rows are preserved.
+
+---
+
+
+| Concept | Rule |
+| :--- | :--- |
+| **LEFT JOIN** | Returns all rows from the left table, plus matching rows from the right. Non-matches get NULL. |
+| **LEFT OUTER JOIN** | Exactly the same as LEFT JOIN. OUTER is an optional keyword. |
+| **INNER JOIN** | Returns only matching rows from both tables. (This is what your wrong answer described). |
+| **COUNT(*)** | Counts the total number of rows in a table. |
+| **SUM(col) / AVG(col)** | Requires a specific numeric column name inside the parentheses. |
+
+
+# Complete Guide to SQL "BY" Clauses
+
+> A full breakdown of all SQL clauses that use the keyword "BY", when to use them, and how they work in a query.
+> Copy this into VS Code or GitHub as your study notes.
+
+---
+
+## Table of Contents
+
+1. [Overview of All "BY" Clauses](#1-overview-of-all-by-clauses)
+2. [GROUP BY](#2-group-by)
+3. [ORDER BY](#3-order-by)
+4. [PARTITION BY](#4-partition-by)
+5. [Special Cases: DISTRIBUTE BY, SORT BY, CLUSTER BY](#5-special-cases-distribute-by-sort-by-cluster-by)
+6. [Logical Execution Order](#6-logical-execution-order)
+7. [Quick Reference Cheat Sheet](#7-quick-reference-cheat-sheet)
+
+---
+
+## 1. Overview of All "BY" Clauses
+
+| Clause | Purpose | Collapses Rows? | Used With |
+|--------|---------|-----------------|-----------|
+| `GROUP BY` | Aggregate rows into groups | Yes | Aggregate functions (`SUM`, `COUNT`, `AVG`, etc.) |
+| `ORDER BY` | Sort the final result set | No | Any `SELECT` statement |
+| `PARTITION BY` | Divide rows into groups for window functions | No | Window functions (`OVER()`) |
+| `DISTRIBUTE BY` | Distribute rows among reducers (Hive/Spark) | No | Big data tools |
+| `SORT BY` | Sort within partitions (Hive/Spark) | No | Big data tools |
+| `CLUSTER BY` | Combination of `DISTRIBUTE BY` + `SORT BY` | No | Big data tools |
+
+---
+
+## 2. GROUP BY
+
+### What it does:
+Groups rows that have the same values in specified columns into summary rows.
+
+### When to use:
+- When you want to calculate aggregates (`SUM`, `COUNT`, `AVG`, `MIN`, `MAX`) per group.
+- When you want **one row per unique group**.
+
+### Syntax:
+
+```sql
+SELECT column1, aggregate_function(column2)
+FROM table_name
+GROUP BY column1;
+```
+
+### Example:
+
+```sql
+SELECT department, COUNT(*) AS num_employees, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department;
+```
+
+**Result:** One row per department, with the count of employees and the average salary.
+
+| department | num_employees | avg_salary |
+|------------|---------------|------------|
+| HR | 2 | 55000 |
+| IT | 3 | 81666.67 |
+| Sales | 1 | 70000 |
+
+### Key Rules:
+- Every column in the `SELECT` list that is **not** an aggregate must appear in the `GROUP BY`.
+- `WHERE` filters rows *before* grouping.
+- `HAVING` filters groups *after* grouping.
+
+---
+
+## 3. ORDER BY
+
+### What it does:
+Sorts the final result set by one or more columns.
+
+### When to use:
+- When you want results in a specific order (alphabetical, numerical, chronological).
+- When you use `LIMIT` or `OFFSET` (always order first so you know which rows you're getting).
+
+### Syntax:
+
+```sql
+SELECT column1, column2
+FROM table_name
+ORDER BY column1 [ASC|DESC], column2 [ASC|DESC];
+```
+
+### Example:
+
+```sql
+SELECT name, salary
+FROM employees
+ORDER BY salary DESC, name ASC;
+```
+
+**Result:** Employees sorted by salary (highest first). If two have the same salary, sort by name alphabetically.
+
+### Key Rules:
+- Default is `ASC` (ascending).
+- Use `DESC` for descending order.
+- Can sort by multiple columns (separated by commas).
+- Can sort by column position (e.g., `ORDER BY 2` means the 2nd column in `SELECT`).
+
+---
+
+## 4. PARTITION BY
+
+### What it does:
+Divides the result set into partitions (groups) and performs a window function calculation **within each partition**, while keeping **all rows**.
+
+### When to use:
+- When you want to calculate something per group (e.g., rank within a department) **without** collapsing rows.
+- When you need running totals, moving averages, or rankings.
+- When you want to compare a row to its group average/total.
+
+### Syntax:
+
+```sql
+SELECT column1, column2,
+       window_function() OVER (PARTITION BY column1 ORDER BY column2)
+FROM table_name;
+```
+
+### Example:
+
+```sql
+SELECT name, department, salary,
+       RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS rank_in_dept
+FROM employees;
+```
+
+**Result:** Every employee is listed, with a rank showing where they fall within their department.
+
+| name | department | salary | rank_in_dept |
+|------|------------|--------|--------------|
+| Bob | HR | 60000 | 1 |
+| Alice | HR | 50000 | 2 |
+| Eve | IT | 90000 | 1 |
+| Carol | IT | 80000 | 2 |
+| Dave | IT | 75000 | 3 |
+| Frank | Sales | 70000 | 1 |
+
+### Key Rules:
+- Used with `OVER()`.
+- Does **not** collapse rows.
+- `ORDER BY` inside `OVER()` defines the order of calculation *within* each partition.
+- Without `ORDER BY`, the calculation applies to the whole partition.
+
+---
+
+## 5. Special Cases: DISTRIBUTE BY, SORT BY, CLUSTER BY
+
+These are used in **Hive** and **Spark SQL** (big data tools), not standard SQL. Included for completeness.
+
+### DISTRIBUTE BY
+- Distributes rows to reducers based on column values.
+- Used to control data movement.
+
+```sql
+SELECT * FROM sales DISTRIBUTE BY region;
+```
+
+### SORT BY
+- Sorts data **within each reducer** (not globally).
+
+```sql
+SELECT * FROM sales SORT BY amount DESC;
+```
+
+### CLUSTER BY
+- Combination of `DISTRIBUTE BY` and `SORT BY`.
+
+```sql
+SELECT * FROM sales CLUSTER BY region;
+```
+
+---
+
+## 6. Logical Execution Order
+
+SQL clauses are written in one order, but executed in a different order:
+
+```
+1. FROM         →  Get the table(s)
+2. WHERE        →  Filter rows
+3. GROUP BY     →  Group rows
+4. HAVING       →  Filter groups
+5. SELECT       →  Pick columns
+6. PARTITION BY →  Apply window functions (with OVER)
+7. ORDER BY     →  Sort final result
+8. LIMIT        →  Limit rows
+```
+
+### Example Query with All Clauses:
+
+```sql
+SELECT department, COUNT(*) AS num_emp, AVG(salary) OVER (PARTITION BY department) AS avg_by_dept
+FROM employees
+WHERE salary > 30000
+GROUP BY department, salary
+HAVING COUNT(*) > 1
+ORDER BY num_emp DESC
+LIMIT 10;
+```
+
+---
+
+## 7. Quick Reference Cheat Sheet
+
+| Clause | Use It When You Want To... | Example |
+|--------|----------------------------|---------|
+| `GROUP BY` | Aggregate rows into one per group | `SELECT dept, COUNT(*) FROM emp GROUP BY dept;` |
+| `ORDER BY` | Sort the result set | `SELECT * FROM emp ORDER BY salary DESC;` |
+| `PARTITION BY` | Calculate within groups without collapsing | `SELECT name, RANK() OVER (PARTITION BY dept ORDER BY salary DESC) FROM emp;` |
+| `DISTRIBUTE BY` | Distribute rows in big data tools | `SELECT * FROM sales DISTRIBUTE BY region;` |
+| `SORT BY` | Sort within partitions in big data tools | `SELECT * FROM sales SORT BY amount DESC;` |
+| `CLUSTER BY` | Combine distribute + sort in big data tools | `SELECT * FROM sales CLUSTER BY region;` |
+
+---
+
+### Golden Rule:
+- **`GROUP BY`** → Collapses rows into groups (one row per group).
+- **`PARTITION BY`** → Keeps all rows but calculates within groups.
+- **`ORDER BY`** → Sorts the final output.
+
+Think of it like this:
+- `GROUP BY` = "Summarize this for me."
+- `PARTITION BY` = "Show me everything, but calculate a group stat next to each row."
+- `ORDER BY` = "Put it in this order."
+
+---
+
+**End of SQL "BY" Clauses Notes.**
