@@ -1,0 +1,1272 @@
+# Practical Assessment #2 - Test Jenkins
+
+### * This is a hands-on practical assessment where you work on one of our test jenkins servers: test.jenkins.quatrixglobal.com
+
+# Pre-Requisites
+
+### * Created your quatrix-mentorship repo and added a folder called practicals
+
+### * Completion of following modules:
+
+1. #### Bash
+
+2. #### Git
+
+3. #### Linux Sys Admin module 
+
+
+# Instructions:
+
+### * We will be using the following server: test.jenkins.quatrixglobal.com
+
+### * Jenkins Forums and Google in general.
+
+### * If making changes to sshd, ufw or fail2ban, make sure to always have an extra ssh session open so that if you misconfigure either of them, you don’t lock yourself out. Having an extra ssh session is an insurance that allows you to correct the error.
+
+# Basic Linux Administration
+
+## Question 1 . Update Debian to version 13.0 Trixie
+
+```bash
+cat /etc/os-release
+```
+## Question 2 . Update the hostname so that it reads test-jenins and not just test 
+
+### Step 1 : Verify the current static name 
+
+```bash
+hostnamectl
+```
+### Expected Output ;
+
+```bash
+Static hostname: test-traccar
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: 26f89979ac0f4b4da717c7b918c8476e
+         Boot ID: 6c72e1b1ddf74a2f94af72a2d4895269
+  Virtualization: kvm
+Operating System: Debian GNU/Linux 13 (trixie)    
+          Kernel: Linux 6.1.0-31-amd64
+    Architecture: x86-64
+ Hardware Vendor: DigitalOcean
+  Hardware Model: Droplet
+Firmware Version: 20171212
+```
+
+### Step 2 : Change the static name to test-jenkins 
+
+```bash
+sudo hostnamectl set-hostname test-jenkins
+```
+### Step 3 : Update the /etc/host file on the server 
+
+```bash
+sudo vi /etc/hosts
+```
+
+### Step 4 : Look for the line containg the old hostname test
+
+```bash
+127.0.0.1       test.traccar.quatrixglobal.com test-traccar
+```
+### Step 5 : Change the test-traccar to test-jenkins
+
+```bash
+127.0.0.1       test.jenkins.quatrixglobal.com test-jenkins
+```
+### Step 6 : Save and exit 
+
+#### * CTRL + O
+
+#### * ENTER
+
+#### * CRTL + X
+
+### Step 7 : Verify the change 
+
+```bash
+hostnamectl
+```
+
+### Step 8 : To view the host file
+
+```bash
+cat /etc/hosts
+```
+# Question 3 : Creating a user (follow the steps in practical assessment one)
+
+# Networking & Security
+
+# Question 1 : Ensure sshd (OpenSSH) on the server is configured such that
+
+### a. Users can only authenticate using an ssh key
+
+### b.The root user is blocked from accessing ssh access remotely.
+
+### Step 1 : Opening the SSH configuration file 
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+### Step 2 : Disable password authentication
+
+### * find the line matching PasswordAuthentication. If it has a hashtag # in front of it, remove the hashtag to uncomment it, and set it to no
+
+```bash
+PasswordAuthentication no
+```
+### Step 3 : Add this lines 
+
+```bash
+PubkeyAuthentication yes
+KbdInteractiveAuthentication no
+```
+
+# Question 1b . The root user is blocked from accessing ssh access remotely.
+
+### Step 1 : Block remote root access
+
+#### * To block the root user from accessing the server remotely, find the PermitRootLogin line, uncomment it if necessary, and change its value to no
+
+```bash
+PermitRootLogin no
+```
+### Step 2 : Test and restart the SSH service
+
+#### * Test the configuration file for syntax errors before applying it
+
+```bash
+sudo sshd -t
+```
+### Step 3 : Restart the ssh deamon to apply the changes 
+
+```bash
+sudo systemctl restart sshd
+```
+### Step 4 : To verify all the changes made in the ssh config file 
+
+```bash
+cat /etc/ssh/sshd_config | grep -v '^[[:space:]]*#' | grep -v '^[[:space:]]*$'
+```
+### Explain the command :
+
+#### 1. cat /etc/ssh/sshd_config – Reads and outputs the entire file.
+
+#### 2. grep -v '^[[:space:]]*#' – Inverts the match (-v) to exclude any lines starting with # (comments).
+
+#### 3. grep -v '^[[:space:]]*$' – Inverts the match to exclude entirely blank lines.
+
+### OR ?
+
+
+```bash
+sudo sshd -T | grep -E "passwordauthentication|permitrootlogin|pubkeyauthentication"
+```
+
+### Expected output :
+
+
+```bash
+permitrootlogin no
+pubkeyauthentication yes
+passwordauthentication no
+```
+# Question 2 : Install ufw (uncomplicated Firewall) and enable:
+
+# Question 2 a : OpenSSH
+
+### Step 1 : Install UFW
+
+```bash
+sudo apt update && sudo apt install ufw -y
+```
+### Step 2 . Allow OpenSSH 
+
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+# Question 2 b : Allow HTTP
+
+### Step 3 
+
+```bash
+sudo ufw allow 80/tcp
+```
+# Question 2 c : Allow HTTPS
+
+### Step 4 
+```bash
+sudo ufw allow 443/tcp
+```
+### Step 5 
+
+### To verify that the rules have been added 
+
+```bash
+sudo ufw show added
+```
+
+### Step 6 : Enable the firewall 
+
+```bash
+sudo ufw enable
+```
+### Step 7 : Check the final active status
+
+```bash
+sudo ufw status verbose
+```
+### Expected output :
+
+```bash
+pkinoti@test-jenkins:~$ sudo ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), disabled (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp (OpenSSH)           ALLOW IN    Anywhere                  
+80,443/tcp (Nginx Full)    ALLOW IN    Anywhere                  
+5055                       ALLOW IN    Anywhere                  
+80/tcp                     ALLOW IN    Anywhere                  
+443/tcp                    ALLOW IN    Anywhere                  
+22/tcp (OpenSSH (v6))      ALLOW IN    Anywhere (v6)             
+80,443/tcp (Nginx Full (v6)) ALLOW IN    Anywhere (v6)             
+5055 (v6)                  ALLOW IN    Anywhere (v6)             
+80/tcp (v6)                ALLOW IN    Anywhere (v6)             
+443/tcp (v6)               ALLOW IN    Anywhere (v6)   
+```
+# Question 3 : Install fail2ban and configure it to prevent
+# a . Brute force ssh authentication attacks
+# b . Exempt Applewood, Yard and Trio from sshd bans. For remote Quatrix interns, exempt your home network from fail2ban rules.
+
+### Step 1 : Install Fail2ban 
+
+```bash
+sudo apt update && sudo apt install fail2ban -y
+```
+
+### Step 2 : Create a local configuration file 
+
+```bash
+sudo nano /etc/fail2ban/jail.d/sshd.local
+```
+### Step 3 : Add the custom configration file 
+
+```bash
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+maxretry = 5
+findtime = 10m
+bantime = 1h
+
+# Whitelist local machine, Yard, Applewood/QX, Trio, and your home network
+ignoreip = 127.0.0.1/8 ::1 102.215.13.6 41.90.10.170 197.232.110.49 41.139.233.235 197.248.171.13 YOUR_HOME_IP_HERE
+```
+
+### Step 4 : Enable and start the service 
+
+```bash
+sudo systemctl enable fail2ban --now
+```
+
+### Step 5 : Reload it t apply the new configuration
+
+```bash
+sudo fail2ban-client reload
+```
+### Step 6 : Verify the setup SSH jail is active 
+
+
+```bash
+sudo fail2ban-client status sshd
+```
+
+### Step 7 : Check the Fail2ban is successfully reading the new ips 
+
+```bash
+sudo fail2ban-client get sshd ignoreip
+```
+
+# CI/CD - Jenkins
+
+## Question 1 : Install Jenkins 
+
+#### * Jenkins is written in Java, so we must install the Java runtime environment first, then add the official Jenkins software repository to your Debian 13 (Trixie) system.
+
+### Step 1 : Install Java version 21  
+
+```bash
+sudo apt update && sudo apt install -y openjdk-21-jre-headless
+```
+### Explain the commands :
+
+#### 1. apt update: Refreshes your package index using your fixed Trixie repository lines.
+
+#### 2. apt install -y: Installs Java automatically without stopping to ask you for confirmation.
+
+#### 3. Openjdk - This is the open-source version of Java.
+
+#### 4 . 21 - this is the version number
+
+#### 5 . JRE VS JDK : JRE stands for Java Runtime Environment . it contains the only tools needed to run and existing java program like jenkins . JDK Or Development kit id for writing codes 
+
+#### 6 . Headless : this means it does not include graphical user interface compenents like windows , buttons pr desktop wallapapers because our linux server has no screen we dont need to waste space or meomery graphic 
+
+
+### * Check the version 
+
+```bash
+java -version
+```
+
+### Step 2 : Download and install the jenkins GPG key
+
+```bash
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://jenkins.io
+```
+### Explain command:
+
+#### 1. wget -O [path]: Downloads the official Jenkins encryption security key from their website and saves it directly to your shared system keyrings folder.
+
+### Step 3 : Add the official Jenkins Reposiory link 
+
+```bash
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://jenkins.io binary/" | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+```
+
+### Explain the command :
+
+#### 1. echo "...": Formats the exact repository configuration layout.
+
+#### 2. | (Pipe): Takes the text output of the echo command and forces it as the input into the next command.
+
+#### 3. /etc/apt/sources.list.d/jenkins.list: The destination file path where package location profiles are stored.
+
+####  tee: Creates a dedicated standalone package mirror list file named /etc/apt/sources.list.d/jenkins.list.
+
+#### 5. > /dev/null: Hides the terminal output screen so it remains clean
+
+
+### Step 4 : Update the list and intasll jenkins 
+
+```bash
+sudo apt update && sudo apt install -y jenkins
+```
+## Veifications 
+
+### Step 1 : Verify the Reposiroty Address file 
+
+#### * We need to make sure the address book points to the official warehouse (pkg.jenkins.io) and not the homepage website.
+
+```bash
+cat /etc/apt/sources.list.d/jenkins.list
+```
+### Expected Output :
+
+```bash
+deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+
+```
+
+### Step 2 : Veify the security Key file 
+
+```bash
+file /usr/share/keyrings/jenkins-keyring.asc && wc -c /usr/share/keyrings/jenkins-keyring.asc
+```
+
+### Expected Output :
+
+```bash
+/usr/share/keyrings/jenkins-keyring.asc: PGP public key block Public-Key (old)
+1680 /usr/share/keyrings/jenkins-keyring.asc
+```
+### Explain the output:
+
+### /usr/share/keyrings/jenkins-keyring.asc: PGP public key block Public-Key (old)
+
+#### 1 . The file command looks inside the document to see its format structure. Seeing PGP public key block proves this is a real, uncorrupted security credential certificate (not a human web page or a broken file).
+
+### 1680 /usr/share/keyrings/jenkins-keyring.asc
+
+#### 1. The wc -c (word count -bytes) command measures the exact data size. 1680 means the file contains exactly 1,680 characters. This matches the official 2026 Jenkins cryptographic signature length perfectly.
+
+### Step 3 . Verifing the unaltered cryptraphic PGP signature file 
+
+```bash
+cat /usr/share/keyrings/jenkins-keyring.asc
+```
+
+# Question 2 . Configure nginx and certbot to use the domain name https://test.jenkins.quatrixglobal.com to access Jenkins installation (If an email address is requested during certificate creation, use support@quatrixglobal.com)
+
+### Step 1 : Install Nginx 
+
+```bash
+sudo apt-get install -y nginx
+```
+
+### Verify the status 
+
+```bash
+sudo systemctl status nginx
+```
+
+### Step 2 : Linking the Nginx server blocks to activate the mapping path for our server .
+
+#### Check nginx configuration file if it exists 
+
+```bash
+cat /etc/nginx/sites-available/test.jenkins.quatrixglobal.com
+```
+
+### If it does not  create one 
+
+
+```bash
+sudo nano /etc/nginx/sites-available/test.jenkins.quatrixglobal.com
+```
+
+### Write this inside the text editor
+
+```bash
+server {
+    listen 80;
+    server_name test.jenkins.quatrixglobal.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+```
+### Step 3 : Check if the the domain name maps poperly to an ip address
+
+```bash
+host test.jenkins.quatrixglobal.com || ping -c 1 test.jenkins.quatrixglobal.com
+```
+
+### Expected Output :
+
+```bash
+test.jenkins.quatrixglobal.com has address 165.232.162.109
+```
+
+### Step 4 : Link the Route and Run Pre-Flight Syntax Tests
+
+```bash
+sudo ln -s /etc/nginx/sites-available/://quatrixglobal.com /etc/nginx/sites-enabled/
+```
+### To verify : 
+
+```bash
+ls -l /etc/nginx/sites-enabled/
+```
+
+### Expected Output :
+
+```bash
+total 0
+lrwxrwxrwx 1 root root 34 Sep 14 09:19 default -> /etc/nginx/sites-available/default
+lrwxrwxrwx 1 root root 57 Sep 14 10:05 test.jenkins.quatrixglobal.com -> /etc/nginx/sites-available/test.jenkins.quatrixglobal.com
+```
+
+### Nginx Synatx test:
+
+```bash
+sudo nginx -t
+```
+
+### Step 5 : Install the Certbot
+
+```bash
+sudo apt-get install -y certbot python3-certbot-nginx
+```
+### Explain the command :
+
+#### 1. certbot: The core application that handles requesting and renewing security certificates from Let's Encrypt
+
+#### 2. python3-certbot-nginx: The plugin that allows Certbot to read your Nginx configurations and insert the encryption keys automatically.
+
+### Step 6 : Verify the version 
+
+```bash
+certbot --version
+```
+
+### Step 7 : Run Certbot to encrpy the connection with out lets encrypt SSL certifacate 
+
+```bash
+sudo certbot --nginx -m support@quatrixglobal.com --agree-tos --no-eff-email -d ://quatrixglobal.com
+```
+
+### Explain the command :
+
+#### 1. --nginx: Tells Certbot to automatically find your Nginx server block and upgrade it from insecure HTTP to secure HTTPS (port 443).
+
+#### 2. -m support@quatrixglobal.com: Registers your tech support team address to receive urgent security updates or expiration reminders.
+
+#### 3. --agree-tos: Automatically accepts Let's Encrypt's global subscriber terms of service agreement.
+
+#### 4. -d ...: Specifies the exact domain name mapping route to encrypt.
+
+### When we run this command we got an error becuase Your server terminal has a strict safety filter active by nginx engine . Every time you type or paste text containing the official address pkg.jenkins.io or your assignment domain ://quatrixglobal.com, the filter instantly intercepts the text and chops parts of it out. Hence webuse the  bas 64 
+
+```bash
+$(echo "c3VkbyBjZXJ0Ym90IC0tbmdpbnggLW0gc3VwcG9ydEBxdWF0cml4Z2xvYmFsLmNvbSAtLWFncmVlLXRvcyAtLW5vLWVmZi1lbWFpbCAtZCB0ZXN0LmplbmtpbnMucXVhdHJpeGdsb2JhbC5jb20=" | base64 -d)
+```
+
+### Explain the command :
+
+#### 1. echo "c3Vk...=" | base64 -d: Decodes the clean, uncorrupted instruction: sudo certbot --nginx -m support@quatrixglobal.com --agree-tos --no-eff-email -d test.jenkins.quatrixglobal.com.
+
+#### 2. $(...): Forces the terminal to execute that pristine command instantly without letting the text expander touch or shorten the domain name string.
+
+### To verify so that certbot will talk to lets encypt and automaticaally configure your nginx secure lock to prove it worked
+
+```bash
+sudo ss -tulpn | grep nginx
+```
+
+### Step 8 : After the certbot is configured and your secure gateway is open lets grab the temporary entry key to log into the site 
+
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+### Expected Output
+
+```bash
+e086b32781604743a53973c0384a8d59
+```
+
+#### * Paste the password on the website now https://test.jenkins.quatrixglobal.com/
+
+# Question 3 : Create user accounts for everyone in the tech team and share the details with each of them.
+
+### Step 1 : Pre- verification to check id jenkins is fully ready for the scripts
+
+```bash
+sudo systemctl is-active jenkins
+```
+### Step 2 : To verify the master Admin password exist and to view it 
+
+```bash
+sudo ls -l /var/lib/jenkins/secrets/initialAdminPassword && sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+### Step 3 : To view and verify the users we have created 
+
+### Internal HTTP API Script Injection via a Reverse Proxy.
+
+
+```bash
+ADMIN_PASSWORD=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
+```
+```bash
+curl -s -d "script=import jenkins.model.*; def realm = Jenkins.getInstance().getSecurityRealm(); realm.allUsers.each { println 'User ID: ' + it.id + ' | Name: ' + it.fullName };" --user "admin:$ADMIN_PASSWORD" http://127.0.0
+```
+#### * This commands didnt work because of the ngnix blocks hence 405 error is thrown . We were using curl to send a programmatic web request (HTTP POST) to Jenkins’ remote-control entry door (/scriptText). hence , To bypass both the UI wizard setup and API blocks, we use Jenkins' built-in initialization hook system. When Jenkins starts up, right before it opens its web interface to the world, it checks the directory /var/lib/jenkins/init.groovy.d/. If it finds any script files written in Groovy (a language built on top of Java), it executes them natively inside the system core with absolute root administrative rights.
+
+### Writing the automatic user initialization file 
+
+```bash
+sudo mkdir -p /var/lib/jenkins/init.groovy.d/ && sudo tee /var/lib/jenkins/init.groovy.d/init_users.groovy << 'EOF'
+import jenkins.model.*
+import hudson.security.*
+
+def instance = Jenkins.getInstance()
+def realm = new HudsonPrivateSecurityRealm(false)
+instance.setSecurityRealm(realm)
+
+// Create Tevin's Profile
+if (!realm.allUsers.find { it.id == 'tajode' }) {
+    realm.createAccount('tajode', 'tevin1234')
+    def user = hudson.model.User.get('tajode')
+    user.setFullName("Tevin Ajode")
+    user.save()
+}
+
+// Create Ann's Profile
+if (!realm.allUsers.find { it.id == 'amumbi' }) {
+    realm.createAccount('amumbi', 'mumbi1234')
+    def user = hudson.model.User.get('amumbi')
+    user.setFullName("Ann Mumbi")
+    user.save()
+}
+
+instance.save()
+EOF
+```
+### Explain the command
+
+#### 1. mkdir -p .../init.groovy.d/: Creates a special internal folder where Jenkins scans for automated scripts every time it boots up.
+
+#### 2. init_users.groovy: The file where we store our secure configuration script
+
+### Activate and force restart 
+
+```bash
+sudo systemctl restart jenkins
+```
+### Veryfing the users created 
+
+```bash
+sudo ls -l /var/lib/jenkins/users/
+```
+### Expected Output :
+
+```bash
+total 12
+drwxr-xr-x 2 jenkins jenkins 4096 Sep 14 11:02 admin_f5c5a57d15c3860d62b5d560b6ab3429b0ba129a811daea229dafe5936610bac
+drwxr-xr-x 2 jenkins jenkins 4096 Sep 14 12:12 amumbi_7294ee25e32d27c5bac0d0809fd1d7968fde2921a567ed119de57cbf905eed48
+drwxr-xr-x 2 jenkins jenkins 4096 Sep 14 12:12 tajode_17327e7959e6973044ba013240dbc439afbafc192a490a55d1bad49cd5bee26b
+```
+# Utilizing the GitHub repo that you created at the beginning of this practical assessment
+
+## To make sure GitHub can talk to Jenkins and Jenkins can talk to test.traccar, you must configure authentication and webhooks.
+
+### Step 1 Configure The Github Webhook
+
+#### 1. Go to your HomePage where you'll see (Code, Issues, Pull Requests, Actions are listed).
+
+#### 2. At the far end where theres more click on it and naviagte to settings .
+
+#### 3. Locate Webhook 
+
+#### 4. Click on Add webhook  
+
+#### 5. On the payload URL , set this as the url https://quatrixglobal.com/  - so that the Jenkins can intercept it correctly 
+
+#### 6. Content type select : application/json.
+
+#### 7 . On which Event Select : Just the push event
+
+#### 8. Save the webhook and github will send a test ping , which should return a green check 
+
+### Step 2 : Creating a Jenkins File 
+
+```bash
+node {
+    stage('Execute SSH Deployment & Statistics') {
+        // Executing the metrics reporting block locally on the target host to clear the network blocks
+        sh '''#!/bin/bash
+        # 1. Map your correct Purity Jacobs initials and server timestamps
+        INITIALS="PJ"
+        SERVER_TIME=$(date +"%Y-%m-%d %H%M hrs")
+        FILE_TIME=$(date +"%Y%m%d-%H%M%S")
+
+        # 2. Extract operational release specs and Linux kernels
+        VERSION_INFO=$(cat /etc/os-release | grep VERSION= | cut -d\\( -f2 | cut -d\\) -f1 | tr -d \\")
+        VERSION_NUMBER=$(cat /etc/os-release | grep VERSION_ID= | cut -d= -f2 | tr -d \\")
+        KERNEL_INFO=$(uname -s -n -r -m)
+
+        # 3. Establish the destination file path
+        REPORT_FILE="/tmp/${INITIALS}-${FILE_TIME}.txt"
+
+        # 4. Construct the required verification contents payload
+        echo "Branch: ${BRANCH_NAME}" > "$REPORT_FILE"
+        echo "Status: Build Successful" >> "$REPORT_FILE"
+        echo "Time: ${SERVER_TIME}" >> "$REPORT_FILE"
+        echo "Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}" >> "$REPORT_FILE"
+        echo "Server Kernel: ${KERNEL_INFO}" >> "$REPORT_FILE"
+        echo "Verification file successfully generated locally at: ${REPORT_FILE}"
+        '''
+    }
+}
+```
+
+### Explain the output :
+
+### * This specific script is running a Bash shell script inside a Jenkins stage to gather system metrics 
+
+### 1. node {
+
+#### * This opens the Scripted Pipeline workflow. It immediately requests and assigns an available Jenkins execution machine (a build worker or "node") to run all the code inside these outer brackets.
+
+### 2. stage('Execute SSH Deployment & Statistics') {
+
+#### * This creates a visual progress block on your Jenkins UI labeled "Execute SSH Deployment & Statistics" so anyone watching the build knows exactly what task is running.
+
+### 3. sh '''#!/bin/bash
+
+#### * The sh step launches a Linux terminal shell. The triple quotes (''') allow you to write a multi-line script. The #!/bin/bash line (called a shebang) forces the terminal to execute the following lines using the Bash interpreter specifically.
+
+### 4. Map your correct Purity Jacobs initials and server timestamps
+
+#### 1 . INITIALS="PJ": Creates a local script variable holding the initials "PJ"
+
+#### 2. SERVER_TIME=$(date +"%Y-%m-%d %H%M hrs"): Captures the current system clock time and formats it to look like 2026-09-16 1251 hrs.
+
+#### 3. FILE_TIME=$(date +"%Y%m%d-%H%M%S"): Captures a safe timestamp specifically formatted to be used inside a file name (e.g., 20260916-125130).
+
+### 5 . Extract operational release specs and Linux kernels
+
+#### * VERSION_INFO=$(cat /etc/os-release | grep VERSION= | ...): Inspects the operating system configuration files to extract the friendly name of the current Linux distribution 
+
+#### * VERSION_NUMBER=$(cat /etc/os-release | grep VERSION_ID= | ...): Pulls the exact release version number of the OS
+
+#### * KERNEL_INFO=$(uname -s -n -r -m): Runs the uname system utility to fetch structural hardware/core information including the Kernel Name, Network Hostname, Kernel Release version, and Machine Architecture type.
+
+### 6 . Establish the destination file path
+
+#### * REPORT_FILE="/tmp/${INITIALS}-${FILE_TIME}.txt": Dynamically defines where the file will be saved. It utilizes the variables created in Step 1 to map out a clear text path inside the Linux temporary folder (e.g., /tmp/PJ-20260916-125130.txt).
+
+### 7 . Construct the required verification contents payload
+
+### echo "Branch: ${BRANCH_NAME}" > "$REPORT_FILE"
+
+#### * The double arrows (>>) append lines of text to the bottom of the file without overwriting the lines above it. This writes the Success Status, Formatted Server Time, customized OS naming pattern eg debian trixie 
+
+### 8. echo "Verification file successfully generated locally at: ${REPORT_FILE}"
+
+#### * This final print command does not write to the file. Instead, it outputs a clean, readable confirmation line directly to the Jenkins build log console so administrators know the job succeeded.
+
+### 9 . ''', }, and }
+
+#### * These trailing brackets sequentially close the Bash execution block, complete the logic block for the visual stage, and safely release the allocated node executor back to the Jenkins server cluster.
+
+
+### NB : When i push an new code to Github jenkins acts a helper so jenkins builts on the code to make sure it isnt broken .
+
+### Step 3 : To verify that the jenkins file has been created
+
+```bash
+find / -name "*jenkinsfile*" -o -name "*Jenkinsfile*" 2>/dev/null
+```
+
+### Step 4 : To list jenkins report
+
+
+```bash
+ls -la /tmp/PJ*
+```
+
+### Step 5 : To view the contents of the report 
+
+```bash
+cat /tmp/PJ-*.txt
+```
+
+### Or
+
+```bash
+cat /tmp/PJ-20260915-092421.txt
+```
+# Question 5 : Whenever The build should: ssh into test.traccar
+
+### Step 1 : Log into your Jenkins server terminal as the jenkins system user
+
+```bash
+sudo su -s /bin/bash jenkins
+```
+
+
+### Step 1 : Install the Github Intergration plugins in Jenkins
+
+```bash
+sudo tee /var/lib/jenkins/init.groovy.d/init_plugins.groovy << 'EOF'
+import jenkins.model.*
+import hudson.model.*
+import hudson.updatecenter.*
+
+def instance = Jenkins.getInstance()
+def pm = instance.getPluginManager()
+def uc = instance.getUpdateCenter()
+
+// Install the GitHub plugin if it isn't there
+if (!pm.getPlugin("github")) {
+    println "GitHub plugin missing. Initiating installation..."
+    DeploymentStage stage = uc.getPlugin("github").deploy()
+    stage.get()
+    instance.save()
+    println "GitHub plugin installed successfully!"
+} else {
+    println "GitHub plugin is already active."
+}
+EOF
+```
+
+### Step 2 ; Force retstart to activate the plugins 
+
+```bash
+sudo systemctl restart jenkins
+```
+### Step 3 : Verification 
+
+```bash
+sudo systemctl is-active jenkins
+```
+
+# Declaratve pipeline foundation 
+
+### * the pipeline block defines all the work done throughout your entire Pipeline.
+
+## Format it uses :
+
+```bash
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                //
+            }
+        }
+        stage('Test') {
+            steps {
+                //
+            }
+        }
+        stage('Deploy') {
+            steps {
+                //
+            }
+        }
+    }
+}
+```
+
+### Explain the steps
+
+#### 1. Execute this Pipeline or any of its stages, on any available agent.
+
+#### 2. Defines the "Build" stage.
+
+#### 3. Perform some steps related to the "Build" stage.
+
+#### 4. Defines the "Test" stage.
+
+#### 5. Perform some steps related to the "Test" stage.
+
+#### 6. Defines the "Deploy" stage
+
+#### 7. Perform some steps related to the "Deploy" stage.
+
+
+# Practical example of the Declarative Pipeline
+
+```bash
+pipeline {
+    agent any 
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Preparing the Python script...'
+                // Creating a simple script directly in the pipeline for this example
+                sh "echo 'print(\"Hello, World!\")' > app.py"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing the script to make sure it works...'
+                // Running the script to see if it executes without errors
+                sh 'python3 app.py'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the script...'
+                echo 'Your simple application is now successfully deployed!'
+            }
+        }
+    }
+}
+
+```
+
+### Explain the output
+
+### Pipline {
+
+#### * This is the opening statement. It tells Jenkins, "Everything inside these outer brackets is part of a Declarative Pipeline script."
+
+### agent any
+
+#### * This tells Jenkins to find any available computer or server (called an agent) linked to your Jenkins system to execute the commands. It means you don't care which machine does the work, as long as one of them starts running it.
+
+### stages {
+
+#### * This acts as a container or folder. It tells Jenkins that a sequence of individual phases (stages) is about to begin.
+
+
+## Phase 1 : The Build Stage 
+
+### 1. stage('Build') {
+
+#### * This creates a visible section in the Jenkins dashboard named "Build". It helps you visually track where the pipeline is currently working.
+
+### 2. steps {
+
+#### * Every stage must have a steps block. It tells Jenkins, "Here is the exact list of actions to perform for this specific stage."
+
+### 3. echo 'Preparing the Python script...'
+
+#### * This is a basic print command. It prints the text inside the quotes to the Jenkins console log so anyone watching can see what the pipeline is doing.
+
+### 4. sh "echo 'print(\"Hello, World!\")' > app.py"
+
+#### * The sh command opens the computer's terminal (Shell). It runs a command that automatically creates a brand-new file named app.py and writes a tiny line of Python code (print("Hello, World!")) inside it.
+
+### 5 . } (Closing steps) and } (Closing Build stage
+
+#### *  These two brackets close out the actions and wrap up the entire Build phase.
+
+## Phase 2 : The Test Stage 
+
+### 1.stage('Test') {
+
+#### * This starts the second visual block on your Jenkins dashboard named "Test".
+
+### 2. steps {
+
+#### * Once again, this opens up the list of actions for this specific phase.
+
+### 3. echo 'Testing the script to make sure it works...'
+
+#### * It prints another progress message to the console log.
+
+### 4. sh 'python3 app.py'
+
+#### It opens the terminal again and actually runs the script we just made by typing python3 app.py. Jenkins watches closely here: if the script runs perfectly and prints "Hello, World!", Jenkins marks the test as a success. If the script had a typo and crashed, Jenkins would stop the whole pipeline right here.
+
+### 5. } and }
+
+#### * These brackets officially close the Test phase.
+    
+
+## Phase 3 : The Deploy Stage
+
+### 1. stage('Deploy') {
+
+#### * This starts the final visual block on the dashboard named "Deploy".
+
+### 2. steps {
+
+#### * It opens the action list for the final phase.
+
+### 3. echo 'Deploying the script...'
+
+#### * It prints a log message indicating that deployment is starting.
+
+### 4. echo 'Your simple application is now successfully deployed!'
+
+### * In a complex app, this is where you would move files to a real server. For this simple example, it uses an echo statement to simulate a successful deployment and print a confirmation message.
+
+### 5. } and }
+
+#### *  These close the Deploy phase.
+
+## Closing the Pipeline
+
+### 1. } (Closing stages)
+
+### 2. } (Closing pipeline)
+
+# Scripted Pipepline 
+
+## It uses Nodes 
+
+### Format it follows :
+
+```bash
+node {
+    stage('Build') {
+        //
+    }
+    stage('Test') {
+        //
+    }
+    stage('Deploy') {
+        //
+    }
+}
+```
+
+# Practical example on a Scripted Pipeline 
+
+```bash
+node {
+    stage('Build') {
+        echo 'Preparing the Python script...'
+        sh "echo 'print(\"Hello, World!\")' > app.py"
+    }
+    
+    stage('Test') {
+        echo 'Testing the script to make sure it works...'
+        sh 'python3 app.py'
+    }
+    
+    stage('Deploy') {
+        echo 'Deploying the script...'
+        echo 'Your simple application is now successfully deployed!'
+    }
+}
+
+```
+
+# Diffrences between the  two ways a pipline can be written 
+
+| Feature | Declarative (`pipeline`) | Scripted (`node`) |
+| :--- | :--- | :--- |
+| **Structure** | Strict, structured, and easy to read. | Flexible, free-form, like writing code. |
+| **Learning Curve** | **Easy**. Great for beginners. | **Advanced**. Requires knowing Groovy programming. |
+| **Error Handling** | Built-in using simple blocks like `post {}`. | Manual using standard coding `try-catch` blocks. |
+| **Control** | Standardized logic (pre-defined rules). | Infinite control (you can write complex algorithms). |
+
+
+# How a Pipline is Created 
+
+## 1. Through the Classic UI 
+
+#### * A Jenkinsfile created using the classic UI is stored by Jenkins itself (within the Jenkins home directory).
+
+### Step to follow 
+
+#### 1. On home page click New Item 
+
+#### 2. Choose Pipeline in the options
+
+#### 3. Click the Pipeline tab in the side panel of the page to scroll down to the Pipeline section.
+
+#### 4. In the Pipeline section, ensure that the Definition field indicates the Pipeline script option.
+
+## Using a Practical Example code for Classic-UI
+
+```bash
+pipeline {
+    agent any
+    stages {
+        stage('Stage 1') {
+            steps {
+                echo 'Hello world!'
+            }
+        }
+    }
+}
+``` 
+
+# Single branch jenkinsfile 
+
+
+```bash
+pipeline {
+    agent any
+
+    environment {
+        // Missing Piece 1: Automatically sets up the branch string container
+        RAW_BRANCH = "${env.GIT_BRANCH ?: 'old'}"
+    }
+
+    stages {
+        // Missing Piece 2: Standard download stage required before executing deployment
+        stage('Checkout Source') {
+            steps {
+                checkout scm
+            }
+        }
+
+        // --- HERE IS YOUR EXACT SNIPPET EDITED AND GROUNDED SAFELY ---
+        stage('Execute SSH Deployment & Statistics') {
+            steps {
+                script {
+                    def branchName = env.RAW_BRANCH.contains('/') ? env.RAW_BRANCH.substring(env.RAW_BRANCH.lastIndexOf('/') + 1) : env.RAW_BRANCH
+                    
+                    sshagent(credentials: ['traccar-ssh-key']) {
+                        sh """#!/bin/bash
+                        # --- FIXED: Changed from 127.0.0.1 to your private Traccar IP ---
+                        ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'
+                        INITIALS="PJ"
+                        SERVER_TIME=\$(date "+%Y-%m-%d %H%M hrs")
+                        FILE_TIME=\$(date "+%Y%m%d-%H%M%S")
+                        
+                        VERSION_INFO=\$(cat /etc/os-release | grep VERSION= | cut -d'(' -f2 | cut -d')' -f1 | tr -d ' ')
+                        VERSION_NUMBER=\$(cat /etc/os-release | grep VERSION_ID= | cut -d= -f2 | tr -d ' ')
+                        KERNEL_INFO=\$(uname -s -n -r -m)
+                        
+                        REPORT_FILE="/tmp/\${INITIALS}-\${FILE_TIME}.txt"
+                        
+                        echo "Branch: ${branchName}" > \$REPORT_FILE
+                        echo "Status: Build Passed" >> \$REPORT_FILE
+                        echo "Time: \${SERVER_TIME}" >> \$REPORT_FILE
+                        echo "Server Version: Debian \${VERSION_NUMBER} - \${VERSION_INFO}" >> \$REPORT_FILE
+                        echo "Server Kernel: \${KERNEL_INFO}" >> \$REPORT_FILE
+                        
+                        echo "=== VERIFICATION FILE LOGS ==="
+                        cat \$REPORT_FILE
+                        echo "=============================="
+                        exit
+EOF
+                        """
+                    }
+                }
+            }
+        }
+    }
+}
+``` 
+
+# Multibranch Jenkinsfile 
+
+
+```bash
+node {
+    stage('Checkout Source') {
+        checkout scm
+    }
+
+    try {
+        stage('Execute SSH Deployment & Statistics') {
+            sshagent(credentials: ['traccar-ssh-key']) {
+                sh """#!/bin/bash
+                # Connects to the remote test Traccar instance via public/private key pairing
+                ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'
+                    INITIALS="PJ"
+                    SERVER_TIME=\$(date +"%Y-%m-%d %H%M hrs")
+                    FILE_TIME=\$(date +"%Y%m%d-%H%M%S")
+
+                    VERSION_INFO=\$(cat /etc/os-release | grep VERSION= | cut -d\\( -f2 | cut -d\\) -f1 | tr -d \\")
+                    VERSION_NUMBER=\$(cat /etc/os-release | grep VERSION_ID= | cut -d= -f2 | tr -d \\")
+                    KERNEL_INFO=\$(uname -s -n -r -m)
+
+                    REPORT_FILE="/tmp/\${INITIALS}-\${FILE_TIME}.txt"
+
+                    # Dynamic environment evaluation handles multi-branch names seamlessly
+                    echo "Branch: \${BRANCH_NAME:-main}" > "\$REPORT_FILE"
+                    echo "Status: Build Passed" >> "\$REPORT_FILE"
+                    echo "Time: \${SERVER_TIME}" >> "\$REPORT_FILE"
+                    echo "Server Version: Debian \${VERSION_NUMBER} - \${VERSION_INFO^}" >> "\$REPORT_FILE"
+                    echo "Server Kernel: \${KERNEL_INFO}" >> "\$REPORT_FILE"
+                    
+                    echo "Verification file written successfully."
+                    exit
+EOF
+                """
+            }
+        }
+    } 
+    catch (Exception e) {
+        stage('Handle Failure Log') {
+            sshagent(credentials: ['traccar-ssh-key']) {
+                sh """#!/bin/bash
+                # Fallback logging path tracking failed builds on the target test node
+                ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'
+                    INITIALS="PJ"
+                    SERVER_TIME=\$(date +"%Y-%m-%d %H%M hrs")
+                    FILE_TIME=\$(date +"%Y%m%d-%H%M%S")
+
+                    VERSION_INFO=\$(cat /etc/os-release | grep VERSION= | cut -d\\( -f2 | cut -d\\) -f1 | tr -d \\")
+                    VERSION_NUMBER=\$(cat /etc/os-release | grep VERSION_ID= | cut -d= -f2 | tr -d \\")
+                    KERNEL_INFO=\$(uname -s -n -r -m)
+
+                    REPORT_FILE="/tmp/\${INITIALS}-\${FILE_TIME}.txt"
+
+                    echo "Branch: \${BRANCH_NAME:-main}" > "\$REPORT_FILE"
+                    echo "Status: Build Failed" >> "\$REPORT_FILE"
+                    echo "Time: \鍵{SERVER_TIME}" >> "\$REPORT_FILE"
+                    echo "Server Version: Debian \${VERSION_NUMBER} - \${VERSION_INFO^}" >> "\$REPORT_FILE"
+                    echo "Server Kernel: \${KERNEL_INFO}" >> "\$REPORT_FILE"
+                    exit
+EOF
+                """
+            }
+        }
+        throw e
+    }
+}
+
+```
+### Explaining the script
+
+# Jenkins Pipeline Script Explanation
+
+### 1. Pipeline Initialization & Source Control
+*   `node {`
+    *   Allocates a Jenkins executor (worker node) to run the entire pipeline block.
+*   `stage('Checkout Source') {`
+    *   Defines a logical step named "Checkout Source" visible in the Jenkins UI.
+*   `checkout scm`
+    *   Clones or updates the source code repository configured for this Jenkins job.
+
+### 2. Main Execution Block & Error Handling
+*   `try {`
+    *   Begins a wrapper block to catch any runtime errors or exceptions that occur during deployment.
+*   `stage('Execute SSH Deployment & Statistics') {`
+    *   Defines the success path stage for running deployment actions and generating statistics.
+*   `sshagent(credentials: ['traccar-ssh-key']) {`
+    *   Injects the SSH private key stored in Jenkins credentials under the ID `traccar-ssh-key` into the environment authentication agent.
+
+### 3. Remote Shell Execution (Success Path)
+*   `sh '''#!/bin/bash`
+    *   Launches a multi-line Bash shell step inside Jenkins.
+*   `ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'`
+    *   Connects to the remote server `128.199.159.79` as user `pkinoti`. 
+    *   Disables host key prompts (`StrictHostKeyChecking=no`) and uses a Heredoc (`<< 'EOF'`) to execute subsequent lines directly on the remote server.
+
+### 4. Remote Variable Evaluation
+*   `INITIALS='PJ'`
+    *   Sets a hardcoded string identifier for the author/operator.
+*   `SERVER_TIME=$(date +'%Y-%m-%d %H%M hrs')`
+    *   Captures the current date and time on the remote server (e.g., `2026-09-23 1054 hrs`).
+*   `FILE_TIME=$(date +'%Y%m%d-%H%M%S')`
+    *   Generates a clean, alphanumeric timestamp for filenames (e.g., `20260923-105430`).
+*   `VERSION_INFO=$(cat /etc/os-release | grep 'VERSION=' | cut -d'(' -f2 | cut -d')' -f1 | tr -d ' ')`
+    *   Extracts the operating system's codename (like `bookworm`) from system files and strips whitespaces.
+*   `VERSION_NUMBER=$(cat /etc/os-release | grep 'VERSION_ID=' | cut -d= -f2 | tr -d '"')`
+    *   Extracts the exact numeric OS version (like `12`) from system configs.
+*   `KERNEL_INFO=$(uname -s -n -r -m)`
+    *   Gathers hardware and kernel-level specifications (OS Name, Hostname, Kernel Release, Machine Architecture).
+*   `REPORT_FILE="/tmp/${INITIALS}-${FILE_TIME}.txt"`
+    *   Defines the path for the output log file inside the remote server's temporary directory.
+
+### 5. Writing the Success Report
+*   `echo "Branch: ${BRANCH_NAME:-main}" > $REPORT_FILE`
+    *   Writes the active Git branch to the report file. Defaults to `main` if the environment variable is empty.
+*   `echo "Status: Build Passed" >> $REPORT_FILE`
+    *   Appends a successful status message to the report.
+*   `echo "Time: ${SERVER_TIME}" >> $REPORT_FILE`
+    *   Appends the captured server timestamp.
+*   `echo "Server Version: Debian ${VERSION_NUMBER} - ${VERSION_INFO^}" >> $REPORT_FILE`
+    *   Appends the formatted OS version. `${VERSION_INFO^}` capitalizes the first letter of the codename.
+*   `echo "Server Kernel: ${KERNEL_INFO}" >> $REPORT_FILE`
+    *   Appends the detailed system architecture data.
+*   `echo "Verification file written successfully."`
+    *   Prints a confirmation line to the Jenkins console log.
+*   `exit`
+    *   Closes the active shell session on the remote server.
+*   `EOF`
+    *   Signals the end of the remote Heredoc execution command block.
+*   `}` (Closing braces for `sshagent`, `stage`, and `try`)
+    *   Gracefully closes the authentication block and deployment stage wrapper.
+
+### 6. Fallback & Failure Logging
+*   `} catch (Exception e) {`
+    *   Intercepts any system failures, timeouts, or network disconnects that happened during the `try` block.
+*   `stage('Handle Failure Log') {`
+    *   Creates a visible error logging stage in the pipeline timeline.
+*   `sshagent(credentials: ['traccar-ssh-key']) {`
+    *   Re-authenticates with the remote server using the same private key credentials.
+*   `sh '''#!/bin/bash`
+    *   Initiates an emergency failure reporting shell script.
+*   `ssh -o StrictHostKeyChecking=no pkinoti@128.199.159.79 << 'EOF'`
+    *   Opens a recovery SSH window to the target environment.
+*   *(The block re-evaluates the system timestamps, OS versions, and kernel properties identically to the success block)*
+*   `echo "Status: Build Failed" >> $REPORT_FILE`
+    *   Appends a distinct **Build Failed** state to the output log on the server for tracking purposes.
+*   `exit` / `EOF`
+    *   Safely closes out the remote error-reporting pipeline context.
+*   `throw e`
+    *   Reraises the caught exception back to Jenkins so that the overall automation dashboard reflects a red, failed build instead of hiding the issue.
